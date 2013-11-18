@@ -1,6 +1,5 @@
 package fr.twiced.ucoinj;
 
-import java.io.File;
 import java.net.URL;
 
 import org.eclipse.jetty.server.Server;
@@ -8,6 +7,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.servlet.DispatcherServlet;
 
 public class JettyServer {
@@ -40,22 +40,17 @@ public class JettyServer {
     }
 
     private ServletContextHandler getServletHandler() {
+    	// Setup Spring MVC Servlet holder
         ServletHolder mvcServletHolder = new ServletHolder(MVC_SERVLET_NAME, new DispatcherServlet());
         mvcServletHolder.setInitParameter("contextConfigLocation", "web-context.xml");
 
-        ServletHolder jspServletHolder = new ServletHolder(JSP_SERVLET_NAME, new org.apache.jasper.servlet.JspServlet());
-        // these two lines are not strictly required - they will keep classes generated from JSP in "${javax.servlet.context.tempdir}/views/generated"
-        jspServletHolder.setInitParameter("keepgenerated", "true");
-        jspServletHolder.setInitParameter("scratchDir", "views/generated");
-
-        // session has to be set, otherwise Jasper won't work
-        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.setAttribute("javax.servlet.context.tempdir", new File("../tmp/webapp"));
-        // that classloader is requres to set JSP classpath. Without it you will just get NPE
-        context.setClassLoader(Thread.currentThread().getContextClassLoader());
-        context.addServlet(jspServletHolder, "*.jsp");
+        ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.addServlet(mvcServletHolder, "/");
         context.setResourceBase( getBaseUrl() );
+        
+        // Setup Spring context
+        context.addEventListener(new ContextLoaderListener());
+        context.setInitParameter("contextConfigLocation", "classpath*:**/applicationContext.xml");
 
         return context;
     }

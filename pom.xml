@@ -10,12 +10,10 @@
 	<properties>
 		<project.build.sourceencoding>UTF-8</project.build.sourceencoding>
 		<jetty.version>9.1.0.RC1</jetty.version>
-		<jetty.jsp.version>9.1.0.RC1</jetty.jsp.version>
 		<spring.version>3.1.2.RELEASE</spring.version>
+		<hibernate.version>4.1.9.Final</hibernate.version>
+		<jackson.version>1.9.10</jackson.version>
 	</properties>
-
-	<!-- <properties> <org.springframework.version>3.2.0.RELEASE</org.springframework.version> 
-		<org.eclipse.jetty.version>8.1.8.v20121106</org.eclipse.jetty.version> </properties> -->
 
 	<repositories>
 		<repository>
@@ -67,17 +65,31 @@
 			<version>1.46</version>
 		</dependency>
 
-		<!-- SPRING DEPENDENCIES -->
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-context</artifactId>
-			<version>${spring.version}</version>
-		</dependency>
+		<!-- SPRING & HIBERNATE DEPENDENCIES -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>3.2.0.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+			<!-- will come with Hibernate core -->
+		</dependency>
+
+		<!-- MYSQL -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.27</version>
+		</dependency>
+
 
 		<!-- JETTY DEPENDENCIES -->
 		<dependency>
@@ -101,17 +113,11 @@
 			<version>${jetty.version}</version>
 		</dependency>
 
-		<!-- JSP and JSTL SUPPORT -->
+		<!-- Jackson JSON Mapper -->
 		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-jsp</artifactId>
-			<version>${jetty.jsp.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>jstl</artifactId>
-			<version>1.2</version>
-			<scope>provided</scope>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>
 
 		<!-- SLF4J -->
