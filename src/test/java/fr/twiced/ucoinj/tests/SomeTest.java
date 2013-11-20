@@ -1,6 +1,7 @@
-package fr.twiced.fr.tests;
-import junit.framework.Assert;
+package fr.twiced.ucoinj.tests;
 
+
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
