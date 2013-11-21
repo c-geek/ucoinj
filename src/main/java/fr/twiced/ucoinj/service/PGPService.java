@@ -12,6 +12,8 @@ public interface PGPService {
 	
 	boolean verify(String originalDocument, String base64signature, PGPPublicKey pubkey) throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception;
 	
+	boolean verify(String base64signature, PGPPublicKey pubkey) throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception;
+	
 	String extractIssuer(String base64signature) throws NoSignaturePacketException, Exception;
 	
 	String extractFingerprint(PGPPublicKey publicKey);
