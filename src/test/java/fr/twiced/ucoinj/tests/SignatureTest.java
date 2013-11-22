@@ -1,6 +1,6 @@
 package fr.twiced.ucoinj.tests;
 
-import org.bouncycastle.crypto.digests.SHA1Digest;
+import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,91 +31,47 @@ public class SignatureTest {
 			+ "kNlP+H1aLntNkCjv6Liy9RDjubxBys6Y0mK6julZqbeN5BtLjXDE6sAPjr1ybfQ=\r\n"
 			+ "=C6z8\r\n"
 			+ "-----END PGP SIGNATURE-----\r\n";
-
-	private static final String CAT_SIGNATURE_HASH = "5ED0478377E717B8F35F6A945505AA9435DC2B38";
+	
 	private static final String CAT_SIGNATURE = "-----BEGIN PGP MESSAGE-----\r\n"
-			+ "Version: GnuPG v1.4.12 (GNU/Linux)\r\n"
+			+ "Version: GnuPG v1.4.11 (GNU/Linux)\r\n"
 			+ "\r\n"
-			+ "owGbwMvMwMH48tT2XMkVqXKMaxnlkjiTE0v0UvNKiiqDrD7Fh6UWFWfm51kpGPJy\r\n"
-			+ "OZcWFaXmJVdaKSSlliTGJxXllxbnl6bxcnmnAsWczY0tLIyczEyczF3NjYyMzR2N\r\n"
-			+ "3EzMDJxdLZ0dnczNXAwtHS3MTA1debk88otLgMZaAU0kWo+LgYmlgYGRo5m5kYmL\r\n"
-			+ "sambhZm5m5mJs7OBhbmTo7GpobOBo6uTmYsbL1dIUWlxCa0M72SUYWFg5GBgY2UC\r\n"
-			+ "hQ4DF6cALPCyuDgYzrobG1XMi1+maDOj0Jjvd0KJovun7O6aueyW8VlC2m/entz3\r\n"
-			+ "wFprxwQJQ8NTSkHHnlf0Z3dbyV31m/l9/pdbmYczC2zUF5980/71Pctr4cP1OZGq\r\n"
-			+ "xu8CvqgmbzTo+aSzvEbEptJSVCBc83jFh5BfU41UzwsraYrKr5jkdWODcqSLhPqT\r\n"
-			+ "i2dTWi5+CuMVW3AgbLfhL42Fx61P254MPi+hr7O87Ufcz9sf5WU3nd6gdm9Z8I4v\r\n"
-			+ "8h/jdmx2nl1gp6n1+ADHP63JF0WCg566HrLbIbFaM2Fd8fxT9S7Vm3uU1eyYG/dn\r\n"
-			+ "CJ22+H7n2Eu7p0pL9EXn/M5f8OasEPOfyVtitHR9c1co/jT/3bP7xo5aAA==\r\n"
-			+ "=lI/K\r\n"
-			+ "-----END PGP MESSAGE-----\r\n";
+			+ "owGbwMvMwMH48tT2XMkVqXKMa5kkkpgSc4P6+wvDUouKM/PzrBQMebmcS4uKUvOS\r\n"
+			+ "K60UklJLEuOTivJLi/NL03i5/Epzk1KLrBQMeLncU/NSixJLUlP8QXqMLQyMLc2N\r\n"
+			+ "LCyAalIrSoJSC0szi1JTwvJLUoutFIx4uXxTQTqLg/LzS6wU3Ewdnd1czMzdnC0N\r\n"
+			+ "LFyMLJwNgFxHFwsLMyMTS0dnIzMDU0NToBxcm3N+aR5QnzFCICMxLx1oNC+XtpGr\r\n"
+			+ "maWhpbmbo5OBkaWLhZmZpaubhamrhZGJqbmjoamFubOjgauLpTNQqbGxk5Mb0DIz\r\n"
+			+ "cwNzCxdzI0c3QyMLJ1MnRyNLM2dnU2MDQyMzN2NzoHO1nc2NLSyMnMxMnMxdzY2M\r\n"
+			+ "jM0djdxMzAycXS2dHZ3MzVwMLR0tzEwNXXm5QH4k3WMQXQh/QfmDx1udjDIsDIwc\r\n"
+			+ "DGysTKDkwcDFKQBLNmxP2P/wn7FK2nPoSNnfkPNcuvulzLk33rjX6Zz5f07WlJSr\r\n"
+			+ "dzwnMhyd/WKabv+7c+mrD2WeFflaf8Yk51xpnquuRETh9qVTZh32tUhh27LtwrqP\r\n"
+			+ "ZlcjN8Qcrby7aKfRy/yuZ14nnvbvl2dgUlsV0uC1dcKrcy9ytzE5JG5Tic7rOvje\r\n"
+			+ "t+/f03zGR5PdDzYcr5y6891fmcc+vTXzlJaXnr72eOfHBqPlLn7ai5T5cstWf18q\r\n"
+			+ "m72o3yNl+4fVmq/OhvSJScw07A6JuqEkfVlxAQt7SJit+tETzjtcJdleHanLn5Lr\r\n"
+			+ "PzvI7c6ys6djxBrYyn2DHbT3dModjjWcnPt33019v6anF28XbOg6aaW7faqp4Vkj\r\n"
+			+ "AA==\r\n"
+			+ "=lfTO\r\n"
+			+ "-----END PGP MESSAGE-----\r\n".replace("\r\n", "\n");
+	
+	private static final String CAT_SIGNATURE_DATA_HASH = "58A2700B6CE56E112238FDCD81C8DACE2F2D06DC";
 	private static final String CAT_SIGNATURE_DATA = "Version: 1\r\n"
 			+ "Currency: beta_brousouf\r\n"
-			+ "Key: C73882B64B7E72237A2F460CE9CAB76D19A8651E\r\n"
-			+ "Hosters:\r\n"
-			+ "C73882B64B7E72237A2F460CE9CAB76D19A8651E\r\n"
-			+ "D049002A6724D35F867F64CC087BA351C0AEB6DF\r\n"
-			+ "Trusts:\r\n"
-			+ "C73882B64B7E72237A2F460CE9CAB76D19A8651E\r\n"
-			+ "D049002A6724D35F867F64CC087BA351C0AEB6DF\r\n";
-	
-	private static final String CAT_SIGNATURE2_HASH = "5ED0478377E717B8F35F6A945505AA9435DC2B38";
-	private static final String CAT_SIGNATURE2 = "-----BEGIN PGP MESSAGE-----\r\n"
-			+ "Version: GnuPG v1.4.12 (GNU/Linux)\r\n"
-			+ "\r\n"
-			+ "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\r\n"
-			+ "jwe53ewbDrF7rWwujewlkFOtWHQZM2PfH01cdxbEfJbV4IBPbF2gZAmqoscwrUDv\r\n"
-			+ "95ZTV6Ub48EJTQ9bbV8exhwYfHU8J0RX8NPWGo7gKSm0+SyM/dbXFWrAxjIF7ViU\r\n"
-			+ "qoYbfUBKGOyybSoMR+VNJ6ax3xng7kQiteuJ6TZ1FSLG6vHqWVyt08hh19PRtdEF\r\n"
-			+ "qMcKQCI4oNI+QXUJ0i/FhsSInhoIwBHP3QGpTH2y1rJlHCIpRvhrBl8WYFmNrpKQ\r\n"
-			+ "+4BmIwjp7dRTZe5FssgaeYL4HA/OwGGpnvwuFU3ecJEdzbqcSqMXipnP+nUp4VlZ\r\n"
-			+ "xsPR+T9vEkjNYDmSvQrMak3mr+BPc+O4plXtJFYkSUeZIjnYRTHH9IoDKinN1Uqi\r\n"
-			+ "GKyKqL/WWSeXs2ZIiNcA/lKis9xst+LqXIRFvskAimvIPvRQ0U2w/sBfldYD/DrL\r\n"
-			+ "EADf6IkGqtge4a0enRAVCs4+LoTs6Msw3sADpC3Pp7wDNQgRPGEDnwTeJLmr0q4s\r\n"
-			+ "i0PAGJSXy0tqWbCAoOsAuGbYMG5zZJDo0gGK1u7JpLULIBVJ1ok7n1oH2EGBjrkx\r\n"
-			+ "n7mtZ6bIJjSHxMyAAtO3U4Bi0a40TtJy44gAA6IZTspWnxqdx6S2KuJmbFDOFmTH\r\n"
-			+ "MwfMZwdCcq5OyuS8HdmGqW5XxoQMhDkOhhhzzJSUcQ9X/KFgsFNqJ2Ps6RV5PJ71\r\n"
-			+ "i2/XknH1rGO18pSwbrClYJ64fRew6p52ZYdNAC6KHn10Pns0G+lpPntlv2NF5tcv\r\n"
-			+ "f++/642/ceOu+27ce8/dL++LN2av+c3/XycfeOK+G8/+HfIP+ufedM+fP9999J6X\r\n"
-			+ "ePb2rX/+6kx/8rO/uO+3P/m0+uofwBnxwJc/99it737g++/rKeVdT9iP/xf9u9vq\r\n"
-			+ "q3/zlCI++yf/9t/v+MVPbt0buk98604a8v+CJz+8/cD0xmd+50PfGj/+4oOvTZ8L\r\n"
-			+ "PvaXb//5L9/02r+/c/+nrDvPwk9+r/nObfaLD774hfdQzzz11K2f/uf/3P7317+K\r\n"
-			+ "f/rb4vEb/t8+Nyuk+x/c//ifvjt95cVP3//OvxaefuHdv8X80eZ1j9y7rv5gzT/+\r\n"
-			+ "sx//K6+/9GEXK9/5rucr6u5b9tc+8t5v//Hdl+fQH/3jG/7MGr75H1/6q1r8zu3H\r\n"
-			+ "2Lf+8BPPvPSW8pPvfeT5P80fIl/4gvqxz//hZ9/8Nf09L/zFZz709ff/3iO//78=\r\n"
-			+ "=gOJJ\r\n"
-			+ "-----END PGP MESSAGE-----\r\n";
-	
+			+ "Number: 0\r\n"
+			+ "GeneratedOn: 1380397288\r\n"
+			+ "NextRequiredVotes: 2\r\n"
+			+ "MembersRoot: F5ACFD67FC908D28C0CFDAD886249AC260515C90\r\n"
+			+ "MembersCount: 3\r\n"
+			+ "MembersChanges:\r\n"
+			+ "+2E69197FAB029D8669EF85E82457A1587CA0ED9C\r\n"
+			+ "+33BBFC0C67078D72AF128B5BA296CC530126F372\r\n"
+			+ "+C73882B64B7E72237A2F460CE9CAB76D19A8651E\r\n"
+			+ "VotersRoot: F5ACFD67FC908D28C0CFDAD886249AC260515C90\r\n"
+			+ "VotersCount: 3\r\n"
+			+ "VotersChanges:\r\n"
+			+ "+2E69197FAB029D8669EF85E82457A1587CA0ED9C\r\n"
+			+ "+33BBFC0C67078D72AF128B5BA296CC530126F372\r\n"
+			+ "+C73882B64B7E72237A2F460CE9CAB76D19A8651E\r\n";
+
+	private static final String CAT_PUBKEY_FINGERPRINT = "C73882B64B7E72237A2F460CE9CAB76D19A8651E";
 	private static final String CAT_PUBKEY = "-----BEGIN PGP PUBLIC KEY BLOCK-----\r\n"
 			+ "Version: GnuPG v1.4.12 (GNU/Linux)\r\n"
 			+ "\r\n"
@@ -147,19 +103,70 @@ public class SignatureTest {
 			+ "ZJJPb/89yrs9F7JkLi/oiAl5VpItm+hlFpLe1TE7oa6k53eZ2a+V\r\n"
 			+ "=rOj9\r\n"
 			+ "-----END PGP PUBLIC KEY BLOCK-----\r\n";
+	
+	private static final String TOBI_PUBKEY = "-----BEGIN PGP PUBLIC KEY BLOCK-----\n"
+			+ "Version: GnuPG v1.4.12 (GNU/Linux)\n"
+			+ "\n"
+			+ "mQENBFHG4x4BCADi8J4sSpIv5q2gREBwMj1TCUFDvQDx8/WivLKJ+LgmC2zwuuMD\n"
+			+ "Yo9YwZBmMe/orZJRSDwslKUARtFzmSui2CR3b4EEr1Hhz9coyqHsF9lYdht2YU7i\n"
+			+ "08FOdppRJdk7XuHCABZ+mXeG8WnNMP+9QjRAh3sFDkWpji9iL5ZmzlDx6UMXq3lM\n"
+			+ "SvN3VC32X+K2HoQgesm3fTjCBmQik2Ayvp89Ikc2wAWM5/B7RCwdHTTysVOE0Kkx\n"
+			+ "IIkeus76p+5pvLzrZOvM18ToLxV7KThxVvHn+dj2iOMuteY3BylN+XL1J/nBYkOC\n"
+			+ "fsCigMClbWj7IptqDZWmqRbzYgcrOYa8SezxABEBAAG0VVRvYmkgVWNoaXdhICh1\n"
+			+ "ZGlkMjtjO1VDSElXQTtPQklUTzsyMDAwLTA5LTMwO2UrMzUuNjkrMTM5LjY5OzAp\n"
+			+ "IDxjZW0ubW9yZWF1QGdtYWlsLmNvbT6JAT0EEwEIACcFAlHG4x4CGwMFCQs75EIF\n"
+			+ "CwkIBwMFFQoJCAsFFgIDAQACHgECF4AACgkQJFehWHyg7ZxljwgAkkV+cXO8kXXC\n"
+			+ "qXdo9hwSprQwbHHfwsovhIvZI9E4Tpce0TXaebflCecDwsPgGyeP8xPUX8pZAvYY\n"
+			+ "w5klREvKn7Vu6NiGrE07k7EUCIs+kkPTXeRAv/NpMfJoUOdh+da0ybs+nTO1lJV+\n"
+			+ "cEGqz0OX8yIwrlwhrkvnlFWRE/oe3NoJ9f0N7sMXejhs8aTGClXU87GiUAoQ0XC1\n"
+			+ "U8BPLjprkne5RMsSVHj3HbVzVQXmreNVDNsvtJVTskGxUE7IzIK80fBZP7OmC+bi\n"
+			+ "ZuwTqXekF6SCqOJjlIsDY4uIL/cCQRkhM1kmeeHcGOQT+6auPtpHXniRxUNOoi7V\n"
+			+ "CWg/HS2r9rkBDQRRxuMeAQgA+jCWHHx/kPQxghMBuio36RoR63qQSFxpp2Lx5HIk\n"
+			+ "UYhpHE0oGOEEiBG0HrKIv7Qz+4Cs1VHSDCplD+vtRS9PkjOopSxE+ROHjIfT0fcj\n"
+			+ "kYT14m2Ftmcqs5/Vw9qBHLhJQPyqIR4TMVuDP5/1LIfnv/EUoisAFcpT86CFK1jO\n"
+			+ "GtdTALxDKIk6mlsiPCXD7jlSWw3btJlwydeudTVYBq5OhC/DLREn2vgtvqcWjvi4\n"
+			+ "X/ttEWB35EzP11s6gRTv3ldVlXQ13Db+gHrjExRn848bRu0R1RzgcpsXOVeyzlzM\n"
+			+ "KFJDXueyCOdiVAyEVPmLHKojwaP+UHlEnwI/v5OMva1VsQARAQABiQElBBgBCAAP\n"
+			+ "BQJRxuMeAhsMBQkLO+RCAAoJECRXoVh8oO2cgiQIAKCqxY4LVbHYDywkwI4dAFp4\n"
+			+ "bFlqKDURKzEq8nfDliBLmFrDAv9lFEBbNii7Y6b3FxaijUTPlJbU9RX8xtPO6bbA\n"
+			+ "ujJPyHsi/hBZjqWCqbajbwoNMYzu9nbtB2DfxZKYnVijjmb15WuXVC+GN4M+ZCtw\n"
+			+ "+SNrpFTBPUUl4LjBRvUJ9DhjbD2+FlqXfDiRLKma0658s2PQZhqajiEswDyo1fAh\n"
+			+ "OykaWCE5pW0DHl2Fizc77/QDe7iQa8ZRWp8Q/w0FJE2bXb3Paxtd40XURVOGRmtN\n"
+			+ "vLPTKXIgxFi2dTCBQz6oTeajOjun6x6BUJVUbnJ40YmlqYbXqHyI9AcVMMEsLdw=\n"
+			+ "=ZdXC\n" + "-----END PGP PUBLIC KEY BLOCK-----\n";
 
 	@Autowired
-	PGPService pgpService;
+	private PGPService pgpService;
 
 	@Test
-	public void isTrue() {
-		Assert.assertTrue(true);
-	}
-
-	@Test
-	public void verify() throws BadSignatureException, NoSignaturePacketException, Exception {
+	public void verifyDetached() throws BadSignatureException, NoSignaturePacketException, Exception {
+		// Working detached signature
 		PGPPublicKey catPubkey = pgpService.extractPubkey(CAT_PUBKEY);
-//		Assert.assertEquals(CAT_SIGNATURE_HASH, new Sha1(CAT_DETACHED_SIGNATURE_HASH).toString().toUpperCase());
-		Assert.assertTrue(pgpService.verify(CAT_SIGNATURE_DATA, CAT_DETACHED_SIGNATURE, catPubkey));
+		PGPPublicKey tobiPubkey = pgpService.extractPubkey(TOBI_PUBKEY);
+		String data = CAT_SIGNATURE_DATA;
+		String sign = CAT_DETACHED_SIGNATURE;
+		Assert.assertEquals(CAT_SIGNATURE_DATA_HASH, new Sha1(data).toString().toUpperCase());
+		Assert.assertEquals(CAT_DETACHED_SIGNATURE_HASH, new Sha1(sign).toString().toUpperCase());
+		checkSignature(data, sign, CAT_PUBKEY_FINGERPRINT, catPubkey, tobiPubkey);
+	}
+	
+	@Test(expected = PGPException.class)
+	public void verifyCompressed() throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception{
+		PGPPublicKey catPubkey = pgpService.extractPubkey(CAT_PUBKEY);
+		PGPPublicKey tobiPubkey = pgpService.extractPubkey(TOBI_PUBKEY);
+		// Working with full signature (compressed literal data + signature)
+		String data = CAT_SIGNATURE_DATA;
+		String sign = CAT_SIGNATURE;
+		checkSignature(data, sign, CAT_PUBKEY_FINGERPRINT, catPubkey, tobiPubkey);
+	}
+	
+	public void checkSignature(String data, String sign, String issuerFingerprint, PGPPublicKey issuerPubkey, PGPPublicKey notIssuerPubkey) throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception{
+		String issuer = pgpService.extractIssuer(sign).toUpperCase();
+		Assert.assertTrue(issuerFingerprint.endsWith(issuer));
+		Assert.assertTrue(pgpService.verify(data, sign, issuerPubkey));
+		Assert.assertFalse(pgpService.verify(data, sign, notIssuerPubkey));
+		Assert.assertFalse(pgpService.verify(data + "a", sign, issuerPubkey));
+		Assert.assertFalse(pgpService.verify(data + "b", sign, issuerPubkey));
+		Assert.assertFalse(pgpService.verify(data.replace("\r\n", "\n"), sign, issuerPubkey));
 	}
 }
