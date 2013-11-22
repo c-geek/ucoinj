@@ -118,6 +118,65 @@ public class PrivateKeyTest {
 			+ "=26j0\r\n"
 			+ "-----END PGP PRIVATE KEY BLOCK-----\r\n";
 	
+	private static final String CAT_PRIVKEY_NO_PASSWD = "-----BEGIN PGP PRIVATE KEY BLOCK-----\r\n"
+			+ "Version: GnuPG v1.4.11 (GNU/Linux)\r\n"
+			+ "\r\n"
+			+ "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\r\n"
+			+ "=IaQr\r\n"
+			+ "-----END PGP PRIVATE KEY BLOCK-----\r\n";
+	
 	private static final String CAT_SIGNATURE_DATA = "Version: 1\r\n"
 			+ "Currency: beta_brousouf\r\n"
 			+ "Number: 0\r\n"
@@ -184,6 +243,22 @@ public class PrivateKeyTest {
 	@Test
 	public void signAndVerify() throws BadSignatureException, NoSignaturePacketException, Exception {
 		String signatureString = pgpService.sign(CAT_SIGNATURE_DATA, catPrivKey);
+		assertEquals(CAT_PUBKEY_FINGERPRINT.substring(24), pgpService.extractIssuer(signatureString));
+		assertTrue(pgpService.verify(CAT_SIGNATURE_DATA, signatureString, catPubkey));
+	}
+
+	@Test
+	public void signAndVerifyNoPassword() throws BadSignatureException, NoSignaturePacketException, Exception {
+		PGPPrivateKey privateKey = pgpService.extractPrivateKey(CAT_PRIVKEY_NO_PASSWD, "");
+		String signatureString = pgpService.sign(CAT_SIGNATURE_DATA, privateKey);
+		assertEquals(CAT_PUBKEY_FINGERPRINT.substring(24), pgpService.extractIssuer(signatureString));
+		assertTrue(pgpService.verify(CAT_SIGNATURE_DATA, signatureString, catPubkey));
+	}
+
+	@Test
+	public void signAndVerifyNoPasswordWithPassword() throws BadSignatureException, NoSignaturePacketException, Exception {
+		PGPPrivateKey privateKey = pgpService.extractPrivateKey(CAT_PRIVKEY_NO_PASSWD, "ABC");
+		String signatureString = pgpService.sign(CAT_SIGNATURE_DATA, privateKey);
 		assertEquals(CAT_PUBKEY_FINGERPRINT.substring(24), pgpService.extractIssuer(signatureString));
 		assertTrue(pgpService.verify(CAT_SIGNATURE_DATA, signatureString, catPubkey));
 	}
