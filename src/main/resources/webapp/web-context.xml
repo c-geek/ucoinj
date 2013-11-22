@@ -12,15 +12,12 @@ http://www.springframework.org/schema/context/spring-context-3.0.xsd
 http://www.springframework.org/schema/tx 
 http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
 
-	<context:component-scan base-package="fr.twiced.ucoinj" />
+    <context:annotation-config/>
 
 	<!-- Configures the @Controller programming model -->
 	<mvc:annotation-driven />
 
-	<!-- Database Configuration -->
-	<import resource="DataSource.xml" />
-	<import resource="Hibernate.xml" />
-
 	<tx:annotation-driven />
+	<bean id="config" class="fr.twiced.ucoinj.SpringConfiguration"></bean>
 
 </beans>
