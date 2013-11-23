@@ -115,8 +115,9 @@ public class PGPServiceImpl implements PGPService {
 
 	@Override
 	public PGPPrivateKey extractPrivateKey(String stream, String password) throws PGPException, IOException {
+		String notNullPassword = password == null ? "" : password;
 		PGPSecretKey secretKey = readSecretKey(new ByteArrayInputStream(stream.getBytes()));
-		PBESecretKeyDecryptor decryptor = new BcPBESecretKeyDecryptorBuilder(new BcPGPDigestCalculatorProvider()).build(password.toCharArray());
+		PBESecretKeyDecryptor decryptor = new BcPBESecretKeyDecryptorBuilder(new BcPGPDigestCalculatorProvider()).build(notNullPassword.toCharArray());
 		return secretKey.extractPrivateKey(decryptor);
 	}
 	

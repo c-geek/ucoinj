@@ -1,5 +1,7 @@
 package fr.twiced.ucoinj;
 
+import org.bouncycastle.openpgp.PGPPrivateKey;
+
 public class GlobalConfiguration {
 	
 	private static GlobalConfiguration config = null;
@@ -18,6 +20,8 @@ public class GlobalConfiguration {
 	private String DBURL = "jdbc:mysql://localhost:3306/ucoinj";
 	private String DBUsername = "root";
 	private String DBPassword = "";
+	private PGPPrivateKey PGPPrivateKey;
+	private String PGPPassword;
 
 	public String getPrivateKey() {
 		return privateKey;
@@ -49,5 +53,21 @@ public class GlobalConfiguration {
 
 	public void setDBPassword(String dBPassword) {
 		DBPassword = dBPassword;
+	}
+
+	public PGPPrivateKey getPGPPrivateKey() {
+		return PGPPrivateKey;
+	}
+
+	public void setPGPPrivateKey(PGPPrivateKey privateKey) {
+		PGPPrivateKey = privateKey;
+	}
+
+	public String getPGPPassword() {
+		return PGPPassword;
+	}
+
+	public void setPGPPassword(String pGPPassword) {
+		PGPPassword = pGPPassword;
 	}
 }
