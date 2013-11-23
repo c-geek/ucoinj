@@ -73,8 +73,7 @@ public class HTTPSignedProcessor {
 	 */
 	private static void setHeader(HttpServletResponse response, String boundary, int hashAlgorithm){
 		String contentType = String.format("multipart/signed; boundary=%s; protocol=\"application/pgp-signature\"", boundary, getHashAlgorithm(hashAlgorithm));
-//		response.setHeader("Content-Type", contentType);
-		response.setHeader("Content-Type", "text/plain");
+		response.setHeader("Content-Type", contentType);
 	}
 	
 	/**
