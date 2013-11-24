@@ -235,8 +235,8 @@ public class PrivateKeyTest {
 	
 	@Before
 	public void setUp() throws PGPException, IOException, NoPublicKeyPacketException{
-		catPubkey = pgpService.extractPubkey(CAT_PUBKEY);
-		tobiPubkey = pgpService.extractPubkey(TOBI_PUBKEY);
+		catPubkey = pgpService.extractPublicKey(CAT_PUBKEY).getPGPPublicKey();
+		tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY).getPGPPublicKey();
 		catPrivKey = pgpService.extractPrivateKey(CAT_PRIVKEY, CAT_PRIVKEY_PASSWORD);
 	}
 

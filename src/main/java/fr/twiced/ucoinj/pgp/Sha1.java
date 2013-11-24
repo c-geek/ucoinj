@@ -2,7 +2,6 @@ package fr.twiced.ucoinj.pgp;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.util.Formatter;
 
 import fr.twiced.ucoinj.exceptions.Sha1ConvertionException;

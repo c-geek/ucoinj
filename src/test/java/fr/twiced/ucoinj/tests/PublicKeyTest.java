@@ -1,6 +1,7 @@
 package fr.twiced.ucoinj.tests;
 
-import org.bouncycastle.openpgp.PGPPublicKey;
+import java.io.IOException;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.service.PGPService;
 
@@ -89,27 +91,23 @@ public class PublicKeyTest {
 	}
 
 	@Test
-	public void extractPublicKeys() throws NoPublicKeyPacketException {
+	public void extractPublicKeys() throws NoPublicKeyPacketException, IOException {
 		// Testing Tobi's pubkey
-		PGPPublicKey tobiPubkey = pgpService.extractPubkey(TOBI_PUBKEY);
-		Assert.assertNotNull(tobiPubkey);
-		Assert.assertNotNull(tobiPubkey.getAlgorithm());
-		Assert.assertNotNull(tobiPubkey.getCreationTime());
-		Assert.assertNotNull(tobiPubkey.getFingerprint());
-		Assert.assertNotNull(tobiPubkey.getKeyID());
-		Assert.assertNotNull(tobiPubkey.getVersion());
-		Assert.assertEquals(TOBI_PUBKEY_FINGERPRINT, pgpService.extractFingerprint(tobiPubkey));
+		PublicKey tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY);
+		testPublicKey(TOBI_PUBKEY_FINGERPRINT, tobiPubkey);
 		// Testing Cat's pubkey
-		PGPPublicKey catPubkey = pgpService.extractPubkey(CAT_PUBKEY);
-		Assert.assertNotNull(catPubkey);
-		Assert.assertNotNull(catPubkey.getAlgorithm());
-		Assert.assertNotNull(catPubkey.getCreationTime());
-		Assert.assertNotNull(catPubkey.getFingerprint());
-		Assert.assertNotNull(catPubkey.getKeyID());
-		Assert.assertNotNull(catPubkey.getVersion());
-		Assert.assertEquals(CAT_PUBKEY_FINGERPRINT, pgpService.extractFingerprint(catPubkey));
+		PublicKey catPubkey = pgpService.extractPublicKey(CAT_PUBKEY);
+		testPublicKey(CAT_PUBKEY_FINGERPRINT, catPubkey);
 		// The two should be different
 		Assert.assertNotEquals(TOBI_PUBKEY_FINGERPRINT, CAT_PUBKEY_FINGERPRINT);
-		Assert.assertNotEquals(pgpService.extractFingerprint(tobiPubkey), pgpService.extractFingerprint(catPubkey));
+		Assert.assertNotEquals(tobiPubkey.getFingerprint(), catPubkey.getFingerprint());
+	}
+	
+	private void testPublicKey(String fingerprint, PublicKey pk){
+		Assert.assertNotNull(pk);
+		Assert.assertNotNull(pk.getArmored());
+		Assert.assertNotNull(pk.getFingerprint());
+		Assert.assertNotNull(pk.getPGPPublicKey());
+		Assert.assertEquals(fingerprint, pk.getFingerprint());
 	}
 }

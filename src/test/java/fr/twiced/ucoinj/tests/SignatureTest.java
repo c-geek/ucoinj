@@ -141,8 +141,8 @@ public class SignatureTest {
 	@Test
 	public void verifyDetached() throws BadSignatureException, NoSignaturePacketException, Exception {
 		// Working detached signature
-		PGPPublicKey catPubkey = pgpService.extractPubkey(CAT_PUBKEY);
-		PGPPublicKey tobiPubkey = pgpService.extractPubkey(TOBI_PUBKEY);
+		PGPPublicKey catPubkey = pgpService.extractPublicKey(CAT_PUBKEY).getPGPPublicKey();
+		PGPPublicKey tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY).getPGPPublicKey();
 		String data = CAT_SIGNATURE_DATA;
 		String sign = CAT_DETACHED_SIGNATURE;
 		Assert.assertEquals(CAT_SIGNATURE_DATA_HASH, new Sha1(data).toString().toUpperCase());
@@ -152,8 +152,8 @@ public class SignatureTest {
 	
 	@Test(expected = PGPException.class)
 	public void verifyCompressed() throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception{
-		PGPPublicKey catPubkey = pgpService.extractPubkey(CAT_PUBKEY);
-		PGPPublicKey tobiPubkey = pgpService.extractPubkey(TOBI_PUBKEY);
+		PGPPublicKey catPubkey = pgpService.extractPublicKey(CAT_PUBKEY).getPGPPublicKey();
+		PGPPublicKey tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY).getPGPPublicKey();
 		// Working with full signature (compressed literal data + signature)
 		String data = CAT_SIGNATURE_DATA;
 		String sign = CAT_SIGNATURE;

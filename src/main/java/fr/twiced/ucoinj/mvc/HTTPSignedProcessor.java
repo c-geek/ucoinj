@@ -19,10 +19,29 @@ public class HTTPSignedProcessor {
 	private static char[] ALPHANUM = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 	private static final int boundary_length = 15;
 	private static final char NEXT_LINE = '\n';
+	private static final String AS_JSON = "application/json";
+	private static final String AS_TEXT = "text/plain";
 
 	public static void send(Object obj, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey){
 		try {
 			String jsonResponse = new ObjectMapper().writeValueAsString(obj);
+			send(jsonResponse, request, response, pgpService, privateKey, AS_TEXT);
+		} catch (IOException e) {
+			e.printStackTrace();
+			try {
+				response.sendError(501, "JSON serialization error");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
+	public static void send(String data, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey){
+		send(data, request, response, pgpService, privateKey, AS_JSON);
+	}
+	
+	public static void send(String data, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey, String contentType){
+		try {
 			String accept = request.getHeader("Accept");
 			if (accept != null && accept.equals("multipart/signed")) {
 				String boundary = getRandomBoundary();
@@ -31,11 +50,11 @@ public class HTTPSignedProcessor {
 				// Change header
 				setHeader(response, boundary, hashAlgo);
 				// Send signed response
-				String body = signedResponse(jsonResponse, boundary, privateKey, pgpService);
+				String body = signedResponse(data, boundary, privateKey, pgpService);
 				response.getWriter().write(body);
 			} else {
-				response.setHeader("Content-Type", "application/json");
-				response.getWriter().write(jsonResponse);
+				response.setHeader("Content-Type", contentType);
+				response.getWriter().write(data);
 			}
 		} catch (IOException | SignatureException | PGPException e) {
 			try {

@@ -6,33 +6,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.openpgp.PGPException;
-import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import fr.twiced.ucoinj.GlobalConfiguration;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.service.PGPService;
 import fr.twiced.ucoinj.service.PublicKeyService;
 
 @Controller
-public class TestController {
+public class TestController extends UCoinController {
 	
 	@Autowired
 	private PublicKeyService pubkeyService;
 	
 	private PGPService pgpService;
 	
-	private PGPPrivateKey privateKey;
-	
 	@Autowired
 	public TestController(PGPService pgpService) throws PGPException, IOException {
-		super();
+		super(pgpService);
 		this.pgpService = pgpService;
-		String privateKeyStream = GlobalConfiguration.getInstance().getPrivateKey();
-		String password = GlobalConfiguration.getInstance().getPGPPassword();
-		privateKey = pgpService.extractPrivateKey(privateKeyStream, password);
 	}
 
 	@RequestMapping("/")
@@ -43,6 +36,6 @@ public class TestController {
 			pk = new PublicKey(fingerprint);
 			pubkeyService.save(pk);
 		}
-		HTTPSignedProcessor.send(pk, request, response, pgpService, privateKey);
+		HTTPSignedProcessor.send(pk, request, response, pgpService, getPrivateKey());
 	}
 }

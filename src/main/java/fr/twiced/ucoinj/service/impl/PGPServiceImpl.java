@@ -27,9 +27,9 @@ import org.bouncycastle.openpgp.operator.PBESecretKeyDecryptor;
 import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
-import org.bouncycastle.util.encoders.Hex;
 import org.springframework.stereotype.Service;
 
+import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
@@ -45,12 +45,9 @@ public class PGPServiceImpl implements PGPService {
 	}
 
 	@Override
-	public PGPPublicKey extractPubkey(String base64stream) throws NoPublicKeyPacketException {
+	public PublicKey extractPublicKey(String base64stream) throws NoPublicKeyPacketException, IOException {
 		List<PGPPublicKey> pubkeys = PGPHelper.extract(base64stream);
-		if (pubkeys.isEmpty()) {
-			throw new NoPublicKeyPacketException("error.packet.publickey.not.found");
-		}
-		return pubkeys.get(0);
+		return new PublicKey(pubkeys);
 	}
 
 	@Override
@@ -68,15 +65,8 @@ public class PGPServiceImpl implements PGPService {
 	}
 
 	@Override
-	public String extractFingerprint(PGPPublicKey publicKey) {
-		byte[] twentyBytesFingerprint = publicKey.getFingerprint();
-		byte[] fourtyHexBytesFingerprint = Hex.encode(twentyBytesFingerprint);
-		return new String(fourtyHexBytesFingerprint).toUpperCase();
-	}
-
-	@Override
-	public String extractFingerprint(String base64PublicKey) throws NoPublicKeyPacketException {
-		return extractFingerprint(extractPubkey(base64PublicKey));
+	public String extractFingerprint(String base64PublicKey) throws NoPublicKeyPacketException, IOException {
+		return extractPublicKey(base64PublicKey).getFingerprint();
 	}
 
 	@Override

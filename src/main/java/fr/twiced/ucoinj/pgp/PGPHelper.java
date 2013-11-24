@@ -18,6 +18,8 @@ import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPUtil;
 
+import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
+
 public class PGPHelper {
 	
 	public static String enarmor(byte[] bytes) throws IOException{
@@ -30,7 +32,7 @@ public class PGPHelper {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<PGPPublicKey> extract(String stream){
+	public static List<PGPPublicKey> extract(String stream) throws NoPublicKeyPacketException{
 		List<PGPPublicKey> certs = new ArrayList<PGPPublicKey>();
 		try {
 			PGPPublicKeyRingCollection ringCollection = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(stream.getBytes())));
@@ -46,16 +48,16 @@ public class PGPHelper {
 						PGPSignature sig = sigs.next();
 						isSubKey = isSubKey || sig.getSignatureType() == PGPSignature.SUBKEY_BINDING;
 					}
-					// Do not take care of subkeys
-					if(!isSubKey){
-						certs.add(pubkey);
-					}
+					certs.add(pubkey);
 				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (PGPException e) {
 			e.printStackTrace();
+		}
+		if (certs.isEmpty()) {
+			throw new NoPublicKeyPacketException("error.packet.publickey.not.found");
 		}
 		return certs;
 	}
