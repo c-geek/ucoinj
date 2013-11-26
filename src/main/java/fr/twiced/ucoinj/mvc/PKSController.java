@@ -1,6 +1,10 @@
 package fr.twiced.ucoinj.mvc;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,6 +13,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.twiced.ucoinj.bean.PublicKey;
@@ -52,8 +57,21 @@ public class PKSController extends UCoinController {
 		} catch (ObsoleteDataException e) {
 			sendError(400, e.getMessage(), response);
 		} catch (Exception e) {
-			e.printStackTrace();
 			sendError(400, response);
 		}
+	}
+	
+	@RequestMapping(value = "/pks/lookup", method = RequestMethod.GET)
+	public void lookup(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@RequestParam("search") String search) {
+		List<Object> keys = new ArrayList<>();
+		for (PublicKey pk : pksService.lookup(search)) {
+			keys.add(pk.getJSONObject());
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("keys", keys);
+		sendResult(map, request, response);
 	}
 }

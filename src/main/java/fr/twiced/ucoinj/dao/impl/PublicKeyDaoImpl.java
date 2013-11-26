@@ -1,7 +1,7 @@
 package fr.twiced.ucoinj.dao.impl;
 
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,25 +10,33 @@ import fr.twiced.ucoinj.dao.PublicKeyDao;
 
 @Repository
 @Transactional
-public class PublicKeyDaoImpl implements PublicKeyDao {
-
-
-	@Autowired
-	protected SessionFactory sessionFactory;
+public class PublicKeyDaoImpl extends GenericDaoImpl<PublicKey> implements PublicKeyDao {
 	
 	@Override
 	public PublicKey getByFingerprint(String fpr) {
-		return (PublicKey) sessionFactory.getCurrentSession().createQuery("from PublicKey p where p.fingerprint = :fpr").setString("fpr", fpr).uniqueResult();
+		return (PublicKey) getSession().createQuery("from PublicKey p where p.fingerprint = :fpr").setString("fpr", fpr).uniqueResult();
 	}
 
 	@Override
 	public PublicKey getByKeyID(String keyID) {
-		return (PublicKey) sessionFactory.getCurrentSession().createQuery("from PublicKey p where p.fingerprint like :fpr").setString("fpr", "%" + keyID.toUpperCase()).uniqueResult();
+		return (PublicKey) getSession().createQuery("from PublicKey p where p.fingerprint like :fpr").setString("fpr", "%" + keyID.toUpperCase()).uniqueResult();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void save(PublicKey entity) {
-		sessionFactory.getCurrentSession().save(entity);
+	public List<PublicKey> lookup(String search) {
+		String from = "from PublicKey p ";
+		if (search.startsWith("0x")) {
+			return getSession().createQuery(from + "where p.fingerprint like :fpr ")
+					.setString("fpr", "%" + search.replace("0x", "") + "%")
+					.list();
+		} else {
+			return getSession().createQuery(from + "where p.name like :search "
+					+ "or p.email like :search "
+					+ "or p.comment like :search")
+					.setString("search", "%" + search + "%")
+					.list();
+		}
 	}
 
 }

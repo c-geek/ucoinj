@@ -49,8 +49,7 @@ public class PublicKeyServiceImpl implements PKSService {
 
 	@Override
 	public List<PublicKey> lookup(String search) {
-		// TODO Auto-generated method stub
-		return null;
+		return dao.lookup(search);
 	}
 
 	@Override
