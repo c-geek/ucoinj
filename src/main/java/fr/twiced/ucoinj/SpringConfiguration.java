@@ -13,6 +13,7 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
 import fr.twiced.ucoinj.bean.PublicKey;
+import fr.twiced.ucoinj.bean.Signature;
 
 @Configuration
 @ComponentScan("fr.twiced.ucoinj")
@@ -39,7 +40,7 @@ public class SpringConfiguration {
 		sessionFactory.setDataSource(dataSource());
 		sessionFactory.setHibernateProperties(props);
 		Class<?>[] annotatedClasses = new Class<?>[]{
-			PublicKey.class
+			Signature.class, PublicKey.class
 		};
 		sessionFactory.setAnnotatedClasses(annotatedClasses);
 		sessionFactory.afterPropertiesSet();

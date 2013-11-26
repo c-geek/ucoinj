@@ -12,8 +12,9 @@ import fr.twiced.ucoinj.dao.PublicKeyDao;
 @Transactional
 public class PublicKeyDaoImpl implements PublicKeyDao {
 
+
 	@Autowired
-	private SessionFactory sessionFactory;
+	protected SessionFactory sessionFactory;
 	
 	@Override
 	public PublicKey getByFingerprint(String fpr) {
@@ -21,8 +22,13 @@ public class PublicKeyDaoImpl implements PublicKeyDao {
 	}
 
 	@Override
-	public void save(PublicKey pubkey) {
-		sessionFactory.getCurrentSession().persist(pubkey);
+	public PublicKey getByKeyID(String keyID) {
+		return (PublicKey) sessionFactory.getCurrentSession().createQuery("from PublicKey p where p.fingerprint like :fpr").setString("fpr", "%" + keyID.toUpperCase()).uniqueResult();
+	}
+
+	@Override
+	public void save(PublicKey entity) {
+		sessionFactory.getCurrentSession().save(entity);
 	}
 
 }

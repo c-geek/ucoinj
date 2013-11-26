@@ -1,5 +1,6 @@
 package fr.twiced.ucoinj;
 
+import java.net.InetSocketAddress;
 import java.net.URL;
 
 import org.eclipse.jetty.server.Server;
@@ -17,16 +18,18 @@ public class JettyServer {
     public static final String MVC_SERVLET_NAME = "mvcDispatcher";
     public static final String JSP_SERVLET_NAME = "jspServlet";
 
+    private final String host;
     private final int port;
 
     private Server server;
 
-    public JettyServer(int port) {
+    public JettyServer(String host, int port) {
+    	this.host = host;
         this.port = port;
     }
 
     public void start() {
-        server = new Server(port);
+        server = new Server(new InetSocketAddress(host, port));
         server.setHandler( getServletHandler() );
 
         try {

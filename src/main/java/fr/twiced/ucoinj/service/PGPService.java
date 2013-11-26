@@ -5,7 +5,6 @@ import java.security.SignatureException;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.bouncycastle.openpgp.PGPPublicKey;
 
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
@@ -16,9 +15,7 @@ public interface PGPService {
 	
 	PublicKey extractPublicKey(String base64stream) throws NoPublicKeyPacketException, IOException;
 	
-	boolean verify(String originalDocument, String base64signature, PGPPublicKey pubkey) throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception;
-	
-	boolean verify(String base64signature, PGPPublicKey pubkey) throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception;
+	boolean verify(String originalDocument, String base64signature, PublicKey pubkey) throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception;
 	
 	String extractIssuer(String base64signature) throws NoSignaturePacketException, Exception;
 	

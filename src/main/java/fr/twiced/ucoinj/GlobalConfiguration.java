@@ -22,6 +22,8 @@ public class GlobalConfiguration {
 	private String DBPassword = "";
 	private PGPPrivateKey PGPPrivateKey;
 	private String PGPPassword;
+	private String IPv4;
+	private int port;
 
 	public String getPrivateKey() {
 		return privateKey;
@@ -69,5 +71,21 @@ public class GlobalConfiguration {
 
 	public void setPGPPassword(String pGPPassword) {
 		PGPPassword = pGPPassword;
+	}
+
+	public String getIPv4() {
+		return IPv4;
+	}
+
+	public void setIPv4(String iPv4) {
+		IPv4 = iPv4;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
 	}
 }

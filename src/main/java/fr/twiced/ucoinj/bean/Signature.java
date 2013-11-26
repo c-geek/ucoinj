@@ -1,118 +1,127 @@
 package fr.twiced.ucoinj.bean;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.openpgp.PGPCompressedData;
-import org.bouncycastle.openpgp.PGPException;
-import org.bouncycastle.openpgp.PGPLiteralData;
 import org.bouncycastle.openpgp.PGPObjectFactory;
-import org.bouncycastle.openpgp.PGPOnePassSignature;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureList;
 
+import fr.twiced.ucoinj.exceptions.BadSignatureException;
+
+@Entity
+@Table(name = "signature")
 public class Signature {
-		
+	
+	private Integer id;
+	private String armored;
+	private Date sigDate;
 	private ISignature sigObj;
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", unique = true, nullable = false)
+	public Integer getId() {
+		return id;
+	}
 
-	public Signature(String signatureStream) throws Exception {
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-		PGPObjectFactory pgpObjFactoryA = new PGPObjectFactory(new ArmoredInputStream(new ByteArrayInputStream(signatureStream.getBytes())));
+	@Column(nullable = false, columnDefinition = "TEXT")
+	public String getArmored() {
+		return armored;
+	}
 
-		// Lecture de la donnée PGP
-		Object obj = pgpObjFactoryA.nextObject();
-		
-		if (obj instanceof PGPCompressedData) {
-			throw new PGPException("Handle only detached signatures");
-//			// 1. Extrait la signature compressée
-//			PGPCompressedData compressedData = (PGPCompressedData) obj;
-//
-//			// Get the signature from the file
-//
-//			// 2. Extrait la signature décompressée
-//			PGPObjectFactory pgpObjFactory = new PGPObjectFactory(compressedData.getDataStream());
-//			Object obj2 = pgpObjFactory.nextObject();
-//			PGPOnePassSignatureList onePassSignatureList = (PGPOnePassSignatureList) obj2;
-//			PGPOnePassSignature onePassSignature = onePassSignatureList.get(0);
-//
-//			// 3. Extrait les données littérales signées
-//			Object obj3 = pgpObjFactory.nextObject();
-//			PGPLiteralData pgpLiteralData = (PGPLiteralData) obj3;
-//
-//			// Get the signature from the written out file
-//			Object obj4 = pgpObjFactory.nextObject();
-//			PGPSignatureList p3 = (PGPSignatureList) obj4;
-//			PGPSignature signature = p3.get(0);
-//			sigObj = new AttachedSignature(onePassSignature, signature, pgpLiteralData);
-		} else if (obj instanceof PGPSignatureList) {
-			PGPSignatureList p3 = (PGPSignatureList) obj;
-			PGPSignature signature = p3.get(0);
-			sigObj = new DetachedSignature(signature);
+	public void setArmored(String armored) {
+		this.armored = armored;
+	}
+
+	@Column(nullable = false)
+	public Date getSigDate() {
+		return sigDate;
+	}
+
+	public void setSigDate(Date sigDate) {
+		this.sigDate = sigDate;
+	}
+
+	@Transient
+	public String getIssuerKeyId() throws BadSignatureException{
+		return getSigObj().getIssuerKeyId();
+	}
+
+	public Signature() {
+	}
+	
+	public Signature(String signatureStream) throws BadSignatureException {
+		armored = signatureStream;
+		sigDate = getSigObj().getSignatureDate();
+	}
+	
+	public boolean isMoreRecentThan(Signature otherSig){
+		return sigDate.after(otherSig.getSigDate());
+	}
+	
+	public boolean isLessRecentThan(Signature otherSig){
+		return sigDate.before(otherSig.getSigDate());
+	}
+
+	@Transient
+	public ISignature getSigObj() throws BadSignatureException{
+		try{
+			if(sigObj == null){
+				PGPObjectFactory pgpObjFactoryA = new PGPObjectFactory(new ArmoredInputStream(new ByteArrayInputStream(armored.getBytes())));
+	
+				// Lecture de la donnée PGP
+				Object obj = pgpObjFactoryA.nextObject();
+				
+				if (obj instanceof PGPCompressedData) {
+					throw new BadSignatureException("Handle only detached signatures");
+				} else if (obj instanceof PGPSignatureList) {
+					PGPSignatureList p3 = (PGPSignatureList) obj;
+					PGPSignature signature = p3.get(0);
+					sigObj = new DetachedSignature(signature);
+				}
+			}
+			return sigObj;
+		} catch (BadSignatureException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new BadSignatureException("Error while verifying signature");
 		}
 	}
 
-	public boolean verify(String originalData, PGPPublicKey publicKey, String data) throws Exception {
-		return verify(publicKey, data) && data.equals(originalData);
-	}
-
-	public boolean verify(PGPPublicKey publicKey, String data) throws Exception {
-		return sigObj.verify(publicKey, data);
+	public boolean verify(PublicKey publicKey, String data) throws BadSignatureException {
+		try {
+			return getSigObj().verify(publicKey.getPGPPublicKey(), data);
+		} catch (BadSignatureException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new BadSignatureException("Error while verifying signature");
+		}
 	}
 	
-	public String getIssuerKeyId(){
-		return sigObj.getIssuerKeyId();
-	}
 	private interface ISignature {
 		
 		boolean verify(PGPPublicKey publicKey, String data) throws Exception;
-		
 		public String getIssuerKeyId();
+		public Date getSignatureDate();
 	}
-
-	private class AttachedSignature implements ISignature {
-
-		private PGPOnePassSignature onePassSignature;
-		private PGPSignature signature;
-		private PGPLiteralData pgpLiteralData;
-
-		public AttachedSignature(PGPOnePassSignature onePassSignature, PGPSignature signature, PGPLiteralData pgpLiteralData) {
-			super();
-			this.onePassSignature = onePassSignature;
-			this.signature = signature;
-			this.pgpLiteralData = pgpLiteralData;
-		}
-
-		@Override
-		public boolean verify(PGPPublicKey publicKey, String data) throws Exception {
-			InputStream literalDataStream = pgpLiteralData.getInputStream();
-			ByteArrayOutputStream literalDataOutputStream = new ByteArrayOutputStream();
-			onePassSignature.initVerify(publicKey, "BC");
-
-			int ch;
-			while ((ch = literalDataStream.read()) >= 0) {
-				// 4. Feed onePassStructure + literalData
-				onePassSignature.update((byte) ch);
-				literalDataOutputStream.write(ch);
-			}
-			literalDataOutputStream.close();
-			data = new String(literalDataOutputStream.toByteArray());
-			// Verify the two signatures
-			if (onePassSignature.verify(signature)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		@Override
-		public String getIssuerKeyId(){
-			return Long.toHexString(signature.getKeyID());
-		}
-	}
-
+	
 	private class DetachedSignature implements ISignature {
 
 		private PGPSignature signature;
@@ -139,6 +148,11 @@ public class Signature {
 		@Override
 		public String getIssuerKeyId(){
 			return Long.toHexString(signature.getKeyID());
+		}
+
+		@Override
+		public Date getSignatureDate() {
+			return signature.getCreationTime();
 		}
 	}
 }

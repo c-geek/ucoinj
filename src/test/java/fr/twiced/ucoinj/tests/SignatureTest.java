@@ -1,7 +1,6 @@
 package fr.twiced.ucoinj.tests;
 
 import org.bouncycastle.openpgp.PGPException;
-import org.bouncycastle.openpgp.PGPPublicKey;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.NoSignaturePacketException;
@@ -141,8 +141,8 @@ public class SignatureTest {
 	@Test
 	public void verifyDetached() throws BadSignatureException, NoSignaturePacketException, Exception {
 		// Working detached signature
-		PGPPublicKey catPubkey = pgpService.extractPublicKey(CAT_PUBKEY).getPGPPublicKey();
-		PGPPublicKey tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY).getPGPPublicKey();
+		PublicKey catPubkey = pgpService.extractPublicKey(CAT_PUBKEY);
+		PublicKey tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY);
 		String data = CAT_SIGNATURE_DATA;
 		String sign = CAT_DETACHED_SIGNATURE;
 		Assert.assertEquals(CAT_SIGNATURE_DATA_HASH, new Sha1(data).toString().toUpperCase());
@@ -150,17 +150,17 @@ public class SignatureTest {
 		checkSignature(data, sign, CAT_PUBKEY_FINGERPRINT, catPubkey, tobiPubkey);
 	}
 	
-	@Test(expected = PGPException.class)
+	@Test(expected = BadSignatureException.class)
 	public void verifyCompressed() throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception{
-		PGPPublicKey catPubkey = pgpService.extractPublicKey(CAT_PUBKEY).getPGPPublicKey();
-		PGPPublicKey tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY).getPGPPublicKey();
+		PublicKey catPubkey = pgpService.extractPublicKey(CAT_PUBKEY);
+		PublicKey tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY);
 		// Working with full signature (compressed literal data + signature)
 		String data = CAT_SIGNATURE_DATA;
 		String sign = CAT_SIGNATURE;
 		checkSignature(data, sign, CAT_PUBKEY_FINGERPRINT, catPubkey, tobiPubkey);
 	}
 	
-	public void checkSignature(String data, String sign, String issuerFingerprint, PGPPublicKey issuerPubkey, PGPPublicKey notIssuerPubkey) throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception{
+	public void checkSignature(String data, String sign, String issuerFingerprint, PublicKey issuerPubkey, PublicKey notIssuerPubkey) throws BadSignatureException, NoPublicKeyPacketException, NoSignaturePacketException, Exception{
 		String issuer = pgpService.extractIssuer(sign).toUpperCase();
 		Assert.assertTrue(issuerFingerprint.endsWith(issuer));
 		Assert.assertTrue(pgpService.verify(data, sign, issuerPubkey));

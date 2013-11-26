@@ -91,7 +91,7 @@ public class HTTPSignedProcessor {
 	 * @param hashAlgorithm The hash algorithm used to compute signature's hash
 	 */
 	private static void setHeader(HttpServletResponse response, String boundary, int hashAlgorithm){
-		String contentType = String.format("multipart/signed; boundary=%s; protocol=\"application/pgp-signature\"", boundary, getHashAlgorithm(hashAlgorithm));
+		String contentType = String.format("multipart/signed; boundary=%s; protocol=\"application/pgp-signature\"; micalg=%s; ", boundary, getHashAlgorithm(hashAlgorithm));
 		response.setHeader("Content-Type", contentType);
 	}
 	
@@ -126,13 +126,14 @@ public class HTTPSignedProcessor {
 	 */
 	private static String signedResponse(String data, String boundary, PGPPrivateKey privateKey, PGPService pgpService) throws SignatureException, PGPException, IOException {
 		StringBuffer sBuff = new StringBuffer();
+		String truncatedData = data;
 		sBuff.append("--" + boundary + NEXT_LINE);
-		sBuff.append(data + NEXT_LINE);
+		sBuff.append(truncatedData + NEXT_LINE);
 		sBuff.append(NEXT_LINE);
 		sBuff.append("--" + boundary + NEXT_LINE);
 		sBuff.append("Content-Type: application/pgp-signature" + NEXT_LINE);
 		sBuff.append(NEXT_LINE);
-		sBuff.append(pgpService.sign(data, privateKey));
+		sBuff.append(pgpService.sign(truncatedData, privateKey));
 		sBuff.append(NEXT_LINE);
 		sBuff.append("--" + boundary + "--");
 		return sBuff.toString();

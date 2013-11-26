@@ -3,18 +3,28 @@ package fr.twiced.ucoinj.bean;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.bouncycastle.bcpg.ArmoredOutputStream;
+import org.bouncycastle.bcpg.UserIDPacket;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -22,22 +32,21 @@ import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 
 @Entity
 @Table(name = "publickey", uniqueConstraints = { @UniqueConstraint(columnNames = "fpr") })
-public class PublicKey {
+public class PublicKey extends UCoinEntity {
 
 	private Integer id;
+	private String email;
+	private String comment;
+	private String name;
 	private String fingerprint;
 	private String armored;
 	private PGPPublicKey PGPPublicKey;
+	private Signature signature;
 	
 	public PublicKey() {
 	}
-	
-	public PublicKey(String fingerprint) {
-		super();
-		this.fingerprint = fingerprint;
-	}
 
-	public PublicKey(List<PGPPublicKey> pubkeys) throws NoPublicKeyPacketException, IOException {
+	public PublicKey(List<PGPPublicKey> pubkeys, String armored) throws NoPublicKeyPacketException, IOException {
 		super();
 		if (pubkeys.isEmpty()) {
 			throw new NoPublicKeyPacketException("error.packet.publickey.not.found");
@@ -47,14 +56,31 @@ public class PublicKey {
 		byte[] twentyBytesFingerprint = PGPPublicKey.getFingerprint();
 		byte[] fourtyHexBytesFingerprint = Hex.encode(twentyBytesFingerprint);
 		fingerprint = new String(fourtyHexBytesFingerprint).toUpperCase();
-		// Armored computation
-		ByteArrayOutputStream armoredOut = new ByteArrayOutputStream();
-		OutputStream out = new ArmoredOutputStream(armoredOut);
-		for(PGPPublicKey key : pubkeys){
-			out.write(key.getEncoded());
+		if (armored == null) {
+			// Armored computation
+			ByteArrayOutputStream armoredOut = new ByteArrayOutputStream();
+			OutputStream out = new ArmoredOutputStream(armoredOut);
+			for(PGPPublicKey key : pubkeys){
+				out.write(key.getEncoded());
+			}
+			out.close();
+			armored = new String(armoredOut.toString().toCharArray());
+		} else {
+			this.armored = armored;
 		}
-		out.close();
-		armored = new String(armoredOut.toString().toCharArray());
+		Iterator<String> userIds = PGPPublicKey.getUserIDs();
+		if (userIds.hasNext()) {
+			String uid = userIds.next();
+			String p3 = "^(.*) \\((.*)\\) <(.*)>$";
+			if (uid.matches(p3)) {
+				Pattern p = Pattern.compile(p3);
+				Matcher m = p.matcher(uid);
+				m.find();
+				name = m.group(1);
+				comment = m.group(2);
+				email = m.group(3);
+			}
+		}
 	}
 
 	@Id
@@ -68,7 +94,7 @@ public class PublicKey {
 		this.id = id;
 	}
 	
-	@Column(name = "fpr", unique = true, nullable = false)
+	@Column(name = "fpr", unique = true, nullable = false, precision = 40)
 	public String getFingerprint() {
 		return fingerprint;
 	}
@@ -77,7 +103,7 @@ public class PublicKey {
 		this.fingerprint = fingerprint;
 	}
 
-	@Transient
+	@Column(name = "raw", nullable = false, columnDefinition = "TEXT")
 	public String getArmored() {
 		return armored;
 	}
@@ -89,5 +115,85 @@ public class PublicKey {
 	@Transient
 	public PGPPublicKey getPGPPublicKey() {
 		return PGPPublicKey;
+	}
+
+	@Column(name = "email")
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	@Column(name = "comment")
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+
+	@Column(name = "name")
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "signatureId", nullable = false)
+	public Signature getSignature() {
+		return signature;
+	}
+
+	public void setSignature(Signature signature) {
+		this.signature = signature;
+	}
+
+	@Override
+	@Transient
+	public Object getJSONObject() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("signature", signature.getArmored());
+		map.put("key", new JSONEntity(email, comment, name, fingerprint, armored));
+		return map;
+	}
+	
+	public class JSONEntity {
+		
+		private String email, comment, name, fingerprint, raw;
+
+		public JSONEntity(String email, String comment, String name, String fingerprint, String raw) {
+			super();
+			this.email = email;
+			this.comment = comment;
+			this.name = name;
+			this.fingerprint = fingerprint;
+			this.raw = raw;
+		}
+
+		public String getEmail() {
+			return email;
+		}
+
+		public String getComment() {
+			return comment;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getFingerprint() {
+			return fingerprint;
+		}
+
+		public String getRaw() {
+			return raw;
+		}
 	}
 }

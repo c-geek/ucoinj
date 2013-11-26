@@ -1,12 +1,13 @@
 package fr.twiced.ucoinj.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
-import org.bouncycastle.openpgp.PGPPublicKey;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.NoSignaturePacketException;
@@ -229,14 +231,14 @@ public class PrivateKeyTest {
 	@Autowired
 	private PGPService pgpService;
 	
-	private PGPPublicKey catPubkey;
-	private PGPPublicKey tobiPubkey;
+	private PublicKey catPubkey;
+	private PublicKey tobiPubkey;
 	private PGPPrivateKey catPrivKey;
 	
 	@Before
 	public void setUp() throws PGPException, IOException, NoPublicKeyPacketException{
-		catPubkey = pgpService.extractPublicKey(CAT_PUBKEY).getPGPPublicKey();
-		tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY).getPGPPublicKey();
+		catPubkey = pgpService.extractPublicKey(CAT_PUBKEY);
+		tobiPubkey = pgpService.extractPublicKey(TOBI_PUBKEY);
 		catPrivKey = pgpService.extractPrivateKey(CAT_PRIVKEY, CAT_PRIVKEY_PASSWORD);
 	}
 
