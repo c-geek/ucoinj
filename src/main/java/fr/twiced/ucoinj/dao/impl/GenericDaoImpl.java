@@ -14,14 +14,27 @@ public class GenericDaoImpl<E> implements GenericDao<E> {
 
 	@Autowired
 	protected SessionFactory sessionFactory;
+	
+	protected Session getSession(){
+		return sessionFactory.getCurrentSession();
+	}
 
 	@Override
 	public void save(E entity) {
 		getSession().save(entity);
+		getSession().flush();
 	}
-	
-	protected Session getSession(){
-		return sessionFactory.getCurrentSession();
+
+	@Override
+	public void update(E entity) {
+		getSession().update(entity);
+		getSession().flush();
+	}
+
+	@Override
+	public void delete(E entity) {
+		getSession().delete(entity);
+		getSession().flush();
 	}
 
 }

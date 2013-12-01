@@ -24,15 +24,15 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.bouncycastle.bcpg.ArmoredOutputStream;
-import org.bouncycastle.bcpg.UserIDPacket;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.util.encoders.Hex;
 
+import fr.twiced.ucoinj.bean.json.JSONPublicKey;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 
 @Entity
 @Table(name = "publickey", uniqueConstraints = { @UniqueConstraint(columnNames = "fpr") })
-public class PublicKey extends UCoinEntity {
+public class PublicKey extends UCoinEntity implements Merklable {
 
 	private Integer id;
 	private String email;
@@ -159,41 +159,22 @@ public class PublicKey extends UCoinEntity {
 	public Object getJSONObject() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("signature", signature.getArmored());
-		map.put("key", new JSONEntity(email, comment, name, fingerprint, armored));
+		map.put("key", new JSONPublicKey(email, comment, name, fingerprint, armored));
 		return map;
 	}
-	
-	public class JSONEntity {
-		
-		private String email, comment, name, fingerprint, raw;
 
-		public JSONEntity(String email, String comment, String name, String fingerprint, String raw) {
-			super();
-			this.email = email;
-			this.comment = comment;
-			this.name = name;
-			this.fingerprint = fingerprint;
-			this.raw = raw;
-		}
+	@Transient
+	@Override
+	public String getHash() {
+		return this.getFingerprint().toUpperCase();
+	}
 
-		public String getEmail() {
-			return email;
-		}
-
-		public String getComment() {
-			return comment;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getFingerprint() {
-			return fingerprint;
-		}
-
-		public String getRaw() {
-			return raw;
-		}
+	@Transient
+	@Override
+	public Object getJSON() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("fingerprint", this.fingerprint);
+		map.put("raw", this.armored);
+		return map;
 	}
 }

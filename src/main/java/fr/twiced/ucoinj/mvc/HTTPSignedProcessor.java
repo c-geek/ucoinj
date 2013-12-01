@@ -12,6 +12,7 @@ import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPUtil;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.service.PGPService;
 
 public class HTTPSignedProcessor {
@@ -22,10 +23,29 @@ public class HTTPSignedProcessor {
 	private static final String AS_JSON = "application/json";
 	private static final String AS_TEXT = "text/plain";
 
+	public static void send(Jsonable o, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey, Boolean nice) {
+		try {
+			String jsonResponse;
+			if (nice != null && nice) {
+				jsonResponse = new ObjectMapper().defaultPrettyPrintingWriter().writeValueAsString(o.getJSON());
+			} else {
+				jsonResponse = new ObjectMapper().writeValueAsString(o.getJSON());
+			}
+			send(jsonResponse, request, response, pgpService, privateKey, AS_JSON);
+		} catch (IOException e) {
+			e.printStackTrace();
+			try {
+				response.sendError(501, "JSON serialization error");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
 	public static void send(Object obj, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey){
 		try {
 			String jsonResponse = new ObjectMapper().writeValueAsString(obj);
-			send(jsonResponse, request, response, pgpService, privateKey, AS_TEXT);
+			send(jsonResponse, request, response, pgpService, privateKey, AS_JSON);
 		} catch (IOException e) {
 			e.printStackTrace();
 			try {
@@ -37,7 +57,7 @@ public class HTTPSignedProcessor {
 	}
 
 	public static void send(String data, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey){
-		send(data, request, response, pgpService, privateKey, AS_JSON);
+		send(data, request, response, pgpService, privateKey, AS_TEXT);
 	}
 	
 	public static void send(String data, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey, String contentType){

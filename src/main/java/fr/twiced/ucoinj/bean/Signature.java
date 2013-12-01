@@ -23,8 +23,8 @@ import fr.twiced.ucoinj.exceptions.BadSignatureException;
 
 @Entity
 @Table(name = "signature")
-public class Signature {
-	
+public class Signature implements Merklable {
+
 	private Integer id;
 	private String armored;
 	private Date sigDate;
@@ -154,5 +154,17 @@ public class Signature {
 		public Date getSignatureDate() {
 			return signature.getCreationTime();
 		}
+	}
+
+	@Transient
+	@Override
+	public String getHash() {
+		return "";
+	}
+
+	@Transient
+	@Override
+	public Object getJSON() {
+		return "";
 	}
 }

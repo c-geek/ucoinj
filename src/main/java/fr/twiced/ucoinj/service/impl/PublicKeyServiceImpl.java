@@ -13,12 +13,13 @@ import fr.twiced.ucoinj.dao.PublicKeyDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
 import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
+import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
-import fr.twiced.ucoinj.service.PKSService;
+import fr.twiced.ucoinj.service.PublicKeyService;
 
 @Service
 @Transactional
-public class PublicKeyServiceImpl implements PKSService {
+public class PublicKeyServiceImpl implements PublicKeyService {
 
 	@Autowired
 	private PublicKeyDao dao;
@@ -28,6 +29,9 @@ public class PublicKeyServiceImpl implements PKSService {
 	
 	@Autowired
 	private PGPService pgpService;
+	
+	@Autowired
+	private MerkleService merkleService;
 
 	@Override
 	public PublicKey add(PublicKey pubkey, Signature signature) throws ObsoleteDataException, BadSignatureException {
@@ -40,7 +44,9 @@ public class PublicKeyServiceImpl implements PKSService {
 				signatureDao.save(signature);
 				pubkey.setSignature(signature);
 				dao.save(pubkey);
+				merkleService.put(pubkey);
 			} else {
+				signatureDao.save(signature);
 				pubkey = stored;
 			}
 		}
@@ -54,8 +60,12 @@ public class PublicKeyServiceImpl implements PKSService {
 
 	@Override
 	public Merkle<PublicKey> all() {
-		// TODO Auto-generated method stub
-		return null;
+		return merkleService.getPubkeyMerkle();
+	}
+
+	@Override
+	public PublicKey getByFingerprint(String fingerprint) {
+		return dao.getByFingerprint(fingerprint);
 	}
 
 }

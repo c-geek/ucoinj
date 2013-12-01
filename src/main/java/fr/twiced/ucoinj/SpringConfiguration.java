@@ -12,6 +12,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
+import fr.twiced.ucoinj.bean.Merkle;
+import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
 
@@ -40,7 +42,7 @@ public class SpringConfiguration {
 		sessionFactory.setDataSource(dataSource());
 		sessionFactory.setHibernateProperties(props);
 		Class<?>[] annotatedClasses = new Class<?>[]{
-			Signature.class, PublicKey.class
+			Signature.class, PublicKey.class, Node.class, Merkle.class
 		};
 		sessionFactory.setAnnotatedClasses(annotatedClasses);
 		sessionFactory.afterPropertiesSet();

@@ -9,6 +9,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 
 import fr.twiced.ucoinj.GlobalConfiguration;
+import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.service.PGPService;
 
 public class UCoinController {
@@ -34,6 +35,10 @@ public class UCoinController {
 		return pgpService;
 	}
 
+	protected void sendResult(Jsonable o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {
+		HTTPSignedProcessor.send(o, request, response, pgpService, privateKey, nice);
+	}
+	
 	protected void sendResult(Object o, HttpServletRequest request, HttpServletResponse response) {
 		HTTPSignedProcessor.send(o, request, response, pgpService, privateKey);
 	}
