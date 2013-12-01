@@ -59,6 +59,7 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 	public void put(PublicKey pubkey) {
 		Merkle<PublicKey> merkle = pubkeyMerkleDao.getMerkle();
 		merkle.setRoot(null);
+		merkle.initTrees();
 		pubkeyMerkleDao.save(merkle);
 		List<Node> leaves = pubkeyMerkleDao.getLeaves();
 		List<Node> allNodesOfPubkeyMerkle = pubkeyMerkleDao.getAll();

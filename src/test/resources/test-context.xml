@@ -44,6 +44,8 @@ http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
 			<list>
 				<value>fr.twiced.ucoinj.bean.Signature</value>
 				<value>fr.twiced.ucoinj.bean.PublicKey</value>
+				<value>fr.twiced.ucoinj.bean.Merkle</value>
+				<value>fr.twiced.ucoinj.bean.Node</value>
 			</list>
 		</property>
 

@@ -1,6 +1,7 @@
 package fr.twiced.ucoinj.bean;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -62,6 +63,10 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 		levelsCount = 0;
 		leavesCount = 0;
 		nodesCount = 0;
+		initTrees();
+	}
+	
+	public void initTrees() {
 		leavesByHash = new TreeMap<>();
 		leavesHashList = new TreeMap<>();
 		tree = new TreeMap<>();
@@ -69,7 +74,17 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	
 	public void push(E leaf) {
 		leavesByHash.put(leaf.getHash(), leaf);
-		push(leaf, leavesHashList.size());
+		leavesHashList.clear();
+		List<String> hashesSorted = new ArrayList<>();
+		Set<String> hashes = leavesByHash.keySet();
+		for (String hash : hashes) {
+			hashesSorted.add(hash);
+		}
+		Collections.sort(hashesSorted);
+		for (int i = 0; i < hashesSorted.size(); i++) {
+			leavesHashList.put(i, hashesSorted.get(i));
+		}
+		hashesSorted.clear();
 	}
 	
 	public void push(E leaf, int position) {
