@@ -12,11 +12,18 @@ public interface MerkleDao<E extends Merklable> extends GenericDao<Merkle<?>> {
 
 	void save(Node n);
 	
-	List<Node> getLeaves(Merkle<?> m, int start, int end);
+	String getName();
 	
-	List<Node> getNodes(Merkle<?> m, int lstart, int lend, int start, int end);
+	Merkle<E> getMerkle();
 	
-	E getLeaf(Merkle<?> m, int position);
+	E getLeaf(String hash);
 	
-	E getLeaf(Merkle<?> m, String hash);
+	List<Node> getAll();
+
+	List<Node> getLeaves();
+
+	List<Node> getLeaves(int start, int end);
+	
+	List<Node> getNodes(int lstart, int lend, int start, int end);
+	
 }

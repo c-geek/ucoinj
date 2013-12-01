@@ -7,11 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.twiced.ucoinj.UniqueMerkle;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.dao.PublicKeyDao;
-import fr.twiced.ucoinj.dao.PublicKeyMerkleDao;
 
 @Repository
 @Transactional
-public class MerklePublicKeyDaoImpl extends UniqueMerkleDaoImpl<PublicKey> implements PublicKeyMerkleDao {
+public class MerklePublicKeyDaoImpl extends MerkleDaoImpl<PublicKey> {
 
 	@Autowired
 	private PublicKeyDao pubkeyDao;

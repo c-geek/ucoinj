@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
-import fr.twiced.ucoinj.dao.PublicKeyMerkleDao;
+import fr.twiced.ucoinj.dao.MerkleDao;
 import fr.twiced.ucoinj.dao.impl.GenericDaoImpl;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PKSService;
@@ -21,7 +21,7 @@ import fr.twiced.ucoinj.service.PKSService;
 public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleService {
 	
 	@Autowired
-	private PublicKeyMerkleDao pubkeyMerkleDao;
+	private MerkleDao<PublicKey> pubkeyMerkleDao;
 	
 	@Autowired
 	private PKSService pksService;
