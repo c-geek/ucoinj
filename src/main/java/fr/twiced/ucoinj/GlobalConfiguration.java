@@ -16,6 +16,7 @@ public class GlobalConfiguration {
 	private GlobalConfiguration() {
 	}
 
+	private String currency = "";
 	private String privateKey = "";
 	private String DBURL = "jdbc:mysql://localhost:3306/ucoinj";
 	private String DBUsername = "root";
@@ -24,6 +25,10 @@ public class GlobalConfiguration {
 	private String PGPPassword;
 	private String IPv4;
 	private int port;
+	private String remoteHost;
+	private String remoteIPv4;
+	private String remoteIPv6;
+	private int remotePort;
 
 	public String getPrivateKey() {
 		return privateKey;
@@ -87,5 +92,45 @@ public class GlobalConfiguration {
 
 	public void setPort(int port) {
 		this.port = port;
+	}
+
+	public Object getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public String getRemoteHost() {
+		return remoteHost;
+	}
+
+	public void setRemoteHost(String remoteHost) {
+		this.remoteHost = remoteHost;
+	}
+
+	public String getRemoteIPv4() {
+		return remoteIPv4;
+	}
+
+	public void setRemoteIPv4(String remoteIPv4) {
+		this.remoteIPv4 = remoteIPv4;
+	}
+
+	public String getRemoteIPv6() {
+		return remoteIPv6;
+	}
+
+	public void setRemoteIPv6(String remoteIPv6) {
+		this.remoteIPv6 = remoteIPv6;
+	}
+
+	public int getRemotePort() {
+		return remotePort;
+	}
+
+	public void setRemotePort(int remotePort) {
+		this.remotePort = remotePort;
 	}
 }
