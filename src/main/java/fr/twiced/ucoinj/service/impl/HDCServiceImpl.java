@@ -94,9 +94,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Amendment viewSelf(AmendmentId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object viewSelf(AmendmentId id) {
+		return jsonIt(amendmentDao.getByAmendmentId(id));
 	}
 
 	@Override

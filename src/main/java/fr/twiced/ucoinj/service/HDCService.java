@@ -66,7 +66,7 @@ public interface HDCService {
 	 * @param id Targeted amendment id.
 	 * @return or null if it does not exist.
 	 */
-	Amendment viewSelf(AmendmentId id);
+	Object viewSelf(AmendmentId id);
 	
 	/**
 	 * Get the Merkle of signatures justifying previous amendment of targeted amendment.

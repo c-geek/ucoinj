@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Amendment;
+import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.dao.AmendmentDao;
 
 @Repository
@@ -18,6 +19,11 @@ public class AmendmentDaoImpl extends GenericDaoImpl<Amendment> implements Amend
 				.setParameter("number", number)
 				.setParameter("hash", hash)
 				.uniqueResult();
+	}
+
+	@Override
+	public Amendment getByAmendmentId(AmendmentId amId) {
+		return getByNumberAndHash(amId.getNumber(), amId.getHash());
 	}
 
 	@Override

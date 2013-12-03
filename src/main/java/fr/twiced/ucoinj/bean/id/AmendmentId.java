@@ -11,7 +11,7 @@ public class AmendmentId {
 	public AmendmentId() {
 	}
 
-	public AmendmentId(String hash, int number) {
+	public AmendmentId(int number, String hash) {
 		super();
 		this.hash = hash;
 		this.number = number;
