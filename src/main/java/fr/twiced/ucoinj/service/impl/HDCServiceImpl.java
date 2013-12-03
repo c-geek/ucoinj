@@ -71,8 +71,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Amendment promoted() {
-		return amendmentDao.getCurrent();
+	public Object promoted() {
+		return amendmentDao.getCurrent().getJSON();
 	}
 
 	@Override

@@ -38,7 +38,7 @@ public interface HDCService {
 	 * Shortcut for current().
 	 * @return The currently promoted amendment or null if it does not exist.
 	 */
-	Amendment promoted();
+	Object promoted();
 	
 	/**
 	 * Get the unique promoted amendment of given number.

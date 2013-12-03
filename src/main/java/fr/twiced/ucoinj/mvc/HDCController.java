@@ -64,5 +64,12 @@ public class HDCController extends UCoinController {
 		HttpServletResponse response) {
 		sendResult(hdcService.current(), request, response, true);
 	}
+	
+	@RequestMapping(value = "/hdc/amendments/promoted", method = RequestMethod.GET)
+	public void promoted(
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		sendResult(hdcService.promoted(), request, response, true);
+	}
 }
 
