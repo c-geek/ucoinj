@@ -12,7 +12,9 @@ import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.dao.PublicKeyDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
+import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
 import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
+import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
 import fr.twiced.ucoinj.service.PublicKeyService;
@@ -35,7 +37,9 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 
 	@Override
 	public PublicKey add(PublicKey pubkey, Signature signature) throws ObsoleteDataException, BadSignatureException {
-		signature.verify(pubkey, pubkey.getArmored());
+		if (!signature.verify(pubkey, pubkey.getArmored())) {
+			throw new BadSignatureException();
+		}
 		PublicKey stored = dao.getByKeyID(signature.getIssuerKeyId());
 		if(stored != null && stored.getSignature().isMoreRecentThan(signature)){
 			throw new ObsoleteDataException("A more recent version of this pubkey is already stored");
@@ -66,6 +70,30 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 	@Override
 	public PublicKey getByFingerprint(String fingerprint) {
 		return dao.getByFingerprint(fingerprint);
+	}
+
+	@Override
+	public PublicKey getBySignature(Signature sig) throws MultiplePublicKeyException, UnknownPublicKeyException {
+		List<PublicKey> pubkeys = dao.lookup("0x" + sig.getIssuer());
+		if (pubkeys != null && pubkeys.size() > 1) {
+			throw new MultiplePublicKeyException("Several keys found for keyID 0x" + sig.getIssuer());
+		}
+		if (pubkeys != null && pubkeys.size() == 0) {
+			throw new UnknownPublicKeyException("Unkown keyID 0x" + sig.getIssuer());
+		}
+		return pubkeys.get(0);
+	}
+
+	@Override
+	public PublicKey getWorking(PublicKey pubkey) {
+		PublicKey complete;
+		try {
+			complete = pgpService.extractPublicKey(pubkey.getArmored());
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		pubkey.setPGPPublicKey(complete.getPGPPublicKey());
+		return pubkey;
 	}
 
 }

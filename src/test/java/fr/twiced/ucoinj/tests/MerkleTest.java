@@ -75,11 +75,9 @@ public class MerkleTest {
 		addKey("cgeek");
 		assertRoot("586C27C3776946C942FE0D782FDAA1D494302DAB");
 		addKey("snow");
-		addKey("sparkle");
 		addKey("cat");
 		addKey("ubot1");
-		addKey("nukee");
-		assertRoot("7E9130D9DDC873EAF13DBF40BDD04D2DD227401D");
+		assertRoot("40067202E0E9F3B186E7D77AF06D6D3B92E88FAE");
 	}
 	
 	private void assertRoot(String root){

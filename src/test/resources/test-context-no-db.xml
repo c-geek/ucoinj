@@ -35,20 +35,8 @@ http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
-				<prop key="hibernate.show_sql">false</prop>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
 			</props>
-		</property>
-
-		<property name="annotatedClasses">
-			<list>
-				<value>fr.twiced.ucoinj.bean.Signature</value>
-				<value>fr.twiced.ucoinj.bean.PublicKey</value>
-				<value>fr.twiced.ucoinj.bean.Merkle</value>
-				<value>fr.twiced.ucoinj.bean.Node</value>
-				<value>fr.twiced.ucoinj.bean.Amendment</value>
-				<value>fr.twiced.ucoinj.bean.Vote</value>
-			</list>
 		</property>
 
 	</bean>

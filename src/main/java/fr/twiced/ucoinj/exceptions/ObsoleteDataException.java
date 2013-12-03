@@ -1,6 +1,6 @@
 package fr.twiced.ucoinj.exceptions;
 
-public class ObsoleteDataException extends Exception {
+public class ObsoleteDataException extends RefusedDataException {
 
 	private static final long serialVersionUID = 2160176498761867452L;
 

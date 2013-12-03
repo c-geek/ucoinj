@@ -13,7 +13,12 @@ import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.bean.id.TransactionId;
+import fr.twiced.ucoinj.exceptions.BadSignatureException;
+import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
+import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
+import fr.twiced.ucoinj.exceptions.RefusedDataException;
 import fr.twiced.ucoinj.exceptions.UnhandledKeyException;
+import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
 
 public interface HDCService {
 
@@ -80,8 +85,13 @@ public interface HDCService {
 	 * Add a vote for given amendment.
 	 * @param am Voted amendment.
 	 * @param sig Signature of the amendment.
+	 * @throws BadSignatureException 
+	 * @throws ObsoleteDataException 
+	 * @throws RefusedDataException 
+	 * @throws UnknownPublicKeyException 
+	 * @throws MultiplePublicKeyException 
 	 */
-	void vote(Amendment am, Signature sig);
+	void vote(Amendment am, Signature sig) throws BadSignatureException, ObsoleteDataException, RefusedDataException, MultiplePublicKeyException, UnknownPublicKeyException;
 	
 	/**
 	 * Get the Merkle of signatures stored for targeted amendment.

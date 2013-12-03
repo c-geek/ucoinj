@@ -177,4 +177,8 @@ public class PublicKey extends UCoinEntity implements Merklable {
 		map.put("raw", this.armored);
 		return map;
 	}
+
+	public void setPGPPublicKey(PGPPublicKey pGPPublicKey) {
+		PGPPublicKey = pGPPublicKey;
+	}
 }

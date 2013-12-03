@@ -1,7 +1,10 @@
 package fr.twiced.ucoinj.bean;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.security.NoSuchProviderException;
+import java.security.SignatureException;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -14,10 +17,12 @@ import javax.persistence.Transient;
 
 import org.bouncycastle.bcpg.ArmoredInputStream;
 import org.bouncycastle.openpgp.PGPCompressedData;
+import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPObjectFactory;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureList;
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
 
@@ -27,8 +32,18 @@ public class Signature implements Merklable {
 
 	private Integer id;
 	private String armored;
+	private String issuer;
 	private Date sigDate;
 	private ISignature sigObj;
+
+	public Signature() {
+	}
+	
+	public Signature(String signatureStream) throws BadSignatureException {
+		armored = signatureStream;
+		sigDate = getSigObj().getSignatureDate();
+		issuer = getSigObj().getIssuerKeyId().toUpperCase();
+	}
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,17 +52,14 @@ public class Signature implements Merklable {
 		return id;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
 	@Column(nullable = false, columnDefinition = "TEXT")
 	public String getArmored() {
 		return armored;
 	}
-
-	public void setArmored(String armored) {
-		this.armored = armored;
+	
+	@Column(nullable = false, length = 40)
+	public String getIssuer() {
+		return issuer;
 	}
 
 	@Column(nullable = false)
@@ -55,29 +67,9 @@ public class Signature implements Merklable {
 		return sigDate;
 	}
 
-	public void setSigDate(Date sigDate) {
-		this.sigDate = sigDate;
-	}
-
 	@Transient
 	public String getIssuerKeyId() throws BadSignatureException{
 		return getSigObj().getIssuerKeyId();
-	}
-
-	public Signature() {
-	}
-	
-	public Signature(String signatureStream) throws BadSignatureException {
-		armored = signatureStream;
-		sigDate = getSigObj().getSignatureDate();
-	}
-	
-	public boolean isMoreRecentThan(Signature otherSig){
-		return sigDate.after(otherSig.getSigDate());
-	}
-	
-	public boolean isLessRecentThan(Signature otherSig){
-		return sigDate.before(otherSig.getSigDate());
 	}
 
 	@Transient
@@ -103,6 +95,14 @@ public class Signature implements Merklable {
 		} catch (Exception e) {
 			throw new BadSignatureException("Error while verifying signature");
 		}
+	}
+	
+	public boolean isMoreRecentThan(Signature otherSig){
+		return sigDate.after(otherSig.getSigDate());
+	}
+	
+	public boolean isLessRecentThan(Signature otherSig){
+		return sigDate.before(otherSig.getSigDate());
 	}
 
 	public boolean verify(PublicKey publicKey, String data) throws BadSignatureException {
@@ -131,10 +131,9 @@ public class Signature implements Merklable {
 		}
 
 		@Override
-		public boolean verify(PGPPublicKey publicKey, String data) throws Exception {
+		public boolean verify(PGPPublicKey publicKey, String data) throws NoSuchProviderException, PGPException, SignatureException, IOException {
 			InputStream literalDataStream = new ByteArrayInputStream(data.getBytes());
-			signature.initVerify(publicKey, "BC");
-
+			signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), publicKey);
 			int ch;
 			while ((ch = literalDataStream.read()) >= 0) {
 				// 4. Feed onePassStructure + literalData
@@ -167,4 +166,26 @@ public class Signature implements Merklable {
 	public Object getJSON() {
 		return "";
 	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setArmored(String armored) {
+		this.armored = armored;
+	}
+
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
+	}
+
+	public void setSigDate(Date sigDate) {
+		this.sigDate = sigDate;
+	}
+
+	public void setSigObj(ISignature sigObj) {
+		this.sigObj = sigObj;
+	}
+	
+	
 }

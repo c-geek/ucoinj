@@ -14,15 +14,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import fr.twiced.ucoinj.pgp.Sha1;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	
 	@Id

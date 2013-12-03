@@ -2,6 +2,7 @@ package fr.twiced.ucoinj.pgp;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.util.Formatter;
 
 import fr.twiced.ucoinj.exceptions.Sha1ConvertionException;
@@ -18,11 +19,11 @@ public class Sha1 {
 	@Override
 	public String toString() {
 		try {
-			MessageDigest crypt = MessageDigest.getInstance("SHA1");
+			MessageDigest crypt = MessageDigest.getInstance("SHA1", "BC");
 			crypt.reset();
 			crypt.update(data.getBytes());
 			return byteToHex(crypt.digest());
-		} catch (NoSuchAlgorithmException e) {
+		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
 			throw new Sha1ConvertionException(e);
 		}
 	}
