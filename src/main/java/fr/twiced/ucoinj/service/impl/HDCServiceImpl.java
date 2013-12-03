@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Coin;
+import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.PublicKey;
@@ -61,23 +62,23 @@ public class HDCServiceImpl implements HDCService {
 
 	@Override
 	public Object current() {
-		return amendmentDao.getCurrent().getJSON();
+		return jsonIt(amendmentDao.getCurrent());
+	}
+
+	@Override
+	public Object promoted() {
+		return jsonIt(amendmentDao.getCurrent());
+	}
+
+	@Override
+	public Object promoted(int number) {
+		return jsonIt(amendmentDao.getPromoted(number));
 	}
 
 	@Override
 	public Merkle<Signature> currentVotes() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public Object promoted() {
-		return amendmentDao.getCurrent().getJSON();
-	}
-
-	@Override
-	public Amendment promoted(int number) {
-		return amendmentDao.getPromoted(number);
 	}
 
 	@Override
@@ -287,6 +288,13 @@ public class HDCServiceImpl implements HDCService {
 	@Override
 	public Transaction transaction(TransactionId id) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private Object jsonIt(Jsonable jsonable) {
+		if (jsonable != null) {
+			return jsonable.getJSON();
+		}
 		return null;
 	}
 

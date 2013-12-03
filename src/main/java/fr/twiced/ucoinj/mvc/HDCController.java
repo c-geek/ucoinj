@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.bouncycastle.openpgp.PGPException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Signature;
-import fr.twiced.ucoinj.pgp.Sha1;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.PGPService;
 
@@ -62,14 +62,29 @@ public class HDCController extends UCoinController {
 	public void current(
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		sendResult(hdcService.current(), request, response, true);
+		objectOrNotFound(hdcService.current(), request, response);
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/promoted", method = RequestMethod.GET)
 	public void promoted(
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		sendResult(hdcService.promoted(), request, response, true);
+		objectOrNotFound(hdcService.promoted(), request, response);
+	}
+	
+	@RequestMapping(value = "/hdc/amendments/promoted/{number}", method = RequestMethod.GET)
+	public void promotedNumber(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("number") int number) {
+		objectOrNotFound(hdcService.promoted(number), request, response);
+	}
+	
+	private void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response) {
+		if (o != null)
+			sendResult(o, request, response, true);
+		else
+			sendError(404, response);
 	}
 }
 

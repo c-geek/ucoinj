@@ -45,7 +45,7 @@ public interface HDCService {
 	 * @param number The amendment number in amendment's chain (monetary contract).
 	 * @return The corresponding amendment or null if it does not exist.
 	 */
-	Amendment promoted(int number);
+	Object promoted(int number);
 	
 	/**
 	 * Get the Merkle of keys fingerprint which were considered as members for given amendment.
