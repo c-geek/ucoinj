@@ -272,11 +272,16 @@ public class Amendment implements Jsonable,Hashable,Rawable {
 		map.put("number", number);
 		map.put("generated", generatedOn);
 		map.put("nextVotes", nextRequiredVotes);
-		map.put("dividend", dividend);
-		map.put("coinMinPower", coinMinimalPower);
-		map.put("previousHash", previousHash);
-		map.put("previousVotesRoot", previousVotesRoot);
-		map.put("previousVotesCount", previousVotesCount);
+		if (dividend != null)
+			map.put("dividend", dividend);
+		if (coinMinimalPower != null)
+			map.put("coinMinPower", coinMinimalPower);
+		if (previousHash != null)
+			map.put("previousHash", previousHash);
+		if (previousVotesRoot != null)
+			map.put("previousVotesRoot", previousVotesRoot);
+		if (previousVotesCount != null)
+			map.put("previousVotesCount", previousVotesCount);
 		map.put("votersRoot", votersRoot);
 		map.put("votersCount", votersCount);
 		map.put("votersChanges", votersChanges);

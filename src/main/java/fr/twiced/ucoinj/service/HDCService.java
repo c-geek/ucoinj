@@ -26,7 +26,7 @@ public interface HDCService {
 	 * Get the currently promoted amendment.
 	 * @return The currently promoted amendment or null if it does not exist.
 	 */
-	Amendment current();
+	Object current();
 	
 	/**
 	 * Get the Merkle of signatures justifying current amendment's promotion.

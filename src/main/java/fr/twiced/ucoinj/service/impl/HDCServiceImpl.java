@@ -60,8 +60,8 @@ public class HDCServiceImpl implements HDCService {
 	private MerkleService merkleService;
 
 	@Override
-	public Amendment current() {
-		return amendmentDao.getCurrent();
+	public Object current() {
+		return amendmentDao.getCurrent().getJSON();
 	}
 
 	@Override

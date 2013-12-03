@@ -39,6 +39,10 @@ public class UCoinController {
 		HTTPSignedProcessor.send(o, request, response, pgpService, privateKey, nice);
 	}
 	
+	protected void sendResult(Object o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {
+		HTTPSignedProcessor.send(o, request, response, pgpService, privateKey, nice);
+	}
+	
 	protected void sendResult(Object o, HttpServletRequest request, HttpServletResponse response) {
 		HTTPSignedProcessor.send(o, request, response, pgpService, privateKey);
 	}

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Signature;
-import fr.twiced.ucoinj.exceptions.BadParametersException;
 import fr.twiced.ucoinj.pgp.Sha1;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.PGPService;
@@ -46,8 +45,6 @@ public class HDCController extends UCoinController {
 		@RequestParam("signature") String signatureStream,
 		@RequestParam(value = "peer", required = false) String peerFingerprint) {
 		try{
-			String sha11 = new Sha1(amendment).toString().toUpperCase();
-			String sha12 = new Sha1(signatureStream).toString().toUpperCase();
 			Amendment am = new Amendment(amendment);
 			Signature sig = new Signature(signatureStream);
 			hdcService.vote(am, sig);
@@ -65,7 +62,7 @@ public class HDCController extends UCoinController {
 	public void current(
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		sendError(404, response);
+		sendResult(hdcService.current(), request, response, true);
 	}
 }
 

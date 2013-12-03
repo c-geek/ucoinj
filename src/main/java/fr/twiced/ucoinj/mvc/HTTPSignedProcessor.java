@@ -42,6 +42,25 @@ public class HTTPSignedProcessor {
 		}
 	}
 
+	public static void send(Object o, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey, Boolean nice) {
+		try {
+			String jsonResponse;
+			if (nice != null && nice) {
+				jsonResponse = new ObjectMapper().defaultPrettyPrintingWriter().writeValueAsString(o);
+			} else {
+				jsonResponse = new ObjectMapper().writeValueAsString(o);
+			}
+			send(jsonResponse, request, response, pgpService, privateKey, AS_JSON);
+		} catch (IOException e) {
+			e.printStackTrace();
+			try {
+				response.sendError(501, "JSON serialization error");
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+	}
+
 	public static void send(Object obj, HttpServletRequest request, HttpServletResponse response, PGPService pgpService, PGPPrivateKey privateKey){
 		try {
 			String jsonResponse = new ObjectMapper().writeValueAsString(obj);
