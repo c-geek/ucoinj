@@ -17,10 +17,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.twiced.ucoinj.UniqueMerkle;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
-import fr.twiced.ucoinj.dao.MerkleDao;
+import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
 import fr.twiced.ucoinj.service.PKSService;
@@ -40,7 +41,7 @@ public class MerkleTest {
 	private MerkleService merkleService;
 
 	@Autowired
-	private MerkleDao<PublicKey> pubkeyMerkleDao;
+	private MultipleMerkleDao<PublicKey> pubkeyMerkleDao;
 
 	@Test
 	public void pksAdd1() throws Exception {
@@ -59,7 +60,7 @@ public class MerkleTest {
 		addKey("cat");
 		assertRoot("F5ACFD67FC908D28C0CFDAD886249AC260515C90");
 		addKey("cgeek");
-		List<Node> leaves = pubkeyMerkleDao.getLeaves(0, 4);
+		List<Node> leaves = pubkeyMerkleDao.getLeaves(UniqueMerkle.PUBLIC_KEY.name(), 0, 4);
 		Assert.assertEquals(4, leaves.size());
 		Assert.assertEquals("2E69197FAB029D8669EF85E82457A1587CA0ED9C", leaves.get(0).getHash());
 		Assert.assertEquals("31A6302161AC8F5938969E85399EB3415C237F93", leaves.get(1).getHash());

@@ -8,10 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.twiced.ucoinj.UniqueMerkle;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
-import fr.twiced.ucoinj.dao.MerkleDao;
+import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.dao.impl.GenericDaoImpl;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PKSService;
@@ -21,14 +22,14 @@ import fr.twiced.ucoinj.service.PKSService;
 public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleService {
 	
 	@Autowired
-	private MerkleDao<PublicKey> pubkeyMerkleDao;
+	private MultipleMerkleDao<PublicKey> pubkeyMerkleDao;
 	
 	@Autowired
 	private PKSService pksService;
 
 	@Override
 	public Merkle<PublicKey> searchPubkey(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		Merkle<PublicKey> merkle = pubkeyMerkleDao.getMerkle();
+		Merkle<PublicKey> merkle = pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
 		if (start == null) {
 			start = 0;
 		}
@@ -36,7 +37,7 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 			end = merkle.getLeavesCount();
 		}
 		if (extract != null && extract) {
-			List<Node> leaves = pubkeyMerkleDao.getLeaves(start, end);
+			List<Node> leaves = pubkeyMerkleDao.getLeaves(UniqueMerkle.PUBLIC_KEY.name(), start, end);
 			for (Node n : leaves) {
 				merkle.push(pubkeyMerkleDao.getLeaf(n.getHash()), n.getPosition());
 			}
@@ -47,7 +48,7 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 			if (lend == null) {
 				lend = lstart + 1;
 			}
-			List<Node> nodes = pubkeyMerkleDao.getNodes(lstart, lend, start, end);
+			List<Node> nodes = pubkeyMerkleDao.getNodes(UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end);
 			for (Node n : nodes) {
 				merkle.putTree(n);
 			}
@@ -57,12 +58,12 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 
 	@Override
 	public void put(PublicKey pubkey) {
-		Merkle<PublicKey> merkle = pubkeyMerkleDao.getMerkle();
+		Merkle<PublicKey> merkle = pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
 		merkle.setRoot(null);
 		merkle.initTrees();
 		pubkeyMerkleDao.save(merkle);
-		List<Node> leaves = pubkeyMerkleDao.getLeaves();
-		List<Node> allNodesOfPubkeyMerkle = pubkeyMerkleDao.getAll();
+		List<Node> leaves = pubkeyMerkleDao.getLeaves(UniqueMerkle.PUBLIC_KEY.name());
+		List<Node> allNodesOfPubkeyMerkle = pubkeyMerkleDao.getAll(UniqueMerkle.PUBLIC_KEY.name());
 		for (Node node : allNodesOfPubkeyMerkle) {
 			pubkeyMerkleDao.delete(node);
 		}
@@ -95,6 +96,6 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 
 	@Override
 	public Merkle<PublicKey> getPubkeyMerkle() {
-		return pubkeyMerkleDao.getMerkle();
+		return pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
 	}
 }
