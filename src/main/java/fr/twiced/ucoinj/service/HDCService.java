@@ -81,9 +81,14 @@ public interface HDCService {
 	/**
 	 * Get the Merkle of signatures justifying previous amendment of targeted amendment.
 	 * @param id Targeted amendment id.
+	 * @param extract 
+	 * @param end 
+	 * @param start 
+	 * @param lend 
+	 * @param lstart 
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Signature> viewSignatures(AmendmentId id);
+	Object viewSignatures(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get an index giving the number of votes for each amendment id.

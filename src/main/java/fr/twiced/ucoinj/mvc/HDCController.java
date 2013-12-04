@@ -122,6 +122,20 @@ public class HDCController extends UCoinController {
 		objectOrNotFound(hdcService.viewVoters(amId, lstart, lend, start, end, extract), request, response, nice);
 	}
 	
+	@RequestMapping(value = "/hdc/amendments/view/{amendment_id}/signatures", method = RequestMethod.GET)
+	public void viewSignatures(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("amendment_id") AmendmentId amId,
+		Integer lstart,
+		Integer lend,
+		Integer start,
+		Integer end,
+		Boolean extract,
+		Boolean nice) {
+		objectOrNotFound(hdcService.viewSignatures(amId, lstart, lend, start, end, extract), request, response, nice);
+	}
+	
 	private void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {
 		if (o != null)
 			sendResult(o, request, response, nice);

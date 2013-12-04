@@ -48,6 +48,11 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 	public Jsonable searchVoters(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
 		return searchMerkle(hashMerkleDao, Merkle.getNameForVoters(amId), lstart, lend, start, end, extract);
 	}
+
+	@Override
+	public Jsonable searchSignatures(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return searchMerkle(hashMerkleDao, Merkle.getNameForSignatures(amId), lstart, lend, start, end, extract);
+	}
 	
 	private <E extends Merklable> Merkle<E> searchMerkle(
 			MultipleMerkleDao<E> merkleDao,

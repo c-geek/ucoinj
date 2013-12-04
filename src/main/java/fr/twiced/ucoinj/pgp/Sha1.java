@@ -5,9 +5,10 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.util.Formatter;
 
+import fr.twiced.ucoinj.bean.Hashable;
 import fr.twiced.ucoinj.exceptions.Sha1ConvertionException;
 
-public class Sha1 {
+public class Sha1 implements Hashable {
 
 	private String data;
 
@@ -36,5 +37,10 @@ public class Sha1 {
 	    String result = formatter.toString();
 	    formatter.close();
 	    return result;
+	}
+
+	@Override
+	public String getHash() {
+		return this.toString().toUpperCase();
 	}
 }

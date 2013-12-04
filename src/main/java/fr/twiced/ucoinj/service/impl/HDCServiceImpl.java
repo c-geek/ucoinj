@@ -35,6 +35,7 @@ import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
 import fr.twiced.ucoinj.exceptions.RefusedDataException;
 import fr.twiced.ucoinj.exceptions.UnhandledKeyException;
 import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
+import fr.twiced.ucoinj.pgp.Sha1;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
@@ -104,9 +105,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Signature> viewSignatures(AmendmentId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object viewSignatures(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchSignatures(id, lstart, lend, start, end, extract));
 	}
 
 	@Override
@@ -154,6 +154,7 @@ public class HDCServiceImpl implements HDCService {
 			vote.setPublicKey(pubkey);
 			vote.setSignature(sig);
 			voteDao.save(vote);
+			hashMerkleDao.put(Merkle.getNameForVotes(am.getNaturalId()), new Hash(new Sha1(sig.getArmored())));
 			// Promotion
 			if (mayBePromoted) {
 				log.info(String.format("Promoting amendment n°%d #%s as current", am.getNumber(), am.getHash()));
@@ -313,14 +314,14 @@ public class HDCServiceImpl implements HDCService {
 			Amendment previous = amendmentDao.getByNumberAndHash(am.getNumber() - 1, am.getPreviousHash());
 			previousMembersNodes = hashMerkleDao.getLeaves(Merkle.getNameForMembers(previous.getNaturalId()));
 			previousVotersNodes = hashMerkleDao.getLeaves(Merkle.getNameForVoters(previous.getNaturalId()));
-			previousSignaturesNodes = hashMerkleDao.getLeaves(Merkle.getNameForVotes(am.getNaturalId()));
+			previousSignaturesNodes = hashMerkleDao.getLeaves(Merkle.getNameForVotes(previous.getNaturalId()));
 		}
 		// Members
 		createMerkleOfHashes(Merkle.getNameForMembers(am.getNaturalId()), am.getMembersChanges(), previousMembersNodes);
 		// Voters
 		createMerkleOfHashes(Merkle.getNameForVoters(am.getNaturalId()), am.getVotersChanges(), previousVotersNodes);
 		// Signatures
-		createMerkleOfHashes(Merkle.getNameForVotes(am.getNaturalId()), am.getVotersChanges(), previousSignaturesNodes);
+		createMerkleOfHashes(Merkle.getNameForSignatures(am.getNaturalId()), previousSignaturesNodes);
 	}
 	
 	private void createMerkleOfHashes(String name, List<String> changes, List<Node> previousNodes) {
@@ -337,6 +338,14 @@ public class HDCServiceImpl implements HDCService {
 					leaves.remove(index);
 				}
 			}
+		}
+		hashMerkleDao.put(name, leaves);
+	}
+	
+	private void createMerkleOfHashes(String name, List<Node> previousNodes) {
+		List<Hash> leaves = new ArrayList<>();
+		for (Node n : previousNodes) {
+			leaves.add(new Hash(n.getHash()));
 		}
 		hashMerkleDao.put(name, leaves);
 	}

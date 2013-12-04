@@ -299,4 +299,8 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	public static String getNameForVotes(AmendmentId amId) {
 		return String.format("am_%d_%s_votes", amId.getNumber(), amId.getHash());
 	}
+	
+	public static String getNameForSignatures(AmendmentId amId) {
+		return String.format("am_%d_%s_signatures", amId.getNumber(), amId.getHash());
+	}
 }
