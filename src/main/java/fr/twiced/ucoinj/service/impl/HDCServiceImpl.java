@@ -94,9 +94,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Key> viewVoters(AmendmentId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object viewVoters(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchVoters(id, lstart, lend, start, end, extract));
 	}
 
 	@Override

@@ -9,7 +9,7 @@
 	
 	<logger name="org.springframework.test.context.transaction.TransactionalTestExecutionListener" level="WARN" />
 	
-	<root level="info">
+	<root level="warn">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>

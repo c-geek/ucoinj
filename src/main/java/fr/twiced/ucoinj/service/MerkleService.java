@@ -14,4 +14,6 @@ public interface MerkleService {
 	Jsonable searchPubkey(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	Jsonable searchMembers(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+
+	Jsonable searchVoters(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 }

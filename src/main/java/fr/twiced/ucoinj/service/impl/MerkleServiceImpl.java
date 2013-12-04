@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.UniqueMerkle;
 import fr.twiced.ucoinj.bean.Hash;
+import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Node;
@@ -41,6 +42,11 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 	@Override
 	public Merkle<Hash> searchMembers(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
 		return searchMerkle(hashMerkleDao, Merkle.getNameForMembers(amId), lstart, lend, start, end, extract);
+	}
+
+	@Override
+	public Jsonable searchVoters(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return searchMerkle(hashMerkleDao, Merkle.getNameForVoters(amId), lstart, lend, start, end, extract);
 	}
 	
 	private <E extends Merklable> Merkle<E> searchMerkle(
