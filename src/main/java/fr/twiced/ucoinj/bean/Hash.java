@@ -21,5 +21,10 @@ public class Hash implements Merklable {
 	public String getHash() {
 		return hash;
 	}
+	
+	@Override
+	public String toString() {
+		return hash;
+	}
 
 }

@@ -24,6 +24,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.exceptions.BadFormatException;
 import fr.twiced.ucoinj.pgp.Sha1;
 
@@ -261,6 +262,11 @@ public class Amendment implements Jsonable,Hashable,Rawable {
 
 	public void setVotes(List<Vote> votes) {
 		this.votes = votes;
+	}
+	
+	@Transient
+	public AmendmentId getNaturalId() {
+		return new AmendmentId(number, hash);
 	}
 
 	@Transient

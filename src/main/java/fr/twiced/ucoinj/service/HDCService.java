@@ -50,9 +50,14 @@ public interface HDCService {
 	/**
 	 * Get the Merkle of keys fingerprint which were considered as members for given amendment.
 	 * @param id Targeted amendment id.
+	 * @param extract 
+	 * @param end 
+	 * @param start 
+	 * @param lend 
+	 * @param lstart 
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Key> viewMembers(AmendmentId id);
+	Object viewMembers(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the Merkle of keys fingerprint which were considered as voters for given amendment.

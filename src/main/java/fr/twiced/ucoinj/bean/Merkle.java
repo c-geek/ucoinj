@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.pgp.Sha1;
 
 @Entity
@@ -285,5 +286,17 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 			map.put("levels", leaves);
 		}
 		return map;
+	}
+	
+	public static String getNameForMembers(AmendmentId amId) {
+		return String.format("am_%d_%s_members", amId.getNumber(), amId.getHash());
+	}
+	
+	public static String getNameForVoters(AmendmentId amId) {
+		return String.format("am_%d_%s_voters", amId.getNumber(), amId.getHash());
+	}
+	
+	public static String getNameForVotes(AmendmentId amId) {
+		return String.format("am_%d_%s_votes", amId.getNumber(), amId.getHash());
 	}
 }

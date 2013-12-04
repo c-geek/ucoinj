@@ -16,6 +16,8 @@ public interface MultipleMerkleDao<E extends Merklable> extends GenericDao<Merkl
 	
 	E getLeaf(String hash);
 	
+	E getNew(String hash);
+	
 	List<Node> getAll(String name);
 
 	List<Node> getLeaves(String name);
@@ -23,5 +25,9 @@ public interface MultipleMerkleDao<E extends Merklable> extends GenericDao<Merkl
 	List<Node> getLeaves(String name, int start, int end);
 	
 	List<Node> getNodes(String name, int lstart, int lend, int start, int end);
+
+	void put(String name, E pubkey);
+
+	void put(String name, List<E> newLeaves);
 	
 }

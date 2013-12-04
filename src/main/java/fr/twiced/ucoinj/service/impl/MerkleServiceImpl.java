@@ -1,17 +1,20 @@
 package fr.twiced.ucoinj.service.impl;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.UniqueMerkle;
+import fr.twiced.ucoinj.bean.Hash;
+import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
+import fr.twiced.ucoinj.bean.id.AmendmentId;
+import fr.twiced.ucoinj.dao.MerkleOfHashDao;
+import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.dao.impl.GenericDaoImpl;
 import fr.twiced.ucoinj.service.MerkleService;
@@ -22,14 +25,33 @@ import fr.twiced.ucoinj.service.PKSService;
 public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleService {
 	
 	@Autowired
-	private MultipleMerkleDao<PublicKey> pubkeyMerkleDao;
+	private MerkleOfPublicKeyDao pubkeyMerkleDao;
+	
+	@Autowired
+	private MerkleOfHashDao hashMerkleDao;
 	
 	@Autowired
 	private PKSService pksService;
 
 	@Override
 	public Merkle<PublicKey> searchPubkey(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		Merkle<PublicKey> merkle = pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
+		return searchMerkle(pubkeyMerkleDao, UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end, extract);
+	}
+
+	@Override
+	public Merkle<Hash> searchMembers(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return searchMerkle(hashMerkleDao, Merkle.getNameForMembers(amId), lstart, lend, start, end, extract);
+	}
+	
+	private <E extends Merklable> Merkle<E> searchMerkle(
+			MultipleMerkleDao<E> merkleDao,
+			String name,
+			Integer lstart,
+			Integer lend,
+			Integer start,
+			Integer end,
+			Boolean extract) {
+		Merkle<E> merkle = merkleDao.getMerkle(name);
 		if (start == null) {
 			start = 0;
 		}
@@ -37,9 +59,9 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 			end = merkle.getLeavesCount();
 		}
 		if (extract != null && extract) {
-			List<Node> leaves = pubkeyMerkleDao.getLeaves(UniqueMerkle.PUBLIC_KEY.name(), start, end);
+			List<Node> leaves = merkleDao.getLeaves(name, start, end);
 			for (Node n : leaves) {
-				merkle.push(pubkeyMerkleDao.getLeaf(n.getHash()), n.getPosition());
+				merkle.push(merkleDao.getLeaf(n.getHash()), n.getPosition());
 			}
 		} else {
 			if (lstart == null) {
@@ -48,7 +70,7 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 			if (lend == null) {
 				lend = lstart + 1;
 			}
-			List<Node> nodes = pubkeyMerkleDao.getNodes(UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end);
+			List<Node> nodes = merkleDao.getNodes(name, lstart, lend, start, end);
 			for (Node n : nodes) {
 				merkle.putTree(n);
 			}
@@ -58,40 +80,7 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 
 	@Override
 	public void put(PublicKey pubkey) {
-		Merkle<PublicKey> merkle = pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
-		merkle.setRoot(null);
-		merkle.initTrees();
-		pubkeyMerkleDao.save(merkle);
-		List<Node> leaves = pubkeyMerkleDao.getLeaves(UniqueMerkle.PUBLIC_KEY.name());
-		List<Node> allNodesOfPubkeyMerkle = pubkeyMerkleDao.getAll(UniqueMerkle.PUBLIC_KEY.name());
-		for (Node node : allNodesOfPubkeyMerkle) {
-			pubkeyMerkleDao.delete(node);
-		}
-		for (Node n : leaves) {
-			PublicKey pk = new PublicKey();
-			pk.setFingerprint(n.getHash());
-			merkle.push(pk);
-		}
-		merkle.push(pubkey);
-		Map<Integer, Map<Integer, String>> newTree = merkle.buildMerkle();
-		Node rootNode = null;
-		Set<Integer> lines = newTree.keySet();
-		for (Integer line : lines) {
-			Set<Integer> positions = newTree.get(line).keySet();
-			for (Integer position : positions) {
-				Node n = new Node();
-				n.setLine(line);
-				n.setPosition(position);
-				n.setMerkle(merkle);
-				n.setHash(newTree.get(line).get(position));
-				pubkeyMerkleDao.save(n);
-				if (line == 0 && position == 0) {
-					rootNode = n;
-				}
-			}
-		}
-		merkle.setRoot(rootNode);
-		pubkeyMerkleDao.save(merkle);
+		pubkeyMerkleDao.put(UniqueMerkle.PUBLIC_KEY.name(), pubkey);
 	}
 
 	@Override

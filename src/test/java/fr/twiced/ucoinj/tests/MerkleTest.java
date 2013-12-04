@@ -21,7 +21,7 @@ import fr.twiced.ucoinj.UniqueMerkle;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
-import fr.twiced.ucoinj.dao.MultipleMerkleDao;
+import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
 import fr.twiced.ucoinj.service.PKSService;
@@ -41,7 +41,7 @@ public class MerkleTest {
 	private MerkleService merkleService;
 
 	@Autowired
-	private MultipleMerkleDao<PublicKey> pubkeyMerkleDao;
+	private MerkleOfPublicKeyDao pubkeyMerkleDao;
 
 	@Test
 	public void pksAdd1() throws Exception {

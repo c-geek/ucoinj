@@ -1,5 +1,6 @@
 package fr.twiced.ucoinj.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Coin;
+import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
+import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Transaction;
@@ -23,6 +26,7 @@ import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.bean.id.TransactionId;
 import fr.twiced.ucoinj.dao.AmendmentDao;
+import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
 import fr.twiced.ucoinj.dao.VoteDao;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
@@ -59,6 +63,9 @@ public class HDCServiceImpl implements HDCService {
 	
 	@Autowired
 	private MerkleService merkleService;
+	
+	@Autowired
+	private MerkleOfHashDao hashMerkleDao;
 
 	@Override
 	public Object current() {
@@ -82,9 +89,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Key> viewMembers(AmendmentId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object viewMembers(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchMembers(id, lstart, lend, start, end, extract));
 	}
 
 	@Override
@@ -125,8 +131,7 @@ public class HDCServiceImpl implements HDCService {
 		}
 		Amendment storedAm = amendmentDao.getByNumberAndHash(am.getNumber(), am.getHash());
 		if (storedAm == null) {
-			log.info(String.format("Saving new amendment n°%d #%s", am.getNumber(), am.getHash()));
-			amendmentDao.save(am);
+			saveAmendment(am);
 		}
 		storedAm = am;
 		Vote vote = voteDao.getFor(storedAm, pubkey);
@@ -288,6 +293,53 @@ public class HDCServiceImpl implements HDCService {
 	public Transaction transaction(TransactionId id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	private void saveAmendment(Amendment am) {
+		log.info(String.format("Saving new amendment n°%d #%s", am.getNumber(), am.getHash()));
+		// Save entity
+		amendmentDao.save(am);
+		// Now need to compute:
+		// - members
+		// - voters
+		// - signatures (votes of previous)
+		List<Node> previousMembersNodes;
+		List<Node> previousVotersNodes;
+		List<Node> previousSignaturesNodes;
+		if (am.getNumber() == 0) {
+			previousMembersNodes = new ArrayList<Node>();
+			previousVotersNodes = new ArrayList<Node>();
+			previousSignaturesNodes = new ArrayList<Node>();
+		} else {
+			Amendment previous = amendmentDao.getByNumberAndHash(am.getNumber() - 1, am.getPreviousHash());
+			previousMembersNodes = hashMerkleDao.getLeaves(Merkle.getNameForMembers(previous.getNaturalId()));
+			previousVotersNodes = hashMerkleDao.getLeaves(Merkle.getNameForVoters(previous.getNaturalId()));
+			previousSignaturesNodes = hashMerkleDao.getLeaves(Merkle.getNameForVotes(am.getNaturalId()));
+		}
+		// Members
+		createMerkleOfHashes(Merkle.getNameForMembers(am.getNaturalId()), am.getMembersChanges(), previousMembersNodes);
+		// Voters
+		createMerkleOfHashes(Merkle.getNameForVoters(am.getNaturalId()), am.getVotersChanges(), previousVotersNodes);
+		// Signatures
+		createMerkleOfHashes(Merkle.getNameForVotes(am.getNaturalId()), am.getVotersChanges(), previousSignaturesNodes);
+	}
+	
+	private void createMerkleOfHashes(String name, List<String> changes, List<Node> previousNodes) {
+		List<Hash> leaves = new ArrayList<>();
+		for (Node n : previousNodes) {
+			leaves.add(new Hash(n.getHash()));
+		}
+		for (String fingerprint : changes) {
+			if (fingerprint.startsWith("+")) {
+				leaves.add(new Hash(fingerprint.substring(1)));
+			} else {
+				int index = leaves.indexOf(fingerprint.substring(1));
+				if (index != -1) {
+					leaves.remove(index);
+				}
+			}
+		}
+		hashMerkleDao.put(name, leaves);
 	}
 	
 	private Object jsonIt(Jsonable jsonable) {

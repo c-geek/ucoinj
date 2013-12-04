@@ -68,14 +68,14 @@ public class HDCController extends UCoinController {
 	public void current(
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		objectOrNotFound(hdcService.current(), request, response);
+		objectOrNotFound(hdcService.current(), request, response, true);
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/promoted", method = RequestMethod.GET)
 	public void promoted(
 		HttpServletRequest request,
 		HttpServletResponse response) {
-		objectOrNotFound(hdcService.promoted(), request, response);
+		objectOrNotFound(hdcService.promoted(), request, response, true);
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/promoted/{number}", method = RequestMethod.GET)
@@ -83,7 +83,7 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("number") int number) {
-		objectOrNotFound(hdcService.promoted(number), request, response);
+		objectOrNotFound(hdcService.promoted(number), request, response, true);
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/view/{amendment_id}/self", method = RequestMethod.GET)
@@ -91,12 +91,26 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("amendment_id") AmendmentId amId) {
-		objectOrNotFound(hdcService.viewSelf(amId), request, response);
+		objectOrNotFound(hdcService.viewSelf(amId), request, response, true);
 	}
 	
-	private void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response) {
+	@RequestMapping(value = "/hdc/amendments/view/{amendment_id}/members", method = RequestMethod.GET)
+	public void viewMembers(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("amendment_id") AmendmentId amId,
+		Integer lstart,
+		Integer lend,
+		Integer start,
+		Integer end,
+		Boolean extract,
+		Boolean nice) {
+		objectOrNotFound(hdcService.viewMembers(amId, lstart, lend, start, end, extract), request, response, nice);
+	}
+	
+	private void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {
 		if (o != null)
-			sendResult(o, request, response, true);
+			sendResult(o, request, response, nice);
 		else
 			sendError(404, response);
 	}
