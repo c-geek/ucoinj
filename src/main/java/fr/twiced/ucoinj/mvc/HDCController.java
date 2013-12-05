@@ -39,8 +39,9 @@ public class HDCController extends UCoinController {
 	
 	@RequestMapping(value = "/hdc/amendments/votes", method = RequestMethod.GET)
 	public void amendmentGet(
+			HttpServletRequest request,
 			HttpServletResponse response) {
-		sendError(404, response);
+		objectOrNotFound(hdcService.votes(), request, response, true);
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/votes", method = RequestMethod.POST)

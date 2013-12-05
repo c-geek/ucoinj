@@ -34,5 +34,10 @@ public class AmendmentId implements NaturalId {
 	public void setNumber(int number) {
 		this.number = number;
 	}
+	
+	@Override
+	public String toString() {
+		return number + "-" + hash;
+	}
 
 }

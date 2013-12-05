@@ -1,5 +1,7 @@
 package fr.twiced.ucoinj.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,6 +43,16 @@ public class VoteDaoImpl extends GenericDaoImpl<Vote> implements VoteDao {
 				.setParameter("pubkeyId", pubkey.getId())
 				.setParameter("sigId", sig.getId())
 				.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Object[]> getCount() {
+		return (List<Object[]>) getSession().createQuery("select am.number, am.hash, count(am)"
+				+ "from Vote v "
+				+ "left join v.amendment am "
+				+ "group by am.number, am.hash")
+				.list();
 	}
 
 }

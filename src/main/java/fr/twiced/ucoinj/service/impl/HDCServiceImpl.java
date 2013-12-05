@@ -1,6 +1,7 @@
 package fr.twiced.ucoinj.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -115,9 +116,21 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Map<AmendmentId, Integer> votes() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object votes() {
+		List<Object[]> list = voteDao.getCount();
+		Map<Integer, Map<String, Long>> result = new HashMap<>();
+		for (Object[] o : list) {
+			Integer number = (Integer) o[0];
+			String hash = (String) o[1];
+			Long count = (Long) o[2];
+			if (!result.containsKey(number)) {
+				result.put(number, new HashMap<String, Long>());
+			}
+			result.get(number).put(hash, count);
+		}
+		Map<String, Object> map = new HashMap<>();
+		map.put("amendments", result);
+		return map;
 	}
 
 	@Override
@@ -150,7 +163,7 @@ public class HDCServiceImpl implements HDCService {
 			if (vote == null) {
 				vote = new Vote();
 				Amendment current = amendmentDao.getCurrent();
-				if (current == null || current.getId().equals(previous.getId())) {
+				if (current == null || (previous != null && current.getId().equals(previous.getId()))) {
 					mayBePromoted = true;
 				}
 			}

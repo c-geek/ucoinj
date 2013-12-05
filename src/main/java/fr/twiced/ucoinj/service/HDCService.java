@@ -1,7 +1,6 @@
 package fr.twiced.ucoinj.service;
 
 import java.util.List;
-import java.util.Map;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Coin;
@@ -94,7 +93,7 @@ public interface HDCService {
 	 * Get an index giving the number of votes for each amendment id.
 	 * @return A map giving number of votes per amendment id.
 	 */
-	Map<AmendmentId, Integer> votes();
+	Object votes();
 	
 	/**
 	 * Add a vote for given amendment.
