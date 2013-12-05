@@ -32,7 +32,7 @@ public interface HDCService {
 	 * Get the Merkle of signatures justifying current amendment's promotion.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Signature> currentVotes();
+	Object viewCurrentVoters(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Shortcut for current().

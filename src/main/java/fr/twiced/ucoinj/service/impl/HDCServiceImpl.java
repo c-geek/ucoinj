@@ -84,9 +84,9 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Signature> currentVotes() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object viewCurrentVoters(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		Amendment current = amendmentDao.getCurrent();
+		return viewVotes(current.getNaturalId(), lstart, lend, start, end, extract);
 	}
 
 	@Override
