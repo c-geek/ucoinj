@@ -20,6 +20,7 @@ import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
 import fr.twiced.ucoinj.dao.MerkleOfSignatureOfAmendmentDao;
+import fr.twiced.ucoinj.dao.MerkleOfVoteOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.dao.impl.GenericDaoImpl;
 import fr.twiced.ucoinj.service.MerkleService;
@@ -37,6 +38,9 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 	
 	@Autowired
 	private MerkleOfSignatureOfAmendmentDao signatureMerkleDao;
+	
+	@Autowired
+	private MerkleOfVoteOfAmendmentDao voteMerkleDao;
 	
 	@Autowired
 	private PKSService pksService;
@@ -63,7 +67,7 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 
 	@Override
 	public Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(signatureMerkleDao, amId, Merkle.getNameForVotes(amId), lstart, lend, start, end, extract);
+		return searchMerkle(voteMerkleDao, amId, Merkle.getNameForVotes(amId), lstart, lend, start, end, extract);
 	}
 	
 	private <E extends Merklable, N extends NaturalId> Merkle<E> searchMerkle(

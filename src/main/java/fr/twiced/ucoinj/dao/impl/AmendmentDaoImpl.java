@@ -70,4 +70,19 @@ public class AmendmentDaoImpl extends GenericDaoImpl<Amendment> implements Amend
 				.uniqueResult();
 	}
 
+	@Override
+	public Signature getVote(AmendmentId natId, String hash) {
+		Amendment targeted = getByAmendmentId(natId);
+		return (Signature) getSession().createQuery("select s from Vote v "
+				+ "left join v.signature s "
+				+ "left join v.amendment a "
+				+ "where a.number = :number "
+				+ "and a.hash = :amHash "
+				+ "and s.hash = :sigHash")
+				.setParameter("number", targeted.getNumber())
+				.setParameter("amHash", targeted.getHash())
+				.setParameter("sigHash", hash)
+				.uniqueResult();
+	}
+
 }

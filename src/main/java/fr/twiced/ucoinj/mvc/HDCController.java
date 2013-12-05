@@ -23,11 +23,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
+import fr.twiced.ucoinj.dao.AmendmentDao;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.PGPService;
 
 @Controller
 public class HDCController extends UCoinController {
+	
+	@Autowired
+	private AmendmentDao amendmentDao;
 	
 	@Autowired
 	private HDCService hdcService;
@@ -62,6 +66,20 @@ public class HDCController extends UCoinController {
 			e.printStackTrace();
 			sendError(400, response);
 		}
+	}
+	
+	@RequestMapping(value = "/hdc/amendments/current/votes", method = RequestMethod.GET)
+	public void viewCurrentVotes(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		Integer lstart,
+		Integer lend,
+		Integer start,
+		Integer end,
+		Boolean extract,
+		Boolean nice) {
+		Amendment current = amendmentDao.getCurrent();
+		viewVotes(request, response, current.getNaturalId(), lstart, lend, start, end, extract, nice);
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/current", method = RequestMethod.GET)

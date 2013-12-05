@@ -18,4 +18,6 @@ public interface AmendmentDao extends GenericDao<Amendment> {
 
 	Signature getSignature(AmendmentId natId, String hash);
 
+	Signature getVote(AmendmentId natId, String hash);
+
 }
