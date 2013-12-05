@@ -1,7 +1,6 @@
 package fr.twiced.ucoinj.bean;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
@@ -43,7 +40,7 @@ public class Amendment extends UCoinEntity<AmendmentId> implements Jsonable,Hash
 	private Integer version;
 	private String currency;
 	private Integer number;
-	private Date generatedOn;
+	private Long generatedOn;
 	private Integer dividend;
 	private Integer coinMinimalPower;
 	private Integer nextRequiredVotes;
@@ -106,8 +103,8 @@ public class Amendment extends UCoinEntity<AmendmentId> implements Jsonable,Hash
 		return number;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public Date getGeneratedOn() {
+	@Column(nullable = false)
+	public Long getGeneratedOn() {
 		return generatedOn;
 	}
 
@@ -196,7 +193,7 @@ public class Amendment extends UCoinEntity<AmendmentId> implements Jsonable,Hash
 		this.number = number;
 	}
 
-	public void setGeneratedOn(Date generatedOn) {
+	public void setGeneratedOn(Long generatedOn) {
 		this.generatedOn = generatedOn;
 	}
 
@@ -304,7 +301,7 @@ public class Amendment extends UCoinEntity<AmendmentId> implements Jsonable,Hash
 		sb.append(String.format("Version: %d", version) + CARRIAGE_RETURN);
 		sb.append(String.format("Currency: %s", currency) + CARRIAGE_RETURN);
 		sb.append(String.format("Number: %d", number) + CARRIAGE_RETURN);
-		sb.append(String.format("GeneratedOn: %d", generatedOn.getTime()) + CARRIAGE_RETURN);
+		sb.append(String.format("GeneratedOn: %d", generatedOn) + CARRIAGE_RETURN);
 		if (dividend != null)
 			sb.append(String.format("UniversalDividend: %d", dividend) + CARRIAGE_RETURN);
 		if (coinMinimalPower != null)
@@ -375,7 +372,7 @@ public class Amendment extends UCoinEntity<AmendmentId> implements Jsonable,Hash
 			version = Integer.parseInt(m.group(1));
 			currency = m.group(2);
 			number = Integer.parseInt(m.group(3));
-			generatedOn = new Date(Long.parseLong(m.group(4)));
+			generatedOn = Long.parseLong(m.group(4));
 			if (m.group(5) != null)
 				dividend = Integer.parseInt(m.group(6));
 			if (m.group(7) != null)
