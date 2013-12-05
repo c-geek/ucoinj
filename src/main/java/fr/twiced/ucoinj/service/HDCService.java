@@ -113,7 +113,7 @@ public interface HDCService {
 	 * @param id Targeted amendment id.
 	 * @return Merkle resource of null if it does not exist.
 	 */
-	Merkle<Signature> votes(AmendmentId id);
+	Object viewVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get a list of coins owned by targeted key.

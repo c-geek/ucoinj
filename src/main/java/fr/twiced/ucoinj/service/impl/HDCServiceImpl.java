@@ -110,6 +110,11 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
+	public Object viewVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchVotes(amId, lstart, lend, start, end, extract));
+	}
+
+	@Override
 	public Map<AmendmentId, Integer> votes() {
 		// TODO Auto-generated method stub
 		return null;
@@ -173,12 +178,6 @@ public class HDCServiceImpl implements HDCService {
 				}
 			}
 		}
-	}
-
-	@Override
-	public Merkle<Signature> votes(AmendmentId id) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
