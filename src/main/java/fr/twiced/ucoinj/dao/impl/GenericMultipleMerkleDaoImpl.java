@@ -16,6 +16,7 @@ import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.dao.NodeDao;
 import fr.twiced.ucoinj.dao.PublicKeyDao;
+import fr.twiced.ucoinj.exceptions.RefusedDataException;
 
 @Repository
 @Transactional
@@ -87,14 +88,21 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 	}
 
 	@Override
-	public void put(String name, E newLeaf) {
+	public Merkle<E> put(String name, E newLeaf) {
 		List<E> newLeaves = new ArrayList<>();
 		newLeaves.add(newLeaf);
-		put(name, newLeaves);
+		return put(name, newLeaves);
+	}
+	
+	@Override
+	public Merkle<E> put(String name, E pubkey, String rootCheck) throws RefusedDataException {
+		Merkle<E> merkle = put(name, pubkey);
+		checkRootMatches(merkle, rootCheck);
+		return merkle;
 	}
 
 	@Override
-	public void put(String name, List<E> newLeaves) {
+	public Merkle<E> put(String name, List<E> newLeaves) {
 		Merkle<E> merkle = getMerkle(name);
 		// Clear merkle data
 		merkle.setRoot(null);
@@ -135,5 +143,19 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 		}
 		merkle.setRoot(rootNode);
 		save(merkle);
+		return merkle;
+	}
+	
+	@Override
+	public Merkle<E> put(String name, List<E> newLeaves, String rootCheck) throws RefusedDataException {
+		Merkle<E> merkle = put(name, newLeaves);
+		checkRootMatches(merkle, rootCheck);
+		return merkle;
+	}
+	
+	private void checkRootMatches(Merkle<E> merkle, String rootCheck) throws RefusedDataException {
+		if (merkle.getRoot().getHash() != rootCheck) {
+			throw new RefusedDataException(String.format("Merkle does not match root %s", rootCheck));
+		}
 	}
 }

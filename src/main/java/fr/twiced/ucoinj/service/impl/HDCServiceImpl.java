@@ -295,7 +295,7 @@ public class HDCServiceImpl implements HDCService {
 		return null;
 	}
 	
-	private void saveAmendment(Amendment am) {
+	private void saveAmendment(Amendment am) throws RefusedDataException {
 		log.info(String.format("Saving new amendment n°%d #%s", am.getNumber(), am.getHash()));
 		// Save entity
 		amendmentDao.save(am);
@@ -303,25 +303,22 @@ public class HDCServiceImpl implements HDCService {
 		// - members
 		// - voters
 		// - signatures (votes of previous)
-		List<Node> previousMembersNodes;
-		List<Node> previousVotersNodes;
-		List<Node> previousSignaturesNodes;
-		if (am.getNumber() == 0) {
-			previousMembersNodes = new ArrayList<Node>();
-			previousVotersNodes = new ArrayList<Node>();
-			previousSignaturesNodes = new ArrayList<Node>();
-		} else {
+		List<Node> previousMembersNodes = new ArrayList<Node>();
+		List<Node> previousVotersNodes = new ArrayList<Node>();
+		List<Node> previousSignaturesNodes = new ArrayList<Node>();
+		if (am.getNumber() > 0) {
 			Amendment previous = amendmentDao.getByNumberAndHash(am.getNumber() - 1, am.getPreviousHash());
+			previousSignaturesNodes = hashMerkleDao.getLeaves(Merkle.getNameForVotes(previous.getNaturalId()));
+			// Signatures (early test)
+			createMerkleOfHashes(Merkle.getNameForSignatures(am.getNaturalId()), previousSignaturesNodes, am.getPreviousVotesRoot());
+			// Members & Voters
 			previousMembersNodes = hashMerkleDao.getLeaves(Merkle.getNameForMembers(previous.getNaturalId()));
 			previousVotersNodes = hashMerkleDao.getLeaves(Merkle.getNameForVoters(previous.getNaturalId()));
-			previousSignaturesNodes = hashMerkleDao.getLeaves(Merkle.getNameForVotes(previous.getNaturalId()));
 		}
 		// Members
 		createMerkleOfHashes(Merkle.getNameForMembers(am.getNaturalId()), am.getMembersChanges(), previousMembersNodes);
 		// Voters
 		createMerkleOfHashes(Merkle.getNameForVoters(am.getNaturalId()), am.getVotersChanges(), previousVotersNodes);
-		// Signatures
-		createMerkleOfHashes(Merkle.getNameForSignatures(am.getNaturalId()), previousSignaturesNodes);
 	}
 	
 	private void createMerkleOfHashes(String name, List<String> changes, List<Node> previousNodes) {
@@ -342,12 +339,12 @@ public class HDCServiceImpl implements HDCService {
 		hashMerkleDao.put(name, leaves);
 	}
 	
-	private void createMerkleOfHashes(String name, List<Node> previousNodes) {
+	private void createMerkleOfHashes(String name, List<Node> previousNodes, String checkHash) throws RefusedDataException {
 		List<Hash> leaves = new ArrayList<>();
 		for (Node n : previousNodes) {
 			leaves.add(new Hash(n.getHash()));
 		}
-		hashMerkleDao.put(name, leaves);
+		hashMerkleDao.put(name, leaves, checkHash);
 	}
 	
 	private Object jsonIt(Jsonable jsonable) {

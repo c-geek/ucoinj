@@ -6,6 +6,7 @@ import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.NaturalId;
 import fr.twiced.ucoinj.bean.Node;
+import fr.twiced.ucoinj.exceptions.RefusedDataException;
 
 public interface MultipleMerkleDao<E extends Merklable, N extends NaturalId> extends GenericDao<Merkle<?>> {
 
@@ -27,8 +28,12 @@ public interface MultipleMerkleDao<E extends Merklable, N extends NaturalId> ext
 	
 	List<Node> getNodes(String name, int lstart, int lend, int start, int end);
 
-	void put(String name, E pubkey);
+	Merkle<E> put(String name, E pubkey);
 
-	void put(String name, List<E> newLeaves);
+	Merkle<E> put(String name, E pubkey, String rootCheck) throws RefusedDataException;
+
+	Merkle<E> put(String name, List<E> newLeaves);
+
+	Merkle<E> put(String name, List<E> newLeaves, String rootCheck) throws RefusedDataException;
 	
 }
