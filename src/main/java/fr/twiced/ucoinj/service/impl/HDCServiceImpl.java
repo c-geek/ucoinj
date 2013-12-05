@@ -136,9 +136,10 @@ public class HDCServiceImpl implements HDCService {
 		Amendment storedAm = amendmentDao.getByNumberAndHash(am.getNumber(), am.getHash());
 		if (storedAm == null) {
 			saveAmendment(am);
+		} else {
+			am = storedAm;
 		}
-		storedAm = am;
-		Vote vote = voteDao.getFor(storedAm, pubkey);
+		Vote vote = voteDao.getFor(am, pubkey);
 		if(vote != null && vote.getSignature().isMoreRecentThan(sig)){
 			throw new ObsoleteDataException("A more recent vote is already stored");
 		} else if (vote == null || vote.getSignature().isLessRecentThan(sig)) {

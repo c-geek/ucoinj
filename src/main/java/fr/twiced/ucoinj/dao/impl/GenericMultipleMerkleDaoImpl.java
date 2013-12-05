@@ -154,8 +154,8 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 	}
 	
 	private void checkRootMatches(Merkle<E> merkle, String rootCheck) throws RefusedDataException {
-		if (merkle.getRoot().getHash() != rootCheck) {
-			throw new RefusedDataException(String.format("Merkle does not match root %s", rootCheck));
+		if (!merkle.getRoot().getHash().equals(rootCheck)) {
+			throw new RefusedDataException(String.format("Merkle's root %s does not match root %s", merkle.getRoot().getHash(), rootCheck));
 		}
 	}
 }
