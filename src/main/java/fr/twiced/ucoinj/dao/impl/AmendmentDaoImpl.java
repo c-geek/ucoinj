@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Amendment;
+import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.dao.AmendmentDao;
 
@@ -50,6 +51,22 @@ public class AmendmentDaoImpl extends GenericDaoImpl<Amendment> implements Amend
 				+ "and a.hash = :hash")
 				.setParameter("number", am.getNumber())
 				.setParameter("hash", am.getHash())
+				.uniqueResult();
+	}
+
+	@Override
+	public Signature getSignature(AmendmentId natId, String hash) {
+		Amendment targeted = getByAmendmentId(natId);
+		Amendment previous = getByNumberAndHash(targeted.getNumber()-1, targeted.getPreviousHash());
+		return (Signature) getSession().createQuery("select s from Vote v "
+				+ "left join v.signature s "
+				+ "left join v.amendment a "
+				+ "where a.number = :number "
+				+ "and a.hash = :amHash "
+				+ "and s.hash = :sigHash")
+				.setParameter("number", previous.getNumber())
+				.setParameter("amHash", previous.getHash())
+				.setParameter("sigHash", hash)
 				.uniqueResult();
 	}
 

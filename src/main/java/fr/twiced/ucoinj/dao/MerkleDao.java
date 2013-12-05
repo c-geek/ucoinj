@@ -4,9 +4,10 @@ import java.util.List;
 
 import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
+import fr.twiced.ucoinj.bean.NaturalId;
 import fr.twiced.ucoinj.bean.Node;
 
-public interface MerkleDao<E extends Merklable> extends GenericDao<Merkle<?>> {
+public interface MerkleDao<E extends Merklable, N extends NaturalId> extends GenericDao<Merkle<?>> {
 
 	void delete(Node node);
 
@@ -16,7 +17,7 @@ public interface MerkleDao<E extends Merklable> extends GenericDao<Merkle<?>> {
 	
 	Merkle<E> getMerkle();
 	
-	E getLeaf(String hash);
+	E getLeaf(String hash, N natId);
 	
 	List<Node> getAll();
 

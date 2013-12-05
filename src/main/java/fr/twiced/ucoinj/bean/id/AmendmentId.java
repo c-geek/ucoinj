@@ -2,8 +2,10 @@ package fr.twiced.ucoinj.bean.id;
 
 import javax.persistence.Embeddable;
 
+import fr.twiced.ucoinj.bean.NaturalId;
+
 @Embeddable
-public class AmendmentId {
+public class AmendmentId implements NaturalId {
 
 	private String hash;
 	private int number;

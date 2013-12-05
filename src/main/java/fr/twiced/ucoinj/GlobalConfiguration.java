@@ -18,7 +18,7 @@ public class GlobalConfiguration {
 
 	private String currency = "";
 	private String privateKey = "";
-	private String DBURL = "jdbc:mysql://localhost:3306/ucoinj";
+	private String DBURL = "jdbc:mysql://localhost:3306/ucoinj?createDatabaseIfNotExist=true";
 	private String DBUsername = "root";
 	private String DBPassword = "";
 	private PGPPrivateKey PGPPrivateKey;

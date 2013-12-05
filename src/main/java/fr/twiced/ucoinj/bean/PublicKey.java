@@ -27,12 +27,13 @@ import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.util.encoders.Hex;
 
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.bean.json.JSONPublicKey;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 
 @Entity
 @Table(name = "publickey", uniqueConstraints = { @UniqueConstraint(columnNames = "fpr") })
-public class PublicKey extends UCoinEntity implements Merklable {
+public class PublicKey extends UCoinEntity<KeyId> implements Merklable {
 
 	private Integer id;
 	private String email;
@@ -154,7 +155,6 @@ public class PublicKey extends UCoinEntity implements Merklable {
 		this.signature = signature;
 	}
 
-	@Override
 	@Transient
 	public Object getJSONObject() {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -180,5 +180,11 @@ public class PublicKey extends UCoinEntity implements Merklable {
 
 	public void setPGPPublicKey(PGPPublicKey pGPPublicKey) {
 		PGPPublicKey = pGPPublicKey;
+	}
+
+	@Transient
+	@Override
+	public KeyId getNaturalId() {
+		return new KeyId(this.fingerprint);
 	}
 }

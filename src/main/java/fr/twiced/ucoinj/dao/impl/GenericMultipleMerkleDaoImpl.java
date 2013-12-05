@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
+import fr.twiced.ucoinj.bean.NaturalId;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.dao.NodeDao;
@@ -18,7 +19,7 @@ import fr.twiced.ucoinj.dao.PublicKeyDao;
 
 @Repository
 @Transactional
-public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable> extends GenericMerkleDaoImpl<E> implements MultipleMerkleDao<E> {
+public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extends NaturalId> extends GenericMerkleDaoImpl<E> implements MultipleMerkleDao<E,N> {
 
 	@Autowired
 	private PublicKeyDao pubkeyDao;

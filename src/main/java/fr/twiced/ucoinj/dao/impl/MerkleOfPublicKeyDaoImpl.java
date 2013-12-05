@@ -5,18 +5,19 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.PublicKey;
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
 import fr.twiced.ucoinj.dao.PublicKeyDao;
 
 @Repository
 @Transactional
-public class MerkleOfPublicKeyDaoImpl extends GenericMultipleMerkleDaoImpl<PublicKey> implements MerkleOfPublicKeyDao {
+public class MerkleOfPublicKeyDaoImpl extends GenericMultipleMerkleDaoImpl<PublicKey, KeyId> implements MerkleOfPublicKeyDao {
 
 	@Autowired
 	private PublicKeyDao pubkeyDao;
 
 	@Override
-	public PublicKey getLeaf(String hash) {
+	public PublicKey getLeaf(String hash, KeyId natId) {
 		return pubkeyDao.getByFingerprint(hash);
 	}
 

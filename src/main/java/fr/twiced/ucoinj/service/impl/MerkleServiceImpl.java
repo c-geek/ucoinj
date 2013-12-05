@@ -11,11 +11,15 @@ import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
+import fr.twiced.ucoinj.bean.NaturalId;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
+import fr.twiced.ucoinj.bean.id.HashId;
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
+import fr.twiced.ucoinj.dao.MerkleOfSignatureOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.dao.impl.GenericDaoImpl;
 import fr.twiced.ucoinj.service.MerkleService;
@@ -32,30 +36,34 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 	private MerkleOfHashDao hashMerkleDao;
 	
 	@Autowired
+	private MerkleOfSignatureOfAmendmentDao signatureMerkleDao;
+	
+	@Autowired
 	private PKSService pksService;
 
 	@Override
 	public Merkle<PublicKey> searchPubkey(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(pubkeyMerkleDao, UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end, extract);
+		return searchMerkle(pubkeyMerkleDao, new KeyId(""),UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end, extract);
 	}
 
 	@Override
 	public Merkle<Hash> searchMembers(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(hashMerkleDao, Merkle.getNameForMembers(amId), lstart, lend, start, end, extract);
+		return searchMerkle(hashMerkleDao, new HashId(""), Merkle.getNameForMembers(amId), lstart, lend, start, end, extract);
 	}
 
 	@Override
 	public Jsonable searchVoters(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(hashMerkleDao, Merkle.getNameForVoters(amId), lstart, lend, start, end, extract);
+		return searchMerkle(hashMerkleDao, new HashId(""), Merkle.getNameForVoters(amId), lstart, lend, start, end, extract);
 	}
 
 	@Override
 	public Jsonable searchSignatures(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(hashMerkleDao, Merkle.getNameForSignatures(amId), lstart, lend, start, end, extract);
+		return searchMerkle(signatureMerkleDao, amId, Merkle.getNameForSignatures(amId), lstart, lend, start, end, extract);
 	}
 	
-	private <E extends Merklable> Merkle<E> searchMerkle(
-			MultipleMerkleDao<E> merkleDao,
+	private <E extends Merklable, N extends NaturalId> Merkle<E> searchMerkle(
+			MultipleMerkleDao<E,N> merkleDao,
+			N natId,
 			String name,
 			Integer lstart,
 			Integer lend,
@@ -72,7 +80,7 @@ public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleSer
 		if (extract != null && extract) {
 			List<Node> leaves = merkleDao.getLeaves(name, start, end);
 			for (Node n : leaves) {
-				merkle.push(merkleDao.getLeaf(n.getHash()), n.getPosition());
+				merkle.push(merkleDao.getLeaf(n.getHash(), natId), n.getPosition());
 			}
 		} else {
 			if (lstart == null) {

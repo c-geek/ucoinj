@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +27,7 @@ import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
+import fr.twiced.ucoinj.pgp.Sha1;
 
 @Entity
 @Table(name = "signature")
@@ -32,6 +35,7 @@ public class Signature implements Merklable {
 
 	private Integer id;
 	private String armored;
+	private String hash;
 	private String issuer;
 	private Date sigDate;
 	private ISignature sigObj;
@@ -43,6 +47,7 @@ public class Signature implements Merklable {
 		armored = signatureStream;
 		sigDate = getSigObj().getSignatureDate();
 		issuer = getSigObj().getIssuerKeyId().toUpperCase();
+		hash = new Sha1(armored).getHash();
 	}
 	
 	@Id
@@ -155,16 +160,18 @@ public class Signature implements Merklable {
 		}
 	}
 
-	@Transient
 	@Override
 	public String getHash() {
-		return "";
+		return hash;
 	}
 
 	@Transient
 	@Override
 	public Object getJSON() {
-		return "";
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("issuer", getIssuer());
+		map.put("signature", getArmored());
+		return map;
 	}
 
 	public void setId(Integer id) {
@@ -186,6 +193,9 @@ public class Signature implements Merklable {
 	public void setSigObj(ISignature sigObj) {
 		this.sigObj = sigObj;
 	}
-	
+
+	public void setHash(String hash) {
+		this.hash = hash;
+	}
 	
 }
