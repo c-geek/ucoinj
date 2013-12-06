@@ -83,7 +83,7 @@ public class Signature implements Merklable {
 			if(sigObj == null){
 				PGPObjectFactory pgpObjFactoryA = new PGPObjectFactory(new ArmoredInputStream(new ByteArrayInputStream(armored.getBytes())));
 	
-				// Lecture de la donnée PGP
+				// Lecture de la donnÃ©e PGP
 				Object obj = pgpObjFactoryA.nextObject();
 				
 				if (obj instanceof PGPCompressedData) {

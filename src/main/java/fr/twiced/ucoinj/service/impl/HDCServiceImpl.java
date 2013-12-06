@@ -167,7 +167,7 @@ public class HDCServiceImpl implements HDCService {
 					mayBePromoted = true;
 				}
 			}
-			log.info(String.format("Saving new vote n°%d #%s", am.getNumber(), am.getHash()));
+			log.info(String.format("Saving new vote nÂ°%d #%s", am.getNumber(), am.getHash()));
 			signatureDao.save(sig);
 			vote.setAmendment(am);
 			vote.setPublicKey(pubkey);
@@ -176,7 +176,7 @@ public class HDCServiceImpl implements HDCService {
 			hashMerkleDao.put(Merkle.getNameForVotes(am.getNaturalId()), new Hash(new Sha1(sig.getArmored())));
 			// Promotion
 			if (mayBePromoted) {
-				log.info(String.format("Promoting amendment n°%d #%s as current", am.getNumber(), am.getHash()));
+				log.info(String.format("Promoting amendment nÂ°%d #%s as current", am.getNumber(), am.getHash()));
 				if (am.getNumber() == 0) {
 					// First amendment
 					am.setPromoted(true);
@@ -309,7 +309,7 @@ public class HDCServiceImpl implements HDCService {
 	}
 	
 	private void saveAmendment(Amendment am) throws RefusedDataException {
-		log.info(String.format("Saving new amendment n°%d #%s", am.getNumber(), am.getHash()));
+		log.info(String.format("Saving new amendment nÂ°%d #%s", am.getNumber(), am.getHash()));
 		// Save entity
 		amendmentDao.save(am);
 		// Now need to compute:
