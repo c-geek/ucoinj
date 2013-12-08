@@ -53,6 +53,17 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 		Merkle<?> m = getMerkle(name);
 		return getNodes(name, m.getDepth(), m.getDepth() + 1, start, end);
 	}
+	
+	@Override
+	public boolean hasLeaf(String name, String hash) {
+		Merkle<?> m = getMerkle(name);
+		return !getSession().createQuery("select n from Node n "
+				+ "where n.merkle.id = :merkleId "
+				+ "AND n.hash = :hash")
+				.setParameter("merkleId", m.getId())
+				.setParameter("hash", hash)
+				.list().isEmpty();
+	}
 
 	@SuppressWarnings("unchecked")
 	@Override

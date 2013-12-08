@@ -10,4 +10,9 @@ import fr.twiced.ucoinj.dao.SignatureDao;
 @Transactional
 public class SignatureDaoImpl extends GenericDaoImpl<Signature> implements SignatureDao {
 
+	@Override
+	protected String getEntityName() {
+		return Signature.class.getName();
+	}
+
 }

@@ -39,4 +39,9 @@ public class PublicKeyDaoImpl extends GenericDaoImpl<PublicKey> implements Publi
 		}
 	}
 
+	@Override
+	protected String getEntityName() {
+		return PublicKey.class.getName();
+	}
+
 }

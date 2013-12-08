@@ -1,5 +1,7 @@
 package fr.twiced.ucoinj.dao.impl;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import fr.twiced.ucoinj.dao.GenericDao;
 
 @Repository
 @Transactional
-public class GenericDaoImpl<E> implements GenericDao<E> {
+public abstract class GenericDaoImpl<E> implements GenericDao<E> {
 
 	@Autowired
 	protected SessionFactory sessionFactory;
@@ -37,4 +39,11 @@ public class GenericDaoImpl<E> implements GenericDao<E> {
 		getSession().flush();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<E> getAll() {
+		return getSession().createQuery("from " + getEntityName()).list();
+	}
+
+	protected abstract String getEntityName();
 }

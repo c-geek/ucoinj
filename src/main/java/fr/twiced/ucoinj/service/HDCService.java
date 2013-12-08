@@ -3,7 +3,7 @@ package fr.twiced.ucoinj.service;
 import java.util.List;
 
 import fr.twiced.ucoinj.bean.Amendment;
-import fr.twiced.ucoinj.bean.Coin;
+import fr.twiced.ucoinj.bean.CoinEntry;
 import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Signature;
@@ -119,14 +119,14 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return A list of coin.
 	 */
-	List<Coin> coinList(KeyId id);
+	List<CoinEntry> coinList(KeyId id);
 	
 	/**
 	 * Get the coin of given id.
 	 * @param id Coin's id.
 	 * @return The full coin.
 	 */
-	Coin coinView(CoinId id);
+	CoinEntry coinView(CoinId id);
 	
 	/**
 	 * Get the list of transactions registered for given coin.
@@ -139,8 +139,13 @@ public interface HDCService {
 	 * Processes a transaction. May either store it or throw an UnhandledKeyException
 	 * if node is not concerned by this transaction.
 	 * @param tx Transaction to be processed.
+	 * @param sig Signature of the transaction
+	 * @throws BadSignatureException 
+	 * @throws UnknownPublicKeyException 
+	 * @throws MultiplePublicKeyException 
+	 * @throws RefusedDataException 
 	 */
-	void transactionsProcess(Transaction tx) throws UnhandledKeyException;
+	void transactionsProcess(Transaction tx, Signature sig) throws UnhandledKeyException, BadSignatureException, MultiplePublicKeyException, UnknownPublicKeyException, RefusedDataException;
 	
 	/**
 	 * Get the Merkle of all transactions stored by this node.
@@ -242,5 +247,5 @@ public interface HDCService {
 	 * @param id Targeted transaction's id.
 	 * @return Transaction or null if it does not exist.
 	 */
-	Transaction transaction(TransactionId id);
+	Object transaction(TransactionId id);
 }

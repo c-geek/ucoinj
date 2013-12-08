@@ -85,4 +85,9 @@ public class AmendmentDaoImpl extends GenericDaoImpl<Amendment> implements Amend
 				.uniqueResult();
 	}
 
+	@Override
+	protected String getEntityName() {
+		return Amendment.class.getName();
+	}
+
 }

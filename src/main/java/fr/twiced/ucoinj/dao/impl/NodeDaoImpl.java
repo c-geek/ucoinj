@@ -49,4 +49,9 @@ public class NodeDaoImpl extends GenericDaoImpl<Node> implements NodeDao {
 				.list();
 	}
 
+	@Override
+	protected String getEntityName() {
+		return Node.class.getName();
+	}
+
 }

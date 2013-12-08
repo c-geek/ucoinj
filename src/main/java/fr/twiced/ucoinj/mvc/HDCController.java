@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Signature;
+import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.PGPService;
@@ -162,6 +163,29 @@ public class HDCController extends UCoinController {
 		Boolean extract,
 		Boolean nice) {
 		objectOrNotFound(hdcService.viewVotes(amId, lstart, lend, start, end, extract), request, response, nice);
+	}
+	
+	@RequestMapping(value = "/hdc/transactions/process", method = RequestMethod.POST)
+	public void transactionsProcess(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@RequestParam("transaction") String transactionStream,
+		@RequestParam("signature") String signatureStream,
+		@RequestParam(value = "peer", required = false) String peerFingerprint) {
+		try{
+			Transaction tx = new Transaction(transactionStream);
+			Signature sig = new Signature(signatureStream);
+			hdcService.transactionsProcess(tx, sig);
+			Object recorded = hdcService.transaction(tx.getNaturalId());
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("signature", sig);
+			map.put("raw", tx.getRaw());
+			map.put("transaction", recorded);
+			sendResult(map, request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+			sendError(400, response);
+		}
 	}
 	
 	private void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {

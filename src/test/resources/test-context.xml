@@ -35,7 +35,7 @@ http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
 		<property name="hibernateProperties">
 			<props>
 				<prop key="hibernate.dialect">org.hibernate.dialect.HSQLDialect</prop>
-				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 			</props>
 		</property>
@@ -48,6 +48,10 @@ http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
 				<value>fr.twiced.ucoinj.bean.Node</value>
 				<value>fr.twiced.ucoinj.bean.Amendment</value>
 				<value>fr.twiced.ucoinj.bean.Vote</value>
+				<value>fr.twiced.ucoinj.bean.Key</value>
+				<value>fr.twiced.ucoinj.bean.Coin</value>
+				<value>fr.twiced.ucoinj.bean.CoinEntry</value>
+				<value>fr.twiced.ucoinj.bean.Transaction</value>
 			</list>
 		</property>
 

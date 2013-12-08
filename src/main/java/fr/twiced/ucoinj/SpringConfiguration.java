@@ -13,10 +13,14 @@ import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 
 import fr.twiced.ucoinj.bean.Amendment;
+import fr.twiced.ucoinj.bean.Coin;
+import fr.twiced.ucoinj.bean.CoinEntry;
+import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
+import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.Vote;
 
 @Configuration
@@ -44,7 +48,8 @@ public class SpringConfiguration {
 		sessionFactory.setDataSource(dataSource());
 		sessionFactory.setHibernateProperties(props);
 		Class<?>[] annotatedClasses = new Class<?>[]{
-			Signature.class, PublicKey.class, Node.class, Merkle.class, Amendment.class, Vote.class
+			Signature.class, PublicKey.class, Node.class, Merkle.class, Amendment.class, Vote.class,
+			Key.class, CoinEntry.class, Coin.class, Transaction.class
 		};
 		sessionFactory.setAnnotatedClasses(annotatedClasses);
 		sessionFactory.afterPropertiesSet();

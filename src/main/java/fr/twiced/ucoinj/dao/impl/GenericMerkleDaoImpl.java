@@ -9,4 +9,9 @@ import fr.twiced.ucoinj.bean.Merkle;
 @Transactional
 public class GenericMerkleDaoImpl<E> extends GenericDaoImpl<Merkle<?>> {
 
+	@Override
+	protected String getEntityName() {
+		return Merkle.class.getName();
+	}
+
 }

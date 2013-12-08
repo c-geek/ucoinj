@@ -19,7 +19,7 @@ public interface MerkleDao<E extends Merklable, N extends NaturalId> extends Gen
 	
 	E getLeaf(String hash, N natId);
 	
-	List<Node> getAll();
+	List<Node> getAllNodes();
 
 	List<Node> getLeaves();
 

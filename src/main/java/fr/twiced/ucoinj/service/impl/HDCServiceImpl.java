@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Amendment;
-import fr.twiced.ucoinj.bean.Coin;
+import fr.twiced.ucoinj.bean.CoinEntry;
 import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Key;
@@ -27,8 +27,10 @@ import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.bean.id.TransactionId;
 import fr.twiced.ucoinj.dao.AmendmentDao;
+import fr.twiced.ucoinj.dao.KeyDao;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
+import fr.twiced.ucoinj.dao.TransactionDao;
 import fr.twiced.ucoinj.dao.VoteDao;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
 import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
@@ -41,6 +43,10 @@ import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
 import fr.twiced.ucoinj.service.PublicKeyService;
+import fr.twiced.ucoinj.service.tx.FusionTransactionProcessor;
+import fr.twiced.ucoinj.service.tx.IssuanceTransactionProcessor;
+import fr.twiced.ucoinj.service.tx.TransactionProcessor;
+import fr.twiced.ucoinj.service.tx.TransfertTransactionProcessor;
 
 @Service
 @Transactional
@@ -59,6 +65,12 @@ public class HDCServiceImpl implements HDCService {
 
 	@Autowired
 	private SignatureDao signatureDao;
+
+	@Autowired
+	private KeyDao keyDao;
+
+	@Autowired
+	private TransactionDao txDao;
 	
 	@Autowired
 	private PGPService pgpService;
@@ -68,6 +80,15 @@ public class HDCServiceImpl implements HDCService {
 	
 	@Autowired
 	private MerkleOfHashDao hashMerkleDao;
+	
+	@Autowired
+	private IssuanceTransactionProcessor issuanceTxProcessor;
+	
+	@Autowired
+	private TransfertTransactionProcessor transfertTxProcessor;
+	
+	@Autowired
+	private FusionTransactionProcessor fusionTxProcessor;
 
 	@Override
 	public Object current() {
@@ -195,13 +216,13 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public List<Coin> coinList(KeyId id) {
+	public List<CoinEntry> coinList(KeyId id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Coin coinView(CoinId id) {
+	public CoinEntry coinView(CoinId id) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -213,9 +234,34 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public void transactionsProcess(Transaction tx) throws UnhandledKeyException {
-		// TODO Auto-generated method stub
-		
+	public void transactionsProcess(Transaction tx, Signature sig) throws UnhandledKeyException, BadSignatureException, MultiplePublicKeyException, UnknownPublicKeyException, RefusedDataException {
+		PublicKey pubkey = pubkeyService.getWorking(pubkeyService.getBySignature(sig));
+		if (!sig.verify(pubkey, tx.getRaw())) {
+			throw new BadSignatureException("Bad signature for transaction");
+		}
+		// Already stored?
+		if (txDao.getByIssuerAndNumber(tx.getSender(), tx.getNumber()) == null) {
+			// No, so let's process this transaction
+			TransactionProcessor txProcessor = getTransactionProcessor(tx);
+			txProcessor.store(tx);
+			// Don't forget to update transaction's Merkles (for indexing it)
+			txProcessor.updateMerkles(tx);
+		}
+	}
+	
+	private TransactionProcessor getTransactionProcessor(Transaction tx) {
+		TransactionProcessor processor;
+		switch (tx.getType()) {
+		case FUSION:
+			processor = fusionTxProcessor;
+		case ISSUANCE:
+			processor = issuanceTxProcessor;
+		case TRANSFER:
+		default:
+			processor = transfertTxProcessor;
+			break;
+		}
+		return processor;
 	}
 
 	@Override
@@ -303,9 +349,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Transaction transaction(TransactionId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transaction(TransactionId id) {
+		return txDao.getByIssuerAndNumber(id.getSender(), id.getNumber()).getJSON();
 	}
 	
 	private void saveAmendment(Amendment am) throws RefusedDataException {

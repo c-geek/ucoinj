@@ -22,13 +22,12 @@ import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
 import fr.twiced.ucoinj.dao.MerkleOfSignatureOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MerkleOfVoteOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
-import fr.twiced.ucoinj.dao.impl.GenericDaoImpl;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PKSService;
 
 @Service
 @Transactional
-public class MerkleServiceImpl extends GenericDaoImpl<Node> implements MerkleService {
+public class MerkleServiceImpl implements MerkleService {
 	
 	@Autowired
 	private MerkleOfPublicKeyDao pubkeyMerkleDao;

@@ -21,6 +21,8 @@ public interface MultipleMerkleDao<E extends Merklable, N extends NaturalId> ext
 	E getNew(String hash);
 	
 	List<Node> getAll(String name);
+	
+	boolean hasLeaf(String name, String hash);
 
 	List<Node> getLeaves(String name);
 

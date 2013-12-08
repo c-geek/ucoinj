@@ -30,8 +30,6 @@ import fr.twiced.ucoinj.pgp.Sha1;
 		@UniqueConstraint(columnNames = {"number" , "hash"})
 })
 public class Amendment extends UCoinEntity<AmendmentId> implements Jsonable,Hashable,Rawable {
-	
-	private final static String CARRIAGE_RETURN = "\r\n";
 
 	private Integer id;
 	private String hash;

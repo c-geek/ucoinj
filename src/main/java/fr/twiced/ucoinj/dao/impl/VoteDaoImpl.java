@@ -55,4 +55,9 @@ public class VoteDaoImpl extends GenericDaoImpl<Vote> implements VoteDao {
 				.list();
 	}
 
+	@Override
+	protected String getEntityName() {
+		return Vote.class.getName();
+	}
+
 }

@@ -1,7 +1,11 @@
 package fr.twiced.ucoinj.dao;
 
+import java.util.List;
+
 
 public interface GenericDao<E> {
+	
+	List<E> getAll();
 
 	void save(E entity);
 	
