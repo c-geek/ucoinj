@@ -117,7 +117,7 @@ public class TransactionTest {
 			"2E69197FAB029D8669EF85E82457A1587CA0ED9C-0-1-1-A-1\r\n" +
 			"Comment:\r\n";
 
-		Transaction tx = new Transaction(issuanceTx);
+		Transaction tx = new Transaction(issuanceTx, new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
 		Assert.assertNotNull(tx);
 		Assert.assertEquals(new Integer(1), tx.getVersion());
 		Assert.assertEquals(new Integer(0), tx.getNumber());
@@ -126,6 +126,29 @@ public class TransactionTest {
 		Assert.assertEquals("2E69197FAB029D8669EF85E82457A1587CA0ED9C", tx.getRecipient());
 		Assert.assertEquals("", tx.getComment());
 		Assert.assertEquals(TransactionType.ISSUANCE, tx.getType());
+		Assert.assertEquals("18F353A44BD8C223F5D943AE6FF9ABB7C9F16DFB", tx.getHash());
+		
+		String issuanceTx2 = "Version: 1\r\n"
+				+ "Currency: beta_brousouf\r\n"
+				+ "Sender: 2E69197FAB029D8669EF85E82457A1587CA0ED9C\r\n"
+				+ "Number: 1\r\n"
+				+ "PreviousHash: 18F353A44BD8C223F5D943AE6FF9ABB7C9F16DFB\r\n"
+				+ "Recipient: 2E69197FAB029D8669EF85E82457A1587CA0ED9C\r\n"
+				+ "Type: ISSUANCE\r\n"
+				+ "Coins:\r\n"
+				+ "2E69197FAB029D8669EF85E82457A1587CA0ED9C-1-1-2-A-1\r\n"
+				+ "Comment:\r\nSome second transaction !";
+
+		Transaction tx2 = new Transaction(issuanceTx2, new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
+		Assert.assertNotNull(tx2);
+		Assert.assertEquals(new Integer(1), tx2.getVersion());
+		Assert.assertEquals(new Integer(1), tx2.getNumber());
+		Assert.assertEquals("beta_brousouf", tx2.getCurrency());
+		Assert.assertEquals("18F353A44BD8C223F5D943AE6FF9ABB7C9F16DFB", tx2.getPreviousHash());
+		Assert.assertEquals("2E69197FAB029D8669EF85E82457A1587CA0ED9C", tx2.getSender());
+		Assert.assertEquals("2E69197FAB029D8669EF85E82457A1587CA0ED9C", tx2.getRecipient());
+		Assert.assertEquals("Some second transaction !", tx2.getComment());
+		Assert.assertEquals(TransactionType.ISSUANCE, tx2.getType());
 	}
 	
 	@Test
@@ -145,6 +168,7 @@ public class TransactionTest {
 		}));
 		t1.setComment("");
 		t1.setHash(new Sha1(t1.getRaw()).getHash());
+		t1.setSignature(new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
 		issuanceTxProcessor.store(t1);
 		Assert.assertNotNull(txDao.getByIssuerAndNumber("2E69197FAB029D8669EF85E82457A1587CA0ED9C", 0));
 		Assert.assertNull(txDao.getByIssuerAndNumber("2E69197FAB029D8669EF85E82457A1587CA0ED9C", 1));
@@ -174,6 +198,8 @@ public class TransactionTest {
 				new CoinEntry(new CoinId("2E69197FAB029D8669EF85E82457A1587CA0ED9C", 3, 1, 0, TransactionOrigin.AMENDMENT, 2))
 		}));
 		t1.setComment("");
+		// Random signature will be OK
+		t1.setSignature(new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
 		t1.setHash(new Sha1(t1.getRaw()).getHash());
 		issuanceTxProcessor.store(t1);
 	}
@@ -238,6 +264,7 @@ public class TransactionTest {
 		}));
 		t1.setComment("");
 		t1.setHash(new Sha1(t1.getRaw()).getHash());
+		t1.setSignature(new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
 		issuanceTxProcessor.store(t1);
 		Assert.assertNotNull(txDao.getByIssuerAndNumber("2E69197FAB029D8669EF85E82457A1587CA0ED9C", 0));
 		Assert.assertNull(txDao.getByIssuerAndNumber("2E69197FAB029D8669EF85E82457A1587CA0ED9C", 1));
@@ -288,6 +315,7 @@ public class TransactionTest {
 		}));
 		t1.setComment("");
 		t1.setHash(new Sha1(t1.getRaw()).getHash());
+		t1.setSignature(new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
 		issuanceTxProcessor.store(t1);
 		// Transfers 2 to Cat
 		Transaction t2 = new Transaction();
@@ -306,6 +334,7 @@ public class TransactionTest {
 		}));
 		t2.setComment("Paying Cat");
 		t2.setHash(new Sha1(t2.getRaw()).getHash());
+		t2.setSignature(new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
 		transfertTxProcessor.store(t2);
 		// Fusion of the 2 lasts
 		Transaction t3 = new Transaction();
@@ -323,6 +352,7 @@ public class TransactionTest {
 		}));
 		t3.setComment("Paying Cat");
 		t3.setHash(new Sha1(t3.getRaw()).getHash());
+		t3.setSignature(new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
 		fusionTxProcessor.store(t3);
 		// Transfer of the fusioned coin
 		Transaction t4 = new Transaction();
@@ -338,6 +368,7 @@ public class TransactionTest {
 		}));
 		t4.setComment("Paying Cat again");
 		t4.setHash(new Sha1(t4.getRaw()).getHash());
+		t4.setSignature(new Signature(readFile(getClass().getResource("/data/signatures/pubkeys/tobi.asc"))));
 		transfertTxProcessor.store(t4);
 		// Tests existing coins
 		Assert.assertNotNull(coinDao.getByIssuerAndNumber("2E69197FAB029D8669EF85E82457A1587CA0ED9C", 0));

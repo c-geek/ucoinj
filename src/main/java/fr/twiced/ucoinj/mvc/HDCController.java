@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.openpgp.PGPException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -30,6 +32,8 @@ import fr.twiced.ucoinj.service.PGPService;
 
 @Controller
 public class HDCController extends UCoinController {
+
+    private static final Logger log = LoggerFactory.getLogger(HDCController.class);
 	
 	@Autowired
 	private HDCService hdcService;
@@ -174,8 +178,8 @@ public class HDCController extends UCoinController {
 		@RequestParam("signature") String signatureStream,
 		@RequestParam(value = "peer", required = false) String peerFingerprint) {
 		try{
-			Transaction tx = new Transaction(transactionStream);
 			Signature sig = new Signature(signatureStream);
+			Transaction tx = new Transaction(transactionStream, sig);
 			hdcService.transactionsProcess(tx, sig);
 			Object recorded = hdcService.transaction(tx.getNaturalId());
 			Map<String, Object> map = new HashMap<String, Object>();
@@ -184,7 +188,7 @@ public class HDCController extends UCoinController {
 			map.put("transaction", recorded);
 			sendResult(map, request, response);
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.warn(e.getMessage());
 			sendError(400, e.getMessage(), response);
 		}
 	}
@@ -218,6 +222,14 @@ public class HDCController extends UCoinController {
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint) {
 		objectOrNotFound(hdcService.transactionsLastIssuanceOfSender(new KeyId(fingerprint)), request, response, true);
+	}
+	
+	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/last", method = RequestMethod.GET)
+	public void txLastofSender(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint) {
+		objectOrNotFound(hdcService.transactionsLastOfSender(new KeyId(fingerprint)), request, response, true);
 	}
 	
 	private void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {

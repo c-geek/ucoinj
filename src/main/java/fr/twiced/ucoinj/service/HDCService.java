@@ -184,7 +184,7 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return The last stored transaction of targeted key.
 	 */
-	Transaction transactionsLastOfSender(KeyId id);
+	Object transactionsLastOfSender(KeyId id);
 
 	/**
 	 * Get the last n transactions stored for targeted key.

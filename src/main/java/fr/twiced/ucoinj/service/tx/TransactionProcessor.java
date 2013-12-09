@@ -48,7 +48,7 @@ public abstract class TransactionProcessor {
 				throw new RefusedDataException(String.format("Transaction number #%d does not follow last received transaction #%d", tx.getNumber(), previous.getNumber()));
 			}
 			if (!tx.getPreviousHash().equals(previous.getHash())) {
-				throw new RefusedDataException(String.format("Previous hash #%s does not match the last received transaction #%s", tx.getHash(), previous.getHash()));
+				throw new RefusedDataException(String.format("Previous hash #%s does not match the last received transaction #%s", tx.getPreviousHash(), previous.getHash()));
 			}
 		}
 		if (tx.getCoins().size() == 0) {

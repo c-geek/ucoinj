@@ -50,7 +50,8 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 	public Transaction() {
 	}
 	
-	public Transaction(String raw) throws BadFormatException {
+	public Transaction(String raw, Signature sig) throws BadFormatException {
+		this.signature = sig;
 		parseFromRaw(raw);
 	}
 
@@ -122,6 +123,7 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 	public Object getJSON() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("version", version);
+		map.put("currency", currency);
 		map.put("sender", sender);
 		map.put("number", number);
 		map.put("recipient", recipient);
@@ -131,7 +133,7 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 		for (CoinEntry c : theCoins) {
 			Map<String, String> coinValues = new HashMap<>();
 			coinValues.put("id", c.getCoindId().getJSON().toString());
-			coinValues.put("transaction_id", c.getTransactionId().getJSON().toString());
+			coinValues.put("transaction_id", c.getTransactionId() != null ? c.getTransactionId().getJSON().toString() : "");
 			listOfCoins.add(coinValues);
 		}
 		map.put("coins", listOfCoins);
@@ -258,7 +260,7 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 			currency = m.group(2);
 			sender = m.group(3);
 			number = Integer.parseInt(m.group(4));
-			previousHash = m.group(5);
+			previousHash = m.group(6);
 			recipient = m.group(7);
 			type = TransactionType.valueOf(m.group(8));
 			String[] coinsSplit = m.group(9).split("\r\n");
@@ -274,7 +276,7 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 		} else {
 			throw new BadFormatException();
 		}
-		this.hash = new Sha1(getRaw()).getHash();
+		this.hash = new Sha1(getRaw() + this.getSignature().getArmored()).getHash();
 	}
 
 	@Transient

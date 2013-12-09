@@ -109,8 +109,6 @@ public class IssuanceTransactionProcessor extends TransactionProcessor {
 	protected void saveCoins(Transaction tx, Key k) {
 		List<CoinEntry> txCoins = tx.getCoins();
 		for (CoinEntry c : txCoins) {
-			// Justifyin transaction
-			c.setTransactionId(tx.getNaturalId());
 			coinDao.save(new Coin(c.getCoindId(), tx, k));
 		}
 	}
