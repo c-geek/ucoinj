@@ -142,8 +142,9 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 	@Transient
 	public Object getJSONObject() {
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("signature", signature.getArmored());
+		map.put("signature", getSignature().getArmored());
 		map.put("transaction", getJSON());
+		map.put("raw", getRaw());
 		return map;
 	}
 

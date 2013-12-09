@@ -212,7 +212,7 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return The last issuance transaction.
 	 */
-	Transaction transactionsLastIssuanceOfSender(KeyId id);
+	Object transactionsLastIssuanceOfSender(KeyId id);
 	
 	/**
 	 * Get the Merkle of fusion transactions stored by this node for targeted key.

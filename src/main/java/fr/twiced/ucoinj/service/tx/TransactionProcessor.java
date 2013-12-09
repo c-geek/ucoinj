@@ -71,6 +71,8 @@ public abstract class TransactionProcessor {
 			k.setManaged(false);
 			keyDao.save(k);
 		}
+		// Save signature
+		sigDao.save(tx.getSignature());
 		// Save tx
 		txDao.save(tx);
 		// Create/Update coins

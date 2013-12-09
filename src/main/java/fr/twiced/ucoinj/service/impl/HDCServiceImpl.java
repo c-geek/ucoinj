@@ -271,6 +271,7 @@ public class HDCServiceImpl implements HDCService {
 		if (stored == null) {
 			// No, so let's process this transaction
 			TransactionProcessor txProcessor = getTransactionProcessor(tx);
+			tx.setSignature(sig);
 			txProcessor.store(tx);
 			// Don't forget to update transaction's Merkles (for indexing it)
 			txProcessor.updateMerkles(tx);
@@ -353,9 +354,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Transaction transactionsLastIssuanceOfSender(KeyId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsLastIssuanceOfSender(KeyId id) {
+		return txDao.getLastIssuance(id.getHash()).getJSONObject();
 	}
 
 	@Override
