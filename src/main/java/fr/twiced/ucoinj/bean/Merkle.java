@@ -18,6 +18,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
 import fr.twiced.ucoinj.bean.id.AmendmentId;
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.pgp.Sha1;
 
 @Entity
@@ -302,5 +303,9 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	
 	public static String getNameForSignatures(AmendmentId amId) {
 		return String.format("am_%d_%s_signatures", amId.getNumber(), amId.getHash());
+	}
+	
+	public static String getNameForTxDividendOfAm(KeyId id, int amNum) {
+		return String.format("am_dividend_am%d_issuer_%s", amNum, id.getHash());
 	}
 }

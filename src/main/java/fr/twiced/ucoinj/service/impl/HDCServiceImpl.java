@@ -2,8 +2,11 @@ package fr.twiced.ucoinj.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Amendment;
+import fr.twiced.ucoinj.bean.Coin;
 import fr.twiced.ucoinj.bean.CoinEntry;
 import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
@@ -27,6 +31,7 @@ import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.bean.id.TransactionId;
 import fr.twiced.ucoinj.dao.AmendmentDao;
+import fr.twiced.ucoinj.dao.CoinDao;
 import fr.twiced.ucoinj.dao.KeyDao;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
@@ -71,6 +76,9 @@ public class HDCServiceImpl implements HDCService {
 
 	@Autowired
 	private TransactionDao txDao;
+
+	@Autowired
+	private CoinDao coinDao;
 	
 	@Autowired
 	private PGPService pgpService;
@@ -216,9 +224,28 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public List<CoinEntry> coinList(KeyId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object coinList(KeyId id) {
+		List<Coin> coins = coinDao.getByOwner(id.getHash());
+		Map<String, Object> map = new HashMap<>();
+		Map<String, Set<String>> coinObjects = new TreeMap<>();
+		for (Coin c : coins) {
+			if (!coinObjects.containsKey(c.getCoindId().getIssuer())) {
+				coinObjects.put(c.getCoindId().getIssuer(), new HashSet<String>());
+			}
+			coinObjects.get(c.getCoindId().getIssuer()).add(c.getCoinIdButIssuer());
+		}
+		List<Map<String,?>> objCoins = new ArrayList<>();
+		Set<String> issuers = coinObjects.keySet();
+		for (String issuer : issuers) {
+			List<String> coinsOfIssuer = new ArrayList<>(coinObjects.get(issuer));
+			Map<String,Object> entry = new HashMap<>();
+			entry.put("issuer", issuer);
+			entry.put("ids", coinsOfIssuer);
+			objCoins.add(entry);
+		}
+		map.put("owner", id.getHash());
+		map.put("coins", objCoins);
+		return map;
 	}
 
 	@Override
@@ -240,12 +267,17 @@ public class HDCServiceImpl implements HDCService {
 			throw new BadSignatureException("Bad signature for transaction");
 		}
 		// Already stored?
-		if (txDao.getByIssuerAndNumber(tx.getSender(), tx.getNumber()) == null) {
+		Transaction stored = txDao.getByIssuerAndNumber(tx.getSender(), tx.getNumber());
+		if (stored == null) {
 			// No, so let's process this transaction
 			TransactionProcessor txProcessor = getTransactionProcessor(tx);
 			txProcessor.store(tx);
 			// Don't forget to update transaction's Merkles (for indexing it)
 			txProcessor.updateMerkles(tx);
+		} else {
+			if (stored.getHash() != tx.getHash()) {
+				throw new RefusedDataException(String.format("Transaction #%d of issuer %s already stored.", tx.getNumber(), tx.getSender()));
+			}
 		}
 	}
 	
@@ -254,8 +286,10 @@ public class HDCServiceImpl implements HDCService {
 		switch (tx.getType()) {
 		case FUSION:
 			processor = fusionTxProcessor;
+			break;
 		case ISSUANCE:
 			processor = issuanceTxProcessor;
+			break;
 		case TRANSFER:
 		default:
 			processor = transfertTxProcessor;
@@ -337,9 +371,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Transaction> transactionsDividendOfSender(KeyId id, int amendmentNumber) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsDividendOfSender(KeyId id, int amendmentNumber, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchTxDividendOfSender(id, amendmentNumber, lstart, lend, start, end, extract));
 	}
 
 	@Override

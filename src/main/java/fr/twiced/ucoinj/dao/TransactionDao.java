@@ -11,4 +11,6 @@ public interface TransactionDao extends GenericDao<Transaction> {
 	public Transaction getLastIssuance(String issuer);
 
 	public Integer getLastNumber(String issuer);
+
+	public Transaction getByHashAndSender(String hash, String fingerprint);
 }

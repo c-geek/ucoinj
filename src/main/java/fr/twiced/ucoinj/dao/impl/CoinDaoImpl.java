@@ -1,5 +1,7 @@
 package fr.twiced.ucoinj.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,14 @@ public class CoinDaoImpl extends GenericDaoImpl<Coin> implements CoinDao {
 	@Override
 	protected String getEntityName() {
 		return Coin.class.getName();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Coin> getByOwner(String owner) {
+		return getSession().createQuery("select c from Coin c left join c.key k where k.fingerprint = :owner")
+				.setParameter("owner", owner)
+				.list();
 	}
 
 }

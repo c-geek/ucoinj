@@ -26,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 import fr.twiced.ucoinj.TransactionType;
 import fr.twiced.ucoinj.bean.id.TransactionId;
 import fr.twiced.ucoinj.exceptions.BadFormatException;
+import fr.twiced.ucoinj.pgp.Sha1;
 
 @Entity
 @Table(uniqueConstraints = {
@@ -218,7 +219,7 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 			sb.append(c.getRaw());
 			sb.append(CARRIAGE_RETURN);
 		}
-		sb.append(String.format("Comment: %s", comment) + CARRIAGE_RETURN);
+		sb.append(String.format("Comment:" + CARRIAGE_RETURN +"%s", comment));
 		return sb.toString();
 	}
 
@@ -227,10 +228,10 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 		String generic = "Version: (\\d+)\r\n"
 				+ "Currency: ([a-zA-Z0-9 -_]+)\r\n"
 				+ "Sender: ([A-Z0-9]{40})\r\n"
-				+ "Number: (\\d+)\r\n"
-				+ "PreviousHash: ([A-Z0-9]{40})\r\n"
+				+ "Number: (0|(\\d+)\r\n"
+				+ "PreviousHash: ([A-Z0-9]{40}))\r\n"
 				+ "Recipient: ([A-Z0-9]{40})\r\n"
-				+ "Type: (TRANSFERT|ISSUANCE|FUSION)\r\n"
+				+ "Type: (TRANSFER|ISSUANCE|FUSION)\r\n"
 				+ "Coins:\r\n"
 				+ "((([A-Z0-9]{40}-\\d+-\\d-\\d+-[AF]-\\d+)( ,[A-Z0-9]{40}-\\d+)?)\r\n)*"
 				+ "Comment:\r\n"
@@ -242,23 +243,24 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 					+ "Currency: ([a-zA-Z0-9 -_]+)\r\n"
 					+ "Sender: ([A-Z0-9]{40})\r\n"
 					+ "Number: (\\d+)\r\n"
-					+ "PreviousHash: ([A-Z0-9]{40})\r\n"
+					+ "(PreviousHash: ([A-Z0-9]{40})\r\n)?"
 					+ "Recipient: ([A-Z0-9]{40})\r\n"
-					+ "Type: (TRANSFERT|ISSUANCE|FUSION)\r\n"
+					+ "Type: (TRANSFER|ISSUANCE|FUSION)\r\n"
 					+ "Coins:\r\n"
 					+ "(.*)"
 					+ "Comment:\r\n"
 					+ "(.*)";
 			p = Pattern.compile(extractPattern, Pattern.DOTALL);
 			m = p.matcher(raw);
+			m.matches();
 			version = Integer.parseInt(m.group(1));
 			currency = m.group(2);
 			sender = m.group(3);
 			number = Integer.parseInt(m.group(4));
 			previousHash = m.group(5);
-			recipient = m.group(6);
-			type = TransactionType.valueOf(m.group(7));
-			String[] coinsSplit = m.group(8).split("\r\n");
+			recipient = m.group(7);
+			type = TransactionType.valueOf(m.group(8));
+			String[] coinsSplit = m.group(9).split("\r\n");
 			coins = new ArrayList<>();
 			for (String s : coinsSplit) {
 				if (!s.equals("")) {
@@ -267,10 +269,11 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 					coins.add(c);
 				}
 			}
-			comment = m.group(9);
+			comment = m.group(10);
 		} else {
 			throw new BadFormatException();
 		}
+		this.hash = new Sha1(getRaw()).getHash();
 	}
 
 	@Transient

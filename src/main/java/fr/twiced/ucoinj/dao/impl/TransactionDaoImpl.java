@@ -51,4 +51,12 @@ public class TransactionDaoImpl extends GenericDaoImpl<Transaction> implements T
 		return Transaction.class.getName();
 	}
 
+	@Override
+	public Transaction getByHashAndSender(String hash, String fingerprint) {
+		return (Transaction) getSession().createQuery("from Transaction tx where tx.sender = :issuer and tx.hash = :hash")
+				.setParameter("issuer", fingerprint)
+				.setParameter("hash", hash)
+				.uniqueResult();
+	}
+
 }

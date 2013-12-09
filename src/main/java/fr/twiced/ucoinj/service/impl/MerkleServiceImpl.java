@@ -17,9 +17,11 @@ import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.bean.id.HashId;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.bean.id.TransactionId;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
 import fr.twiced.ucoinj.dao.MerkleOfSignatureOfAmendmentDao;
+import fr.twiced.ucoinj.dao.MerkleOfTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfVoteOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.service.MerkleService;
@@ -40,6 +42,9 @@ public class MerkleServiceImpl implements MerkleService {
 	
 	@Autowired
 	private MerkleOfVoteOfAmendmentDao voteMerkleDao;
+	
+	@Autowired
+	private MerkleOfTransactionDao txMerkleDao;
 	
 	@Autowired
 	private PKSService pksService;
@@ -67,6 +72,11 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
 		return searchMerkle(voteMerkleDao, amId, Merkle.getNameForVotes(amId), lstart, lend, start, end, extract);
+	}
+
+	@Override
+	public Jsonable searchTxDividendOfSender(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxDividendOfAm(id, amNum), lstart, lend, start, end, extract);
 	}
 	
 	private <E extends Merklable, N extends NaturalId> Merkle<E> searchMerkle(

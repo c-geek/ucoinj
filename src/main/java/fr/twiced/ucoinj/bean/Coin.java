@@ -111,6 +111,11 @@ public class Coin extends UCoinEntity<CoinId> {
 	}
 	
 	@Transient
+	public String getCoinIdButIssuer() {
+		return getCoindId().getJSON().toString().replace(getCoindId().getIssuer() + "-", "");
+	}
+	
+	@Transient
 	public String getOwner() {
 		return getKey() != null ? getKey().getFingerprint() : null;
 	}

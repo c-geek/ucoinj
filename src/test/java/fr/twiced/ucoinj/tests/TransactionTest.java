@@ -106,6 +106,29 @@ public class TransactionTest {
 	}
 	
 	@Test
+	public void parseIssuance0() throws Exception {
+		String issuanceTx = "Version: 1\r\n" + 
+			"Currency: beta_brousouf\r\n" +
+			"Sender: 2E69197FAB029D8669EF85E82457A1587CA0ED9C\r\n"+
+			"Number: 0\r\n"+
+			"Recipient: 2E69197FAB029D8669EF85E82457A1587CA0ED9C\r\n" +
+			"Type: ISSUANCE\r\n" +
+			"Coins:\r\n" +
+			"2E69197FAB029D8669EF85E82457A1587CA0ED9C-0-1-1-A-1\r\n" +
+			"Comment:\r\n";
+
+		Transaction tx = new Transaction(issuanceTx);
+		Assert.assertNotNull(tx);
+		Assert.assertEquals(new Integer(1), tx.getVersion());
+		Assert.assertEquals(new Integer(0), tx.getNumber());
+		Assert.assertEquals("beta_brousouf", tx.getCurrency());
+		Assert.assertEquals("2E69197FAB029D8669EF85E82457A1587CA0ED9C", tx.getSender());
+		Assert.assertEquals("2E69197FAB029D8669EF85E82457A1587CA0ED9C", tx.getRecipient());
+		Assert.assertEquals("", tx.getComment());
+		Assert.assertEquals(TransactionType.ISSUANCE, tx.getType());
+	}
+	
+	@Test
 	public void goodTransaction1() throws Exception {
 		Transaction t1 = new Transaction();
 		t1.setVersion(1);

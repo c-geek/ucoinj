@@ -116,9 +116,9 @@ public class CoinEntry extends UCoinEntity<CoinId> implements Rawable {
 			coindId.setCoinNumber(Integer.parseInt(m.group(2)));
 			coindId.setCoinBase(Integer.parseInt(m.group(3)));
 			coindId.setCoinPower(Integer.parseInt(m.group(4)));
-			coindId.setOriginType(TransactionOrigin.valueOf(m.group(5)));
+			coindId.setOriginType(TransactionOrigin.getByShortName(m.group(5)));
 			coindId.setOriginNumber(Integer.parseInt(m.group(6)));
-			if (m.groupCount() > 7) {
+			if (m.group(8) != null) {
 				transactionId = new TransactionId();
 				transactionId.setSender(m.group(8));
 				transactionId.setNumber(Integer.parseInt(m.group(9)));

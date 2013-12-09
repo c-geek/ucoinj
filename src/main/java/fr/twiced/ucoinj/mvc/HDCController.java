@@ -24,6 +24,7 @@ import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.PGPService;
 
@@ -184,8 +185,31 @@ public class HDCController extends UCoinController {
 			sendResult(map, request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
-			sendError(400, response);
+			sendError(400, e.getMessage(), response);
 		}
+	}
+	
+	@RequestMapping(value = "/hdc/coins/{fingerprint}/list", method = RequestMethod.GET)
+	public void viewSelf(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint) {
+		objectOrNotFound(hdcService.coinList(new KeyId(fingerprint)), request, response, true);
+	}
+	
+	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/dividend/{amendment_number}", method = RequestMethod.GET)
+	public void txDividendOfSenderForAm(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint,
+		@PathVariable("amendment_number") int amNumber,
+		Integer lstart,
+		Integer lend,
+		Integer start,
+		Integer end,
+		Boolean extract,
+		Boolean nice) {
+		objectOrNotFound(hdcService.transactionsDividendOfSender(new KeyId(fingerprint), amNumber, lstart, lend, start, end, extract), request, response, true);
 	}
 	
 	private void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {

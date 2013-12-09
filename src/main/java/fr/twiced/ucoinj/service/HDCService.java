@@ -119,7 +119,7 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return A list of coin.
 	 */
-	List<CoinEntry> coinList(KeyId id);
+	Object coinList(KeyId id);
 	
 	/**
 	 * Get the coin of given id.
@@ -233,7 +233,7 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Transaction> transactionsDividendOfSender(KeyId id, int amendmentNumber);
+	Object transactionsDividendOfSender(KeyId id, int amendmentNumber, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the Merkle of transactions stored by this node for targeted recipient's key.

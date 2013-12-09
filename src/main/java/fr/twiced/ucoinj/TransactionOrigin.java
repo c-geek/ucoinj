@@ -18,4 +18,14 @@ public enum TransactionOrigin {
 	public String toString() {
 		return code;
 	}
+	
+	public static TransactionOrigin getByShortName(String shortName) {
+		if (shortName.equals("A")) {
+			return AMENDMENT;
+		}
+		if (shortName.equals("F")) {
+			return FUSION;
+		}
+		return null;
+	}
 }
