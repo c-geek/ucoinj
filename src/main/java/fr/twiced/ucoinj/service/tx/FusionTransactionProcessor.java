@@ -57,7 +57,7 @@ public class FusionTransactionProcessor extends TransactionProcessor {
 			throw new RefusedDataException("Fusion transaction must carry at least 3 coins");
 		}
 		Transaction lastIssuance = txDao.getLastIssuance(sender);
-		Integer lastIssuedCoin = lastIssuance == null ? 0 : coinDao.getLastNumber(sender);
+		Integer lastIssuedCoin = lastIssuance == null ? -1 : coinDao.getLastNumber(sender);
 		if (coins.get(0).getCoindId().getCoinNumber() != lastIssuedCoin + 1) {
 			throw new RefusedDataException(String.format("Fusioned coin number must be %d", lastIssuedCoin + 1));
 		}
