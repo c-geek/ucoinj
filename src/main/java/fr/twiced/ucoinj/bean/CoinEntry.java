@@ -107,7 +107,7 @@ public class CoinEntry extends UCoinEntity<CoinId> implements Rawable {
 
 	@Override
 	public void parseFromRaw(String raw) throws BadFormatException {
-		String generic = "([A-Z0-9]{40})-(\\d+)-(\\d)-(\\d+)-(A|F)-(\\d+)( ,([A-Z0-9]{40})-(\\d+))?";
+		String generic = "([A-Z0-9]{40})-(\\d+)-(\\d)-(\\d+)-(A|F)-(\\d+)(, ([A-Z0-9]{40})-(\\d+))?";
 		Pattern p = Pattern.compile(generic, Pattern.DOTALL);
 		Matcher m = p.matcher(raw);
 		if (m.matches()) {

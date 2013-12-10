@@ -44,7 +44,7 @@ public class Signature implements Merklable {
 	}
 	
 	public Signature(String signatureStream) throws BadSignatureException {
-		armored = signatureStream;
+		armored = signatureStream.replace("\r\n", "\n").replace("\n", "\r\n");
 		sigDate = getSigObj().getSignatureDate();
 		issuer = getSigObj().getIssuerKeyId().toUpperCase();
 		hash = new Sha1(armored).getHash();

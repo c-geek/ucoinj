@@ -52,7 +52,7 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 	
 	public Transaction(String raw, Signature sig) throws BadFormatException {
 		this.signature = sig;
-		parseFromRaw(raw);
+		parseFromRaw(raw.replace("\r\n", "\n").replace("\n", "\r\n"));
 	}
 
 	@Id
@@ -236,7 +236,7 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 				+ "Recipient: ([A-Z0-9]{40})\r\n"
 				+ "Type: (TRANSFER|ISSUANCE|FUSION)\r\n"
 				+ "Coins:\r\n"
-				+ "((([A-Z0-9]{40}-\\d+-\\d-\\d+-[AF]-\\d+)( ,[A-Z0-9]{40}-\\d+)?)\r\n)*"
+				+ "((([A-Z0-9]{40}-\\d+-\\d-\\d+-[AF]-\\d+)(, [A-Z0-9]{40}-\\d+)?)\r\n)*"
 				+ "Comment:\r\n"
 				+ ".*";
 		Pattern p = Pattern.compile(generic, Pattern.DOTALL);
