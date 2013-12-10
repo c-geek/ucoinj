@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.twiced.ucoinj.TransactionOrigin;
 import fr.twiced.ucoinj.bean.Coin;
 import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.dao.CoinDao;
@@ -43,6 +44,19 @@ public class CoinDaoImpl extends GenericDaoImpl<Coin> implements CoinDao {
 	public List<Coin> getByOwner(String owner) {
 		return getSession().createQuery("select c from Coin c left join c.key k where k.fingerprint = :owner")
 				.setParameter("owner", owner)
+				.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Coin> getByIssuerAndAmendment(String issuer, Integer amNumber) {
+		return getSession().createQuery("from Coin "
+				+ "where issuer = :issuer "
+				+ "and originType = :originType "
+				+ "and originNumber = :amNumber")
+				.setParameter("issuer", issuer)
+				.setParameter("amNumber", amNumber)
+				.setParameter("originType", TransactionOrigin.AMENDMENT.name())
 				.list();
 	}
 

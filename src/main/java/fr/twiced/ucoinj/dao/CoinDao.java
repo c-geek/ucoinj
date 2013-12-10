@@ -13,5 +13,7 @@ public interface CoinDao extends GenericDao<Coin> {
 	
 	public List<Coin> getByOwner(String owner);
 	
+	public List<Coin> getByIssuerAndAmendment(String issuer, Integer amNumber);
+	
 	public Integer getLastNumber(String issuer);
 }

@@ -88,6 +88,11 @@ public class IssuanceTransactionProcessor extends TransactionProcessor {
 			}
 			if (!valuesIssued.containsKey(amNumber)) {
 				valuesIssued.put(amNumber, BigInteger.ZERO);
+				List<Coin> coinsIssued = coinDao.getByIssuerAndAmendment(sender, amNumber);
+				for (Coin ci : coinsIssued) {
+					BigInteger sum = valuesIssued.get(amNumber).add(ci.getValue());
+					valuesIssued.put(amNumber, sum);
+				}
 			}
 			BigInteger sum = valuesIssued.get(amNumber).add(c.getValue());
 			if (sum.compareTo(valuesAuthorized.get(amNumber)) == 1) {
