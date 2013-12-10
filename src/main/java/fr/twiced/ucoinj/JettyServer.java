@@ -1,9 +1,14 @@
 package fr.twiced.ucoinj;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.net.InetSocketAddress;
 import java.net.URL;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.slf4j.Logger;
@@ -50,6 +55,7 @@ public class JettyServer {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
         context.addServlet(mvcServletHolder, "/");
         context.setResourceBase( getBaseUrl() );
+        context.setErrorHandler(new CustomErrorHandler());
         
         // Setup Spring context
         context.addEventListener(new ContextLoaderListener());
@@ -68,5 +74,12 @@ public class JettyServer {
             throw new RuntimeException("Failed to find web application root: " + WEB_APP_ROOT);
         }
         return webInfUrl.toExternalForm();
+    }
+    
+    private class CustomErrorHandler extends ErrorHandler {
+    	@Override
+    	protected void handleErrorPage(HttpServletRequest request, Writer writer, int code, String message) throws IOException {
+    		writer.write(message);
+    	}
     }
 }
