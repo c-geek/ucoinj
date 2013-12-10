@@ -73,6 +73,15 @@ public class Coin extends UCoinEntity<CoinId> {
 		map.put("owner", key.getJSON());
 		return map;
 	}
+
+	@Transient
+	public Object view() {
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("id", coindId.getJSON());
+		map.put("transaction", transaction.getNaturalId().getJSON());
+		map.put("owner", key.getJSON());
+		return map;
+	}
 	
 	@Transient
 	@Override

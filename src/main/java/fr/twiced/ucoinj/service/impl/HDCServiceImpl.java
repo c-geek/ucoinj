@@ -249,7 +249,7 @@ public class HDCServiceImpl implements HDCService {
 
 	@Override
 	public Object coinView(CoinId id) {
-		return coinDao.getByCoinId(id).getJSON();
+		return coinDao.getByCoinId(id).view();
 	}
 
 	@Override
