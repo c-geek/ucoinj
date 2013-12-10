@@ -26,6 +26,7 @@ import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
+import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.PGPService;
@@ -194,11 +195,20 @@ public class HDCController extends UCoinController {
 	}
 	
 	@RequestMapping(value = "/hdc/coins/{fingerprint}/list", method = RequestMethod.GET)
-	public void viewSelf(
+	public void coinList(
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint) {
 		objectOrNotFound(hdcService.coinList(new KeyId(fingerprint)), request, response, true);
+	}
+	
+	@RequestMapping(value = "/hdc/coins/{fingerprint}/view/{coin_number}", method = RequestMethod.GET)
+	public void coinView(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint,
+		@PathVariable("coin_number") Integer coinNumber) {
+		objectOrNotFound(hdcService.coinView(new CoinId(fingerprint, coinNumber)), request, response, true);
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/dividend/{amendment_number}", method = RequestMethod.GET)

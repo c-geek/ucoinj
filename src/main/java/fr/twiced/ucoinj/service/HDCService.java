@@ -3,7 +3,6 @@ package fr.twiced.ucoinj.service;
 import java.util.List;
 
 import fr.twiced.ucoinj.bean.Amendment;
-import fr.twiced.ucoinj.bean.CoinEntry;
 import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Signature;
@@ -126,7 +125,7 @@ public interface HDCService {
 	 * @param id Coin's id.
 	 * @return The full coin.
 	 */
-	CoinEntry coinView(CoinId id);
+	Object coinView(CoinId id);
 	
 	/**
 	 * Get the list of transactions registered for given coin.

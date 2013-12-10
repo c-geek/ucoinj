@@ -23,6 +23,12 @@ public class CoinId implements NaturalId, Jsonable {
 	public CoinId() {
 	}
 
+	public CoinId(String issuer, Integer coinNumber) {
+		super();
+		this.issuer = issuer;
+		this.coinNumber = coinNumber;
+	}
+
 	public CoinId(String issuer, Integer coinNumber, Integer coinBase, Integer coinPower, TransactionOrigin originType, Integer originNumber) {
 		super();
 		this.issuer = issuer;
