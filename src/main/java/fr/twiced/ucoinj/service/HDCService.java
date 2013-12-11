@@ -239,7 +239,7 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Transaction> transactionsOfRecipient(KeyId id);
+	Object transactionsOfRecipient(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the transaction of given id.

@@ -34,4 +34,6 @@ public interface MerkleService {
 
 	Jsonable searchTxTransfertOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 
+	Jsonable searchTxOfRecipient(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+
 }

@@ -102,6 +102,11 @@ public class MerkleServiceImpl implements MerkleService {
 	public Jsonable searchTxTransfertOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
 		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxTransfertOfSender(id), lstart, lend, start, end, extract);
 	}
+
+	@Override
+	public Jsonable searchTxOfRecipient(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxOfRecipient(id), lstart, lend, start, end, extract);
+	}
 	
 	private <E extends Merklable, N extends NaturalId> Merkle<E> searchMerkle(
 			MultipleMerkleDao<E,N> merkleDao,
