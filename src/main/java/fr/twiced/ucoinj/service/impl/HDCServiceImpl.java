@@ -360,9 +360,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Transaction> transactionsIssuanceOfSender(KeyId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsIssuanceOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchTxIssuanceOfSender(id, lstart, lend, start, end, extract));
 	}
 
 	@Override

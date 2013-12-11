@@ -25,4 +25,6 @@ public interface MerkleService {
 	Jsonable searchTxDividendOfSender(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 
 	Jsonable searchTxOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+
+	Jsonable searchTxIssuanceOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 }

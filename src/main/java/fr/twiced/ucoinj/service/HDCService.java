@@ -204,7 +204,7 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Transaction> transactionsIssuanceOfSender(KeyId id);
+	Object transactionsIssuanceOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the last issuance transaction stored by this node for targeted key.
