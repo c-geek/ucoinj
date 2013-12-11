@@ -19,7 +19,11 @@ import fr.twiced.ucoinj.bean.id.HashId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
+import fr.twiced.ucoinj.dao.MerkleOfRecipientTransactionDao;
+import fr.twiced.ucoinj.dao.MerkleOfSenderDividendTransactionDao;
+import fr.twiced.ucoinj.dao.MerkleOfSenderFusionTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfSenderTransactionDao;
+import fr.twiced.ucoinj.dao.MerkleOfSenderTransferTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfSignatureOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MerkleOfVoteOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
@@ -44,6 +48,18 @@ public class MerkleServiceImpl implements MerkleService {
 	
 	@Autowired
 	private MerkleOfSenderTransactionDao txMerkleDao;
+	
+	@Autowired
+	private MerkleOfSenderDividendTransactionDao txDividendMerkleDao;
+	
+	@Autowired
+	private MerkleOfSenderFusionTransactionDao txFusionMerkleDao;
+	
+	@Autowired
+	private MerkleOfSenderTransferTransactionDao txTransferMerkleDao;
+	
+	@Autowired
+	private MerkleOfRecipientTransactionDao txRecipientMerkleDao;
 	
 	@Autowired
 	private PKSService pksService;
@@ -75,12 +91,12 @@ public class MerkleServiceImpl implements MerkleService {
 
 	@Override
 	public Jsonable searchTxDividendOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxDividend(id), lstart, lend, start, end, extract);
+		return searchMerkle(txDividendMerkleDao, id, Merkle.getNameForTxDividend(id), lstart, lend, start, end, extract);
 	}
 
 	@Override
 	public Jsonable searchTxDividendOfSenderForAm(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxDividendOfAm(id, amNum), lstart, lend, start, end, extract);
+		return searchMerkle(txDividendMerkleDao, id, Merkle.getNameForTxDividendOfAm(id, amNum), lstart, lend, start, end, extract);
 	}
 
 	@Override
@@ -95,17 +111,17 @@ public class MerkleServiceImpl implements MerkleService {
 
 	@Override
 	public Jsonable searchTxFusionOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxFusionOfSender(id), lstart, lend, start, end, extract);
+		return searchMerkle(txFusionMerkleDao, id, Merkle.getNameForTxFusionOfSender(id), lstart, lend, start, end, extract);
 	}
 
 	@Override
 	public Jsonable searchTxTransfertOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxTransfertOfSender(id), lstart, lend, start, end, extract);
+		return searchMerkle(txTransferMerkleDao, id, Merkle.getNameForTxTransfertOfSender(id), lstart, lend, start, end, extract);
 	}
 
 	@Override
 	public Jsonable searchTxOfRecipient(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxOfRecipient(id), lstart, lend, start, end, extract);
+		return searchMerkle(txRecipientMerkleDao, id, Merkle.getNameForTxOfRecipient(id), lstart, lend, start, end, extract);
 	}
 	
 	private <E extends Merklable, N extends NaturalId> Merkle<E> searchMerkle(

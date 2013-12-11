@@ -59,4 +59,21 @@ public class TransactionDaoImpl extends GenericDaoImpl<Transaction> implements T
 				.uniqueResult();
 	}
 
+	@Override
+	public Transaction getByHashSenderAndType(String hash, String fingerprint, TransactionType type) {
+		return (Transaction) getSession().createQuery("from Transaction tx where tx.sender = :issuer and tx.hash = :hash a,d tx.type = :type")
+				.setParameter("issuer", fingerprint)
+				.setParameter("hash", hash)
+				.setParameter("type", type)
+				.uniqueResult();
+	}
+
+	@Override
+	public Transaction getByHashAndRecipient(String hash, String fingerprint) {
+		return (Transaction) getSession().createQuery("from Transaction tx where tx.recipient = :recipient and tx.hash = :hash")
+				.setParameter("recipient", fingerprint)
+				.setParameter("hash", hash)
+				.uniqueResult();
+	}
+
 }
