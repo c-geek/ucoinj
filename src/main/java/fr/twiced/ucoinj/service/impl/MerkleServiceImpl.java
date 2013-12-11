@@ -14,6 +14,7 @@ import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.NaturalId;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
+import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.bean.id.HashId;
 import fr.twiced.ucoinj.bean.id.KeyId;
@@ -47,7 +48,7 @@ public class MerkleServiceImpl implements MerkleService {
 	private MerkleOfVoteOfAmendmentDao voteMerkleDao;
 	
 	@Autowired
-	private MerkleOfSenderTransactionDao txMerkleDao;
+	private MerkleOfSenderTransactionDao txSenderMerkleDao;
 	
 	@Autowired
 	private MerkleOfSenderDividendTransactionDao txDividendMerkleDao;
@@ -101,12 +102,12 @@ public class MerkleServiceImpl implements MerkleService {
 
 	@Override
 	public Jsonable searchTxOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxOfSender(id), lstart, lend, start, end, extract);
+		return searchMerkle(txSenderMerkleDao, id, Merkle.getNameForTxOfSender(id), lstart, lend, start, end, extract);
 	}
 
 	@Override
 	public Jsonable searchTxIssuanceOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxIssuanceOfSender(id), lstart, lend, start, end, extract);
+		return searchMerkle(txSenderMerkleDao, id, Merkle.getNameForTxIssuanceOfSender(id), lstart, lend, start, end, extract);
 	}
 
 	@Override
@@ -168,5 +169,40 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public Merkle<PublicKey> getPubkeyMerkle() {
 		return pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
+	}
+
+	@Override
+	public void putTxOfSender(Transaction tx, KeyId id) {
+		txSenderMerkleDao.put(Merkle.getNameForTxOfSender(id), tx);
+	}
+
+	@Override
+	public void putTxIssuanceOfSender(Transaction tx, KeyId id) {
+		txSenderMerkleDao.put(Merkle.getNameForTxIssuanceOfSender(id), tx);
+	}
+
+	@Override
+	public void putTxDividendOfSender(Transaction tx, KeyId id) {
+		txDividendMerkleDao.put(Merkle.getNameForTxDividend(id), tx);
+	}
+
+	@Override
+	public void putTxDividendOfSenderForAm(Transaction tx, KeyId id, int amNum) {
+		txDividendMerkleDao.put(Merkle.getNameForTxDividendOfAm(id, amNum), tx);
+	}
+
+	@Override
+	public void putTxFusionOfSender(Transaction tx, KeyId id) {
+		txFusionMerkleDao.put(Merkle.getNameForTxFusionOfSender(id), tx);
+	}
+
+	@Override
+	public void putTxTransferOfSender(Transaction tx, KeyId id) {
+		txTransferMerkleDao.put(Merkle.getNameForTxTransfertOfSender(id), tx);
+	}
+
+	@Override
+	public void putTxOfRecipient(Transaction tx, KeyId id) {
+		txSenderMerkleDao.put(Merkle.getNameForTxOfRecipient(id), tx);
 	}
 }

@@ -15,6 +15,7 @@ import fr.twiced.ucoinj.dao.KeyDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
 import fr.twiced.ucoinj.dao.TransactionDao;
 import fr.twiced.ucoinj.exceptions.RefusedDataException;
+import fr.twiced.ucoinj.service.MerkleService;
 
 @Service
 @Transactional
@@ -31,6 +32,9 @@ public abstract class TransactionProcessor {
 	
 	@Autowired
 	private CoinDao coinDao;
+	
+	@Autowired
+	protected MerkleService merkleService;
 	
 	public void checkTransactionCoherence(Transaction tx, Transaction previous) throws RefusedDataException {
 		if (!tx.isFullFilled()) {

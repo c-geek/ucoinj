@@ -42,8 +42,10 @@ public class FusionTransactionProcessor extends TransactionProcessor {
 
 	@Override
 	public void updateMerkles(Transaction tx) {
-		// TODO Auto-generated method stub
-		
+		merkleService.putTxOfRecipient(tx, new KeyId(tx.getRecipient()));
+		merkleService.putTxOfSender(tx, new KeyId(tx.getSender()));
+		merkleService.putTxFusionOfSender(tx, new KeyId(tx.getSender()));
+		merkleService.putTxIssuanceOfSender(tx, new KeyId(tx.getSender()));
 	}
 
 	@Override

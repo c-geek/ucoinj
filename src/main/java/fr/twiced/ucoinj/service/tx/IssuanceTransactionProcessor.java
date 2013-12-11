@@ -49,8 +49,14 @@ public class IssuanceTransactionProcessor extends TransactionProcessor {
 
 	@Override
 	public void updateMerkles(Transaction tx) {
-		// TODO Auto-generated method stub
-		
+		merkleService.putTxOfRecipient(tx, new KeyId(tx.getRecipient()));
+		merkleService.putTxOfSender(tx, new KeyId(tx.getSender()));
+		merkleService.putTxIssuanceOfSender(tx, new KeyId(tx.getSender()));
+		merkleService.putTxDividendOfSender(tx, new KeyId(tx.getSender()));
+		List<CoinEntry> entries = tx.getCoins();
+		for (CoinEntry ce : entries) {
+			merkleService.putTxDividendOfSenderForAm(tx, new KeyId(tx.getSender()), ce.getCoindId().getOriginNumber());
+		}
 	}
 
 	@Override
