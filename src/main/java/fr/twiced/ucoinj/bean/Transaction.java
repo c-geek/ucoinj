@@ -3,6 +3,7 @@ package fr.twiced.ucoinj.bean;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -24,6 +25,7 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import fr.twiced.ucoinj.TransactionType;
+import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.bean.id.TransactionId;
 import fr.twiced.ucoinj.exceptions.BadFormatException;
 import fr.twiced.ucoinj.pgp.Sha1;
@@ -300,5 +302,20 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 			sum = sum.add(iter.next().getValue());
 		}
 		return sum;
+	}
+
+	@Transient
+	public CoinEntry getCoinEntry(CoinId coinId) {
+		CoinEntry ce = null;
+		Iterator<CoinEntry> iter = coins.iterator();
+		while (iter.hasNext() && ce == null) {
+			CoinEntry cei = iter.next();
+			boolean sameIssuer = cei.getCoindId().getIssuer().equals(coinId.getIssuer());
+			boolean sameCoinNumber = cei.getCoindId().getCoinNumber().equals(coinId.getCoinNumber());
+			if (sameIssuer && sameCoinNumber) {
+				ce = cei;
+			}
+		}
+		return ce;
 	}
 }

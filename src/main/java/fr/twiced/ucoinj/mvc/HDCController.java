@@ -202,6 +202,15 @@ public class HDCController extends UCoinController {
 		objectOrNotFound(hdcService.coinList(new KeyId(fingerprint)), request, response, true);
 	}
 	
+	@RequestMapping(value = "/hdc/coins/{fingerprint}/view/{coin_number}/history", method = RequestMethod.GET)
+	public void coinViewHistory(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint,
+		@PathVariable("coin_number") Integer coinNumber) {
+		objectOrNotFound(hdcService.coinHistory(new CoinId(fingerprint, coinNumber)), request, response, true);
+	}
+	
 	@RequestMapping(value = "/hdc/coins/{fingerprint}/view/{coin_number}", method = RequestMethod.GET)
 	public void coinView(
 		HttpServletRequest request,

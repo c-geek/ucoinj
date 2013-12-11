@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Coin;
+import fr.twiced.ucoinj.bean.CoinEntry;
 import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Key;
@@ -253,9 +254,24 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public List<Transaction> coinHistory(CoinId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Object> coinHistory(CoinId id) {
+		Coin c = coinDao.getByCoinId(id);
+		if (c != null) {
+			List<Object> txHistory = new ArrayList<>();
+			Transaction current = c.getTransaction();
+			do {
+				txHistory.add(current.getJSON());
+				CoinEntry ce = current.getCoinEntry(id);
+				TransactionId txId = ce.getTransactionId();
+				current = null;
+				if (txId != null) {
+					current = txDao.getByIssuerAndNumber(txId.getSender(), txId.getNumber());
+				}
+			} while (current != null);
+			return txHistory;
+		} else {
+			return null;
+		}
 	}
 
 	@Override

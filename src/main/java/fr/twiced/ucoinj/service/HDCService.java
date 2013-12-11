@@ -132,7 +132,7 @@ public interface HDCService {
 	 * @param id Coin's id.
 	 * @return The list of transactions this coin went throught.
 	 */
-	List<Transaction> coinHistory(CoinId id);
+	List<Object> coinHistory(CoinId id);
 	
 	/**
 	 * Processes a transaction. May either store it or throw an UnhandledKeyException
