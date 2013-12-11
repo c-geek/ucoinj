@@ -79,7 +79,7 @@ public class JettyServer {
     private class CustomErrorHandler extends ErrorHandler {
     	@Override
     	protected void handleErrorPage(HttpServletRequest request, Writer writer, int code, String message) throws IOException {
-    		writer.write(message);
+    		writer.write(message == null ? "Not found" : message);
     	}
     }
 }
