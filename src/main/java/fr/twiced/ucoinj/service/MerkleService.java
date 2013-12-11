@@ -22,9 +22,12 @@ public interface MerkleService {
 
 	Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 
-	Jsonable searchTxDividendOfSender(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxDividendOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	
+	Jsonable searchTxDividendOfSenderForAm(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 
 	Jsonable searchTxOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 
 	Jsonable searchTxIssuanceOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+
 }

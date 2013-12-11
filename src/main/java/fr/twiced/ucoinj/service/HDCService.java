@@ -225,14 +225,14 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Transaction> transactionsDividendOfSender(KeyId id);
+	Object transactionsDividendOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the Merkle of dividend transactions stored by this node for targeted key.
 	 * @param id Targeted key id.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Object transactionsDividendOfSender(KeyId id, int amendmentNumber, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Object transactionsDividendOfSenderForAm(KeyId id, int amendmentNumber, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the Merkle of transactions stored by this node for targeted recipient's key.

@@ -381,14 +381,13 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Transaction> transactionsDividendOfSender(KeyId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsDividendOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchTxDividendOfSender(id, lstart, lend, start, end, extract));
 	}
 
 	@Override
-	public Object transactionsDividendOfSender(KeyId id, int amendmentNumber, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxDividendOfSender(id, amendmentNumber, lstart, lend, start, end, extract));
+	public Object transactionsDividendOfSenderForAm(KeyId id, int amendmentNumber, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchTxDividendOfSenderForAm(id, amendmentNumber, lstart, lend, start, end, extract));
 	}
 
 	@Override

@@ -74,7 +74,12 @@ public class MerkleServiceImpl implements MerkleService {
 	}
 
 	@Override
-	public Jsonable searchTxDividendOfSender(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+	public Jsonable searchTxDividendOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxDividend(id), lstart, lend, start, end, extract);
+	}
+
+	@Override
+	public Jsonable searchTxDividendOfSenderForAm(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
 		return searchMerkle(txMerkleDao, id, Merkle.getNameForTxDividendOfAm(id, amNum), lstart, lend, start, end, extract);
 	}
 
