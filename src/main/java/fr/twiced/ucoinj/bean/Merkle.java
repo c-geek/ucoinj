@@ -306,6 +306,10 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	}
 	
 	public static String getNameForTxDividendOfAm(KeyId id, int amNum) {
-		return String.format("am_dividend_am%d_issuer_%s", amNum, id.getHash());
+		return String.format("tx_issuer_%s_dividend_am%d", amNum, id.getHash());
+	}
+
+	public static String getNameForTxOfSender(KeyId id) {
+		return String.format("tx_issuer_%s", id.getHash());
 	}
 }

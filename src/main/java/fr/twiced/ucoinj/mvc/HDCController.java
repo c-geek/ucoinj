@@ -221,6 +221,20 @@ public class HDCController extends UCoinController {
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/dividend/{amendment_number}", method = RequestMethod.GET)
+	public void txOfSender(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint,
+		Integer lstart,
+		Integer lend,
+		Integer start,
+		Integer end,
+		Boolean extract,
+		Boolean nice) {
+		objectOrNotFound(hdcService.transactionsOfSender(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
+	}
+	
+	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/dividend/{amendment_number}", method = RequestMethod.GET)
 	public void txDividendOfSenderForAm(
 		HttpServletRequest request,
 		HttpServletResponse response,

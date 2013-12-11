@@ -6,12 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.KeyId;
-import fr.twiced.ucoinj.dao.MerkleOfTransactionDao;
+import fr.twiced.ucoinj.dao.MerkleOfSenderTransactionDao;
 import fr.twiced.ucoinj.dao.TransactionDao;
 
 @Repository
 @Transactional
-public class MerkleOfTransactionDaoImpl extends GenericMultipleMerkleDaoImpl<Transaction, KeyId> implements MerkleOfTransactionDao {
+public class MerkleOfSenderTransactionDaoImpl extends GenericMultipleMerkleDaoImpl<Transaction, KeyId> implements MerkleOfSenderTransactionDao {
 
 	@Autowired
 	private TransactionDao txDao;
