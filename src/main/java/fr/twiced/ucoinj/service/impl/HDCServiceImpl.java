@@ -375,9 +375,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Transaction> transactionsFusionOfSender(KeyId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsFusionOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchTxFusionOfSender(id, lstart, lend, start, end, extract));
 	}
 
 	@Override
