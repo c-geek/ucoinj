@@ -248,7 +248,7 @@ public class HDCController extends UCoinController {
 		objectOrNotFound(hdcService.transactionsIssuanceOfSender(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
 	}
 	
-	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/dividend", method = RequestMethod.GET)
+	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/fusion", method = RequestMethod.GET)
 	public void txFusionOfSender(
 		HttpServletRequest request,
 		HttpServletResponse response,
@@ -289,6 +289,20 @@ public class HDCController extends UCoinController {
 		Boolean extract,
 		Boolean nice) {
 		objectOrNotFound(hdcService.transactionsDividendOfSenderForAm(new KeyId(fingerprint), amNumber, lstart, lend, start, end, extract), request, response, true);
+	}
+	
+	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/transfert", method = RequestMethod.GET)
+	public void txTransfertOfSender(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint,
+		Integer lstart,
+		Integer lend,
+		Integer start,
+		Integer end,
+		Boolean extract,
+		Boolean nice) {
+		objectOrNotFound(hdcService.transactionsTransfertOfSender(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/last", method = RequestMethod.GET)

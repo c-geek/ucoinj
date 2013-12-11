@@ -197,7 +197,7 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Transaction> transactionsTransfertOfSender(KeyId id);
+	Object transactionsTransfertOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the Merkle of issuance transactions (dividend and fusion) stored by this node for targeted key.

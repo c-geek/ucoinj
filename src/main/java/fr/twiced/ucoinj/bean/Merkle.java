@@ -324,4 +324,8 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	public static String getNameForTxFusionOfSender(KeyId id) {
 		return String.format("tx_issuer_%s_fusion", id.getHash());
 	}
+
+	public static String getNameForTxTransfertOfSender(KeyId id) {
+		return String.format("tx_issuer_%s_transfert", id.getHash());
+	}
 }
