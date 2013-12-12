@@ -19,7 +19,6 @@ import fr.twiced.ucoinj.bean.Coin;
 import fr.twiced.ucoinj.bean.CoinEntry;
 import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
-import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
@@ -319,9 +318,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Key> transactionsKeys() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsKeys(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchTxKeys(lstart, lend, start, end, extract));
 	}
 
 	@Override

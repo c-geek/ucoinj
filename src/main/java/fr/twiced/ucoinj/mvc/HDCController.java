@@ -220,6 +220,19 @@ public class HDCController extends UCoinController {
 		objectOrNotFound(hdcService.coinView(new CoinId(fingerprint, coinNumber)), request, response, true);
 	}
 	
+	@RequestMapping(value = "/hdc/transactions/keys", method = RequestMethod.GET)
+	public void txKeys(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		Integer lstart,
+		Integer lend,
+		Integer start,
+		Integer end,
+		Boolean extract,
+		Boolean nice) {
+		objectOrNotFound(hdcService.transactionsKeys(lstart, lend, start, end, extract), request, response, true);
+	}
+	
 	@RequestMapping(value = "/hdc/transactions/last", method = RequestMethod.GET)
 	public void txAll(
 		HttpServletRequest request,

@@ -17,6 +17,14 @@ public class Key extends UCoinEntity<KeyId> implements Merklable {
 	private String fingerprint;
 	private Boolean managed;
 	
+	public Key() {
+	}
+	
+	public Key(String fingerprint) {
+		super();
+		this.fingerprint = fingerprint;
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(nullable = true, unique = true)

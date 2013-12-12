@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.twiced.ucoinj.UniqueMerkle;
 import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
+import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.NaturalId;
@@ -71,6 +72,11 @@ public class MerkleServiceImpl implements MerkleService {
 	private PKSService pksService;
 
 	@Override
+	public Merkle<PublicKey> getPubkeyMerkle() {
+		return pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
+	}
+
+	@Override
 	public Merkle<PublicKey> searchPubkey(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
 		return searchMerkle(pubkeyMerkleDao, new KeyId(""), UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end, extract);
 	}
@@ -93,6 +99,11 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
 		return searchMerkle(voteMerkleDao, amId, Merkle.getNameForVotes(amId), lstart, lend, start, end, extract);
+	}
+
+	@Override
+	public Jsonable searchTxKeys(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return searchMerkle(hashMerkleDao, new HashId(""), UniqueMerkle.ALL_KEYS_WITH_TRANSACTION.name(), lstart, lend, start, end, extract);
 	}
 
 	@Override
@@ -177,8 +188,8 @@ public class MerkleServiceImpl implements MerkleService {
 	}
 
 	@Override
-	public Merkle<PublicKey> getPubkeyMerkle() {
-		return pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
+	public void putTxKey(Key k) {
+		hashMerkleDao.put(UniqueMerkle.ALL_KEYS_WITH_TRANSACTION.name(), new Hash(k.getFingerprint()));
 	}
 
 	@Override

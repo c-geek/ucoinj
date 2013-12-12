@@ -1,6 +1,7 @@
 package fr.twiced.ucoinj.service;
 
 import fr.twiced.ucoinj.bean.Jsonable;
+import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Transaction;
@@ -12,6 +13,8 @@ public interface MerkleService {
 	Merkle<PublicKey> getPubkeyMerkle();
 
 	void put(PublicKey pubkey);
+
+	void putTxKey(Key k);
 
 	void putTxAll(Transaction tx);
 
@@ -40,6 +43,10 @@ public interface MerkleService {
 	Jsonable searchSignatures(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 
 	Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+
+	/** Keys for whom we have transactions **/
+	
+	Jsonable searchTxKeys(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/** Transactions : all **/
 
@@ -62,5 +69,4 @@ public interface MerkleService {
 	/** Transactions: recipient part **/
 
 	Jsonable searchTxOfRecipient(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
-
 }

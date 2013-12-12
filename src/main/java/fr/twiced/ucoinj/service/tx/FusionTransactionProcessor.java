@@ -42,6 +42,8 @@ public class FusionTransactionProcessor extends TransactionProcessor {
 
 	@Override
 	public void updateMerkles(Transaction tx) {
+		merkleService.putTxKey(new Key(tx.getSender()));
+		merkleService.putTxKey(new Key(tx.getRecipient()));
 		merkleService.putTxAll(tx);
 		merkleService.putTxOfRecipient(tx, new KeyId(tx.getRecipient()));
 		merkleService.putTxOfSender(tx, new KeyId(tx.getSender()));

@@ -3,8 +3,6 @@ package fr.twiced.ucoinj.service;
 import java.util.List;
 
 import fr.twiced.ucoinj.bean.Amendment;
-import fr.twiced.ucoinj.bean.Key;
-import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
@@ -156,7 +154,7 @@ public interface HDCService {
 	 * Get the Merkle of keys fingerprint which have some transactions stored by this node.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Key> transactionsKeys();
+	Object transactionsKeys(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the last transaction stored by this node.
