@@ -28,6 +28,7 @@ import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.exceptions.UCoinException;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.PGPService;
 
@@ -66,6 +67,8 @@ public class HDCController extends UCoinController {
 			map.put("signature", sig);
 			map.put("amendment", amendment);
 			sendResult(map, request, response);
+		} catch (UCoinException e) {
+			sendError(400, e.getMessage(), response);
 		} catch (Exception e) {
 			e.printStackTrace();
 			sendError(400, response);

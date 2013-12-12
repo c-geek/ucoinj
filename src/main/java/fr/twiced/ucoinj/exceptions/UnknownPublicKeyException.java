@@ -1,6 +1,6 @@
 package fr.twiced.ucoinj.exceptions;
 
-public class UnknownPublicKeyException extends Exception {
+public class UnknownPublicKeyException extends UCoinException {
 
 	private static final long serialVersionUID = -6410611370992491798L;
 
