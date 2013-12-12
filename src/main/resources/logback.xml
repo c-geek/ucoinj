@@ -11,7 +11,7 @@
 	<logger name="org.springframework.test.context.transaction.TransactionalTestExecutionListener" level="WARN" />
 	<logger name="org.eclipse.jetty.server.HttpChannel" level="DEBUG" />
 	
-	<root level="DEBUG">
+	<root level="INFO">
 		<appender-ref ref="STDOUT" />
 	</root>
 </configuration>
