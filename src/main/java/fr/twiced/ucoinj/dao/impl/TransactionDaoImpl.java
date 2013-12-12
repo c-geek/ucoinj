@@ -1,5 +1,7 @@
 package fr.twiced.ucoinj.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,4 +78,38 @@ public class TransactionDaoImpl extends GenericDaoImpl<Transaction> implements T
 				.uniqueResult();
 	}
 
+	@Override
+	public Transaction getByHash(String hash) {
+		return (Transaction) getSession().createQuery("from Transaction tx where tx.hash = :hash")
+				.setParameter("hash", hash)
+				.uniqueResult(); 
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getLasts(int n) {
+		List<Transaction> lasts = getSession().createQuery("from Transaction tx order by tx.received DESC")
+				.setMaxResults(n)
+				.list();
+		return lasts;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Transaction> getLasts(String issuer, int n) {
+		List<Transaction> lasts = getSession().createQuery("from Transaction tx where tx.issuer = :issuer order by tx.number DESC")
+				.setParameter("issuer", issuer)
+				.setMaxResults(n)
+				.list();
+		return lasts;
+	}
+
+	@Override
+	public Transaction getLast() {
+		List<Transaction> lasts = getLasts(1);
+		if (lasts.isEmpty()) {
+			return null;
+		}
+		return lasts.get(0);
+	}
 }

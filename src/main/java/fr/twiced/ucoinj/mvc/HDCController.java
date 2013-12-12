@@ -220,6 +220,34 @@ public class HDCController extends UCoinController {
 		objectOrNotFound(hdcService.coinView(new CoinId(fingerprint, coinNumber)), request, response, true);
 	}
 	
+	@RequestMapping(value = "/hdc/transactions/last", method = RequestMethod.GET)
+	public void txAll(
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		objectOrNotFound(hdcService.transactionsLast(), request, response, true);
+	}
+	
+	@RequestMapping(value = "/hdc/transactions/last/{count}", method = RequestMethod.GET)
+	public void txAll(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		Integer count) {
+		objectOrNotFound(hdcService.transactionsLasts(count), request, response, true);
+	}
+	
+	@RequestMapping(value = "/hdc/transactions/all", method = RequestMethod.GET)
+	public void txAll(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		Integer lstart,
+		Integer lend,
+		Integer start,
+		Integer end,
+		Boolean extract,
+		Boolean nice) {
+		objectOrNotFound(hdcService.transactionsAll(lstart, lend, start, end, extract), request, response, true);
+	}
+	
 	@RequestMapping(value = "/hdc/transactions/recipient/{fingerprint}", method = RequestMethod.GET)
 	public void txOfRecipient(
 		HttpServletRequest request,
@@ -325,6 +353,15 @@ public class HDCController extends UCoinController {
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint) {
 		objectOrNotFound(hdcService.transactionsLastIssuanceOfSender(new KeyId(fingerprint)), request, response, true);
+	}
+	
+	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/last/{count}", method = RequestMethod.GET)
+	public void txLastIssuancefSender(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint,
+		@PathVariable("count") Integer count) {
+		objectOrNotFound(hdcService.transactionsLastsOfSender(new KeyId(fingerprint), count), request, response, true);
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/last", method = RequestMethod.GET)

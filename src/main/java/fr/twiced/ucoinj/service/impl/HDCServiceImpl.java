@@ -314,9 +314,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Merkle<Transaction> transactionsAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsAll(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return jsonIt(merkleService.searchTxAll(lstart, lend, start, end, extract));
 	}
 
 	@Override
@@ -326,15 +325,25 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Transaction transactionsLast() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsLast() {
+		Transaction last = txDao.getLast();
+		if (last != null) {
+			return last.getJSONObject();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public List<Transaction> transactionsLasts(int n) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsLasts(int n) {
+		List<Transaction> txList = txDao.getLasts(n);
+		List<Object> list = new ArrayList<>();
+		for (Transaction tx : txList) {
+			list.add(tx.getJSON());
+		}
+		Map<String, List<Object>> map = new HashMap<>();
+		map.put("transactions", list);
+		return map;
 	}
 
 	@Override
@@ -344,13 +353,24 @@ public class HDCServiceImpl implements HDCService {
 
 	@Override
 	public Object transactionsLastOfSender(KeyId id) {
-		return txDao.getLast(id.getHash()).getJSONObject();
+		Transaction last = txDao.getLast(id.getHash());
+		if (last != null) {
+			return last.getJSONObject();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
-	public List<Transaction> transactionsLastsOfSender(KeyId id, int n) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object transactionsLastsOfSender(KeyId id, int n) {
+		List<Transaction> txList = txDao.getLasts(id.getHash(), n);
+		List<Object> list = new ArrayList<>();
+		for (Transaction tx : txList) {
+			list.add(tx.getJSON());
+		}
+		Map<String, List<Object>> map = new HashMap<>();
+		map.put("transactions", list);
+		return map;
 	}
 
 	@Override

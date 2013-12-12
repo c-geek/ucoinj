@@ -13,6 +13,8 @@ public interface MerkleService {
 
 	void put(PublicKey pubkey);
 
+	void putTxAll(Transaction tx);
+
 	void putTxOfRecipient(Transaction tx, KeyId id);
 
 	void putTxOfSender(Transaction tx, KeyId id);
@@ -38,6 +40,10 @@ public interface MerkleService {
 	Jsonable searchSignatures(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 
 	Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	
+	/** Transactions : all **/
+
+	Jsonable searchTxAll(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/** Transactions: sender part **/
 

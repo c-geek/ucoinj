@@ -49,6 +49,7 @@ public class IssuanceTransactionProcessor extends TransactionProcessor {
 
 	@Override
 	public void updateMerkles(Transaction tx) {
+		merkleService.putTxAll(tx);
 		merkleService.putTxOfRecipient(tx, new KeyId(tx.getRecipient()));
 		merkleService.putTxOfSender(tx, new KeyId(tx.getSender()));
 		merkleService.putTxIssuanceOfSender(tx, new KeyId(tx.getSender()));

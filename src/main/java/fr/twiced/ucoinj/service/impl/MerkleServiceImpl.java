@@ -18,6 +18,7 @@ import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.bean.id.HashId;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.bean.id.TransactionId;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
 import fr.twiced.ucoinj.dao.MerkleOfRecipientTransactionDao;
@@ -26,6 +27,7 @@ import fr.twiced.ucoinj.dao.MerkleOfSenderFusionTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfSenderTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfSenderTransferTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfSignatureOfAmendmentDao;
+import fr.twiced.ucoinj.dao.MerkleOfTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfVoteOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
 import fr.twiced.ucoinj.service.MerkleService;
@@ -48,6 +50,9 @@ public class MerkleServiceImpl implements MerkleService {
 	private MerkleOfVoteOfAmendmentDao voteMerkleDao;
 	
 	@Autowired
+	private MerkleOfTransactionDao txMerkleDao;
+	
+	@Autowired
 	private MerkleOfSenderTransactionDao txSenderMerkleDao;
 	
 	@Autowired
@@ -67,7 +72,7 @@ public class MerkleServiceImpl implements MerkleService {
 
 	@Override
 	public Merkle<PublicKey> searchPubkey(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(pubkeyMerkleDao, new KeyId(""),UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end, extract);
+		return searchMerkle(pubkeyMerkleDao, new KeyId(""), UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end, extract);
 	}
 
 	@Override
@@ -88,6 +93,11 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
 		return searchMerkle(voteMerkleDao, amId, Merkle.getNameForVotes(amId), lstart, lend, start, end, extract);
+	}
+
+	@Override
+	public Jsonable searchTxAll(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+		return searchMerkle(txMerkleDao, new TransactionId(), UniqueMerkle.ALL_TRANSACTIONS.name(), lstart, lend, start, end, extract);
 	}
 
 	@Override
@@ -169,6 +179,11 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public Merkle<PublicKey> getPubkeyMerkle() {
 		return pubkeyMerkleDao.getMerkle(UniqueMerkle.PUBLIC_KEY.name());
+	}
+
+	@Override
+	public void putTxAll(Transaction tx) {
+		txMerkleDao.put(UniqueMerkle.ALL_TRANSACTIONS.name(), tx);
 	}
 
 	@Override

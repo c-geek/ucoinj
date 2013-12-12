@@ -2,6 +2,7 @@ package fr.twiced.ucoinj.bean;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +22,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
@@ -48,11 +51,14 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 	private String comment;
 	private List<CoinEntry> coins;
 	private Signature signature;
+	private Date received;
 	
 	public Transaction() {
+		this.received = new Date();
 	}
 	
 	public Transaction(String raw, Signature sig) throws BadFormatException {
+		this.received = new Date();
 		this.signature = sig;
 		parseFromRaw(raw.replace("\r\n", "\n").replace("\n", "\r\n"));
 	}
@@ -118,6 +124,12 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 	@Column(nullable = false, length = 40)
 	public String getHash() {
 		return hash;
+	}
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(nullable = false)
+	public Date getReceived() {
+		return received;
 	}
 
 	@Transient
@@ -204,6 +216,10 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 
 	public void setSignature(Signature signature) {
 		this.signature = signature;
+	}
+
+	public void setReceived(Date received) {
+		this.received = received;
 	}
 
 	@Transient

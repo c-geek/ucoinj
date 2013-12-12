@@ -150,7 +150,7 @@ public interface HDCService {
 	 * Get the Merkle of all transactions stored by this node.
 	 * @return Merkle resource or null if it does not exist.
 	 */
-	Merkle<Transaction> transactionsAll();
+	Object transactionsAll(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
 	
 	/**
 	 * Get the Merkle of keys fingerprint which have some transactions stored by this node.
@@ -162,14 +162,14 @@ public interface HDCService {
 	 * Get the last transaction stored by this node.
 	 * @return
 	 */
-	Transaction transactionsLast();
+	Object transactionsLast();
 	
 	/**
 	 * Get the list of last n transactions stored by this node.
 	 * @param n Last n number of transactions.
 	 * @return The last n stored transactions.
 	 */
-	List<Transaction> transactionsLasts(int n);
+	Object transactionsLasts(int n);
 	
 	/**
 	 * Get the Merkle of transactions stored for targeted key id.
@@ -190,7 +190,7 @@ public interface HDCService {
 	 * @param id Targeted key id.
 	 * @return The lasts n stored transactions of targeted key.
 	 */
-	List<Transaction> transactionsLastsOfSender(KeyId id, int n);
+	Object transactionsLastsOfSender(KeyId id, int n);
 	
 	/**
 	 * Get the Merkle of transfert transactions stored by this node for targeted key. 
