@@ -133,8 +133,7 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 	}
 
 	@Transient
-	@Override
-	public Object getJSON() {
+	public Object getJSONObject() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("version", version);
 		map.put("currency", currency);
@@ -156,10 +155,11 @@ public class Transaction extends UCoinEntity<TransactionId> implements Merklable
 	}
 
 	@Transient
-	public Object getJSONObject() {
+	@Override
+	public Object getJSON() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("signature", getSignature().getArmored());
-		map.put("transaction", getJSON());
+		map.put("transaction", getJSONObject());
 		map.put("raw", getRaw());
 		return map;
 	}

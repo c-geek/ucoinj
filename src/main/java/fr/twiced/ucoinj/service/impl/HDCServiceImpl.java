@@ -351,12 +351,7 @@ public class HDCServiceImpl implements HDCService {
 
 	@Override
 	public Object transactionsLastOfSender(KeyId id) {
-		Transaction last = txDao.getLast(id.getHash());
-		if (last != null) {
-			return last.getJSONObject();
-		} else {
-			return null;
-		}
+		return jsonIt(txDao.getLast(id.getHash()));
 	}
 
 	@Override
@@ -383,12 +378,7 @@ public class HDCServiceImpl implements HDCService {
 
 	@Override
 	public Object transactionsLastIssuanceOfSender(KeyId id) {
-		Transaction lastIssuance = txDao.getLastIssuance(id.getHash());
-		if (lastIssuance != null) {
-			return lastIssuance.getJSONObject();
-		} else {
-			return null;
-		}
+		return jsonIt(txDao.getLastIssuance(id.getHash()));
 	}
 
 	@Override
