@@ -174,7 +174,8 @@ public class PublicKey extends UCoinEntity<KeyId> implements Merklable {
 	public Object getJSON() {
 		Map<String, Object> map = new HashMap<>();
 		map.put("fingerprint", this.fingerprint);
-		map.put("raw", this.armored);
+		map.put("pubkey", this.armored);
+		map.put("signature", signature.getArmored());
 		return map;
 	}
 
