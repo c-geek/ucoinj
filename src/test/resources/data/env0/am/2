@@ -1,0 +1,15 @@
+Version: 1
+Currency: beta_brousouf
+Number: 2
+GeneratedOn: 1386962859201
+UniversalDividend: 350
+NextRequiredVotes: 1
+PreviousHash: 9BC899C0F25FAD867E4F1602798B725C81CC7201
+PreviousVotesRoot: B07D88BC5C0156654CAAE224215AA44DEC8217D5
+PreviousVotesCount: 1
+MembersRoot: 2E69197FAB029D8669EF85E82457A1587CA0ED9C
+MembersCount: 1
+MembersChanges:
+VotersRoot: 2E69197FAB029D8669EF85E82457A1587CA0ED9C
+VotersCount: 1
+VotersChanges:

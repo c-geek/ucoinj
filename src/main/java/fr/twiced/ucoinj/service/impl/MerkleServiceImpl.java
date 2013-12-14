@@ -231,4 +231,59 @@ public class MerkleServiceImpl implements MerkleService {
 	public void putTxOfRecipient(Transaction tx, KeyId id) {
 		txSenderMerkleDao.put(Merkle.getNameForTxOfRecipient(id), tx);
 	}
+
+	@Override
+	public String getRootPksAll() {
+		return getRoot(pubkeyMerkleDao, UniqueMerkle.PUBLIC_KEY.name());
+	}
+
+	@Override
+	public String getRootTxKeys() {
+		return getRoot(hashMerkleDao, UniqueMerkle.ALL_KEYS_WITH_TRANSACTION.name());
+	}
+
+	@Override
+	public String getRootTxAll() {
+		return getRoot(txMerkleDao, UniqueMerkle.ALL_TRANSACTIONS.name());
+	}
+
+	@Override
+	public String getRootTxOfRecipient(KeyId id) {
+		return getRoot(txRecipientMerkleDao, Merkle.getNameForTxOfRecipient(id));
+	}
+
+	@Override
+	public String getRootTxOfSender(KeyId id) {
+		return getRoot(txSenderMerkleDao, Merkle.getNameForTxOfSender(id));
+	}
+
+	@Override
+	public String getRootTxIssuanceOfSender(KeyId id) {
+		return getRoot(txSenderMerkleDao, Merkle.getNameForTxIssuanceOfSender(id));
+	}
+
+	@Override
+	public String getRootTxDividendOfSender(KeyId id) {
+		return getRoot(txDividendMerkleDao, Merkle.getNameForTxDividend(id));
+	}
+
+	@Override
+	public String getRootTxDividendOfSenderForAm(KeyId id, int amNum) {
+		return getRoot(txDividendMerkleDao, Merkle.getNameForTxDividendOfAm(id, amNum));
+	}
+
+	@Override
+	public String getRootTxFusionOfSender(KeyId id) {
+		return getRoot(txFusionMerkleDao, Merkle.getNameForTxFusionOfSender(id));
+	}
+
+	@Override
+	public String getRootTxTransferOfSender(KeyId id) {
+		return getRoot(txTransferMerkleDao, Merkle.getNameForTxTransfertOfSender(id));
+	}
+
+	private String getRoot(MultipleMerkleDao<?, ?> merkleDao, String name) {
+		Node n = merkleDao.getMerkle(name).getRoot();
+		return n == null ? null : n.getHash();
+	}
 }

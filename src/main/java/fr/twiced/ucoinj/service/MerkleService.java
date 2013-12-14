@@ -12,6 +12,26 @@ public interface MerkleService {
 
 	Merkle<PublicKey> getPubkeyMerkle();
 
+	String getRootPksAll();
+
+	String getRootTxKeys();
+
+	String getRootTxAll();
+
+	String getRootTxOfRecipient(KeyId id);
+
+	String getRootTxOfSender(KeyId id);
+
+	String getRootTxIssuanceOfSender(KeyId id);
+
+	String getRootTxDividendOfSender(KeyId id);
+
+	String getRootTxDividendOfSenderForAm(KeyId id, int amNum);
+
+	String getRootTxFusionOfSender(KeyId id);
+
+	String getRootTxTransferOfSender(KeyId id);
+
 	void put(PublicKey pubkey);
 
 	void putTxKey(Key k);

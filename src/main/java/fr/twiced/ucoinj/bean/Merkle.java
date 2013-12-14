@@ -237,6 +237,10 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	public Integer getLeavesCount() {
 		return leavesCount;
 	}
+	
+	public Map<Integer, String> getLeavesHashes() {
+		return leavesHashList;
+	}
 
 	public void setLeavesCount(Integer leavesCount) {
 		this.leavesCount = leavesCount;
