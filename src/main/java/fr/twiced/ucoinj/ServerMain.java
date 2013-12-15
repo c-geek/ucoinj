@@ -21,11 +21,10 @@ public class ServerMain {
     public static void main(String args[]) throws Exception {
 		new ServerMain().exec(args);
 	}
-
-    private static String COMMAND = "currency";
     
     private static String OPT_CURRENCY = "currency";
-    private static String OPT_PRIVATE_KEY = "privk";
+    private static String OPT_PRIVATE_KEY = "pgpkey";
+    private static String OPT_PRIVATE_KEY_PASSWORD = "pgppasswd";
     private static String OPT_IPV4 = "ipv4";
     private static String OPT_PORT = "port";
     private static String OPT_REMOTEH= "remoteh";
@@ -42,6 +41,7 @@ public class ServerMain {
 		Options options = new Options();
 		options.addOption(OPT_CURRENCY, true, "Currency to handle");
 		options.addOption(OPT_PRIVATE_KEY, true, "private key to be used for signing messages");
+		options.addOption(OPT_PRIVATE_KEY_PASSWORD, true, "private key password");
 		options.addOption(OPT_IPV4, true, "IPV4 interface to listen for requests");
 		options.addOption("p", OPT_PORT, true, "port to listen for requests");
 		options.addOption(OPT_REMOTEH, true, "Remote interface using DNS access");
@@ -102,9 +102,15 @@ public class ServerMain {
 			config.setDBURL(String.format("jdbc:mysql://%s:%d/%s?createDatabaseIfNotExist=true", dbHost, dbPort, dbName));
 			
 			if (command.equals("start")) {
+				
 				// --privk
 				if(!cmd.hasOption(OPT_PRIVATE_KEY)){
 					throw new OptionRequiredException(cmd);
+				}
+				
+				// --pgppasswd
+				if(cmd.hasOption(OPT_PRIVATE_KEY_PASSWORD)){
+					config.setPGPPassword(cmd.getOptionValue(OPT_PRIVATE_KEY_PASSWORD));
 				}
 				
 				// --ipv4
