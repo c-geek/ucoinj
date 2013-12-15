@@ -45,7 +45,12 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 
 	@Override
 	public void save(Node n) {
-		nodeDao.save(n);
+		// Only save node in case of leaf or root.
+		Integer depth = n.getMerkle().getDepth();
+		Integer nodeLine = n.getLine();
+		if (nodeLine.equals(0) || nodeLine.equals(depth)) {
+			nodeDao.save(n);
+		}
 	}
 
 	@Override
