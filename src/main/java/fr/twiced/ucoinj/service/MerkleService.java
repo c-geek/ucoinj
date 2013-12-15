@@ -7,6 +7,7 @@ import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 
 public interface MerkleService {
 
@@ -52,41 +53,41 @@ public interface MerkleService {
 
 	void putTxTransferOfSender(Transaction tx, KeyId id);
 
-	Jsonable searchPubkey(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchPubkey(Boolean leaves, String leaf) throws UnknownLeafException;
 	
 	/** Amendments part **/
 
-	Jsonable searchMembers(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchMembers(AmendmentId amId, Boolean leaves, String leaf) throws UnknownLeafException;
 
-	Jsonable searchVoters(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchVoters(AmendmentId id, Boolean leaves, String leaf) throws UnknownLeafException;
 
-	Jsonable searchSignatures(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchSignatures(AmendmentId id, Boolean leaves, String leaf) throws UnknownLeafException;
 
-	Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchVotes(AmendmentId amId, Boolean leaves, String leaf) throws UnknownLeafException;
 
 	/** Keys for whom we have transactions **/
 	
-	Jsonable searchTxKeys(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxKeys(Boolean leaves, String leaf) throws UnknownLeafException;
 	
 	/** Transactions : all **/
 
-	Jsonable searchTxAll(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxAll(Boolean leaves, String leaf) throws UnknownLeafException;
 	
 	/** Transactions: sender part **/
 
-	Jsonable searchTxOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException;
 
-	Jsonable searchTxIssuanceOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxIssuanceOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException;
 
-	Jsonable searchTxDividendOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxDividendOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException;
 	
-	Jsonable searchTxDividendOfSenderForAm(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxDividendOfSenderForAm(KeyId id, int amNum, Boolean leaves, String leaf) throws UnknownLeafException;
 
-	Jsonable searchTxFusionOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxFusionOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException;
 
-	Jsonable searchTxTransfertOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxTransfertOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException;
 	
 	/** Transactions: recipient part **/
 
-	Jsonable searchTxOfRecipient(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract);
+	Jsonable searchTxOfRecipient(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException;
 }

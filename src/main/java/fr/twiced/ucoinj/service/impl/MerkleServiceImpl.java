@@ -31,6 +31,7 @@ import fr.twiced.ucoinj.dao.MerkleOfSignatureOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MerkleOfTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfVoteOfAmendmentDao;
 import fr.twiced.ucoinj.dao.MultipleMerkleDao;
+import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PKSService;
 
@@ -77,106 +78,89 @@ public class MerkleServiceImpl implements MerkleService {
 	}
 
 	@Override
-	public Merkle<PublicKey> searchPubkey(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(pubkeyMerkleDao, new KeyId(""), UniqueMerkle.PUBLIC_KEY.name(), lstart, lend, start, end, extract);
+	public Merkle<PublicKey> searchPubkey(Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(pubkeyMerkleDao, new KeyId(""), UniqueMerkle.PUBLIC_KEY.name(), leaves, leaf);
 	}
 
 	@Override
-	public Merkle<Hash> searchMembers(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(hashMerkleDao, new HashId(""), Merkle.getNameForMembers(amId), lstart, lend, start, end, extract);
+	public Merkle<Hash> searchMembers(AmendmentId amId, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(hashMerkleDao, new HashId(""), Merkle.getNameForMembers(amId), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchVoters(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(hashMerkleDao, new HashId(""), Merkle.getNameForVoters(amId), lstart, lend, start, end, extract);
+	public Jsonable searchVoters(AmendmentId amId, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(hashMerkleDao, new HashId(""), Merkle.getNameForVoters(amId), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchSignatures(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(signatureMerkleDao, amId, Merkle.getNameForSignatures(amId), lstart, lend, start, end, extract);
+	public Jsonable searchSignatures(AmendmentId amId, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(signatureMerkleDao, amId, Merkle.getNameForSignatures(amId), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(voteMerkleDao, amId, Merkle.getNameForVotes(amId), lstart, lend, start, end, extract);
+	public Jsonable searchVotes(AmendmentId amId, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(voteMerkleDao, amId, Merkle.getNameForVotes(amId), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxKeys(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(hashMerkleDao, new HashId(""), UniqueMerkle.ALL_KEYS_WITH_TRANSACTION.name(), lstart, lend, start, end, extract);
+	public Jsonable searchTxKeys(Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(hashMerkleDao, new HashId(""), UniqueMerkle.ALL_KEYS_WITH_TRANSACTION.name(), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxAll(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txMerkleDao, new TransactionId(), UniqueMerkle.ALL_TRANSACTIONS.name(), lstart, lend, start, end, extract);
+	public Jsonable searchTxAll(Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(txMerkleDao, new TransactionId(), UniqueMerkle.ALL_TRANSACTIONS.name(), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxDividendOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txDividendMerkleDao, id, Merkle.getNameForTxDividend(id), lstart, lend, start, end, extract);
+	public Jsonable searchTxDividendOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(txDividendMerkleDao, id, Merkle.getNameForTxDividend(id), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxDividendOfSenderForAm(KeyId id, int amNum, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txDividendMerkleDao, id, Merkle.getNameForTxDividendOfAm(id, amNum), lstart, lend, start, end, extract);
+	public Jsonable searchTxDividendOfSenderForAm(KeyId id, int amNum, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(txDividendMerkleDao, id, Merkle.getNameForTxDividendOfAm(id, amNum), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txSenderMerkleDao, id, Merkle.getNameForTxOfSender(id), lstart, lend, start, end, extract);
+	public Jsonable searchTxOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(txSenderMerkleDao, id, Merkle.getNameForTxOfSender(id), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxIssuanceOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txSenderMerkleDao, id, Merkle.getNameForTxIssuanceOfSender(id), lstart, lend, start, end, extract);
+	public Jsonable searchTxIssuanceOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(txSenderMerkleDao, id, Merkle.getNameForTxIssuanceOfSender(id), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxFusionOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txFusionMerkleDao, id, Merkle.getNameForTxFusionOfSender(id), lstart, lend, start, end, extract);
+	public Jsonable searchTxFusionOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(txFusionMerkleDao, id, Merkle.getNameForTxFusionOfSender(id), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxTransfertOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txTransferMerkleDao, id, Merkle.getNameForTxTransfertOfSender(id), lstart, lend, start, end, extract);
+	public Jsonable searchTxTransfertOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(txTransferMerkleDao, id, Merkle.getNameForTxTransfertOfSender(id), leaves, leaf);
 	}
 
 	@Override
-	public Jsonable searchTxOfRecipient(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return searchMerkle(txRecipientMerkleDao, id, Merkle.getNameForTxOfRecipient(id), lstart, lend, start, end, extract);
+	public Jsonable searchTxOfRecipient(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(txRecipientMerkleDao, id, Merkle.getNameForTxOfRecipient(id), leaves, leaf);
 	}
 	
-	private <E extends Merklable, N extends NaturalId> Merkle<E> searchMerkle(
-			MultipleMerkleDao<E,N> merkleDao,
-			N natId,
-			String name,
-			Integer lstart,
-			Integer lend,
-			Integer start,
-			Integer end,
-			Boolean extract) {
+	private <E extends Merklable, N extends NaturalId> Merkle<E> searchMerkle(MultipleMerkleDao<E,N> merkleDao, N natId, String name, Boolean getLeaves, String leaf) throws UnknownLeafException {
 		Merkle<E> merkle = merkleDao.getMerkle(name);
-		if (start == null) {
-			start = 0;
-		}
-		if (end == null) {
-			end = merkle.getLeavesCount();
-		}
-		if (extract != null && extract) {
-			List<Node> leaves = merkleDao.getLeaves(name, start, end);
-			for (Node n : leaves) {
-				merkle.push(merkleDao.getLeaf(n.getHash(), natId), n.getPosition());
+		if (leaf != null && leaf.matches("[A-Z0-9]{40}")) {
+			E theLeaf = merkleDao.getLeaf(leaf, natId);
+			if (theLeaf == null) {
+				throw new UnknownLeafException();
 			}
+			merkle.setLeaf(theLeaf);
 		} else {
-			if (lstart == null) {
-				lstart = 0;
-			}
-			if (lend == null) {
-				lend = lstart + 1;
-			}
-			List<Node> nodes = merkleDao.getNodes(name, lstart, lend, start, end);
-			for (Node n : nodes) {
-				merkle.putTree(n);
+			if (getLeaves != null && getLeaves) {
+				List<Node> leaves = merkleDao.getLeaves(name);
+				for (Node n : leaves) {
+					merkle.push(merkleDao.getLeaf(n.getHash(), natId), n.getPosition());
+				}
 			}
 		}
 		return merkle;

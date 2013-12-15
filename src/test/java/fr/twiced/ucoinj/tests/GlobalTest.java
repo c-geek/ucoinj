@@ -7,8 +7,6 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -69,6 +67,10 @@ public class GlobalTest {
 	private static KeyId tobi = new KeyId("2E69197FAB029D8669EF85E82457A1587CA0ED9C");
 	
 	private static KeyId cat = new KeyId("C73882B64B7E72237A2F460CE9CAB76D19A8651E");
+	
+	private static Boolean GET_LEAVES = Boolean.TRUE;
+	
+	private static String NO_PARTICULAR_LEAF = null;
 
 	@Before
 	public void setupPubkeysAndAmendments() throws Exception {
@@ -100,7 +102,7 @@ public class GlobalTest {
 		Assert.assertEquals("CDE04A358F6A12058A394B9DF30E55660AA169F0", merkleService.getRootTxOfSender(tobi));
 		Assert.assertNull(merkleService.getRootTxTransferOfSender(tobi));
 		// Merkle leaves' tests
-		Merkle<?> merkle = (Merkle<?>) merkleService.searchTxAll(null, null, null, null, true);
+		Merkle<?> merkle = (Merkle<?>) merkleService.searchTxAll(GET_LEAVES, NO_PARTICULAR_LEAF);
 		Assert.assertEquals(1, merkle.getLeavesHashes().size());
 		Assert.assertEquals("CDE04A358F6A12058A394B9DF30E55660AA169F0", merkle.getLeavesHashes().get(0));
 	}
@@ -268,7 +270,7 @@ public class GlobalTest {
 		Assert.assertEquals("DE8D6EE8985C6AB617A918CFCC5705550BA2A7B3", merkleService.getRootTxOfSender(cat));
 		Assert.assertEquals("DE8D6EE8985C6AB617A918CFCC5705550BA2A7B3", merkleService.getRootTxTransferOfSender(cat));
 		// Merkle leaves' tests
-		Merkle<?> merkle = (Merkle<?>) merkleService.searchTxAll(null, null, null, null, true);
+		Merkle<?> merkle = (Merkle<?>) merkleService.searchTxAll(GET_LEAVES, NO_PARTICULAR_LEAF);
 		Assert.assertEquals(8, merkle.getLeavesHashes().size());       
 		Assert.assertEquals("18D5DD88D1BB3783DFFF410E6F3D2639C961F234", merkle.getLeavesHashes().get(0));
 		Assert.assertEquals("2E77D66FFAE997A63799B3A27A803B22A5B07692", merkle.getLeavesHashes().get(1));

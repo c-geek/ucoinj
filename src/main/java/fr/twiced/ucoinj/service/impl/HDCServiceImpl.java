@@ -41,6 +41,7 @@ import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
 import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
 import fr.twiced.ucoinj.exceptions.RefusedDataException;
 import fr.twiced.ucoinj.exceptions.UnhandledKeyException;
+import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
 import fr.twiced.ucoinj.pgp.Sha1;
 import fr.twiced.ucoinj.service.HDCService;
@@ -113,19 +114,19 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Object viewCurrentVoters(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
+	public Object viewCurrentVoters(Boolean leaves, String leaf) throws UnknownLeafException {
 		Amendment current = amendmentDao.getCurrent();
-		return viewVotes(current.getNaturalId(), lstart, lend, start, end, extract);
+		return viewVotes(current.getNaturalId(), leaves, leaf);
 	}
 
 	@Override
-	public Object viewMembers(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchMembers(id, lstart, lend, start, end, extract));
+	public Object viewMembers(AmendmentId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchMembers(id, leaves, leaf));
 	}
 
 	@Override
-	public Object viewVoters(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchVoters(id, lstart, lend, start, end, extract));
+	public Object viewVoters(AmendmentId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchVoters(id, leaves, leaf));
 	}
 
 	@Override
@@ -134,13 +135,13 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Object viewSignatures(AmendmentId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchSignatures(id, lstart, lend, start, end, extract));
+	public Object viewSignatures(AmendmentId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchSignatures(id, leaves, leaf));
 	}
 
 	@Override
-	public Object viewVotes(AmendmentId amId, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchVotes(amId, lstart, lend, start, end, extract));
+	public Object viewVotes(AmendmentId amId, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchVotes(amId, leaves, leaf));
 	}
 
 	@Override
@@ -313,13 +314,13 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Object transactionsAll(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxAll(lstart, lend, start, end, extract));
+	public Object transactionsAll(Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxAll(leaves, leaf));
 	}
 
 	@Override
-	public Object transactionsKeys(Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxKeys(lstart, lend, start, end, extract));
+	public Object transactionsKeys(Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxKeys(leaves, leaf));
 	}
 
 	@Override
@@ -345,8 +346,8 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Object transactionsOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxOfSender(id, lstart, lend, start, end, extract));
+	public Object transactionsOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxOfSender(id, leaves, leaf));
 	}
 
 	@Override
@@ -367,13 +368,13 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Object transactionsTransfertOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxTransfertOfSender(id, lstart, lend, start, end, extract));
+	public Object transactionsTransfertOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxTransfertOfSender(id, leaves, leaf));
 	}
 
 	@Override
-	public Object transactionsIssuanceOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxIssuanceOfSender(id, lstart, lend, start, end, extract));
+	public Object transactionsIssuanceOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxIssuanceOfSender(id, leaves, leaf));
 	}
 
 	@Override
@@ -382,23 +383,23 @@ public class HDCServiceImpl implements HDCService {
 	}
 
 	@Override
-	public Object transactionsFusionOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxFusionOfSender(id, lstart, lend, start, end, extract));
+	public Object transactionsFusionOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxFusionOfSender(id, leaves, leaf));
 	}
 
 	@Override
-	public Object transactionsDividendOfSender(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxDividendOfSender(id, lstart, lend, start, end, extract));
+	public Object transactionsDividendOfSender(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxDividendOfSender(id, leaves, leaf));
 	}
 
 	@Override
-	public Object transactionsDividendOfSenderForAm(KeyId id, int amendmentNumber, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxDividendOfSenderForAm(id, amendmentNumber, lstart, lend, start, end, extract));
+	public Object transactionsDividendOfSenderForAm(KeyId id, int amendmentNumber, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxDividendOfSenderForAm(id, amendmentNumber, leaves, leaf));
 	}
 
 	@Override
-	public Object transactionsOfRecipient(KeyId id, Integer lstart, Integer lend, Integer start, Integer end, Boolean extract) {
-		return jsonIt(merkleService.searchTxOfRecipient(id, lstart, lend, start, end, extract));
+	public Object transactionsOfRecipient(KeyId id, Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchTxOfRecipient(id, leaves, leaf));
 	}
 
 	@Override

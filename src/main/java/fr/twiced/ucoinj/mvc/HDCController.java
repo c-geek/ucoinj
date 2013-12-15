@@ -29,6 +29,7 @@ import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.bean.id.CoinId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.exceptions.UCoinException;
+import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 import fr.twiced.ucoinj.service.HDCService;
 import fr.twiced.ucoinj.service.PGPService;
 
@@ -79,13 +80,14 @@ public class HDCController extends UCoinController {
 	public void viewCurrentVotes(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.viewCurrentVoters(lstart, lend, start, end, extract), request, response, nice);
+		try {
+			objectOrNotFound(hdcService.viewCurrentVoters(leaves, leaf), request, response, nice);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/current", method = RequestMethod.GET)
@@ -123,13 +125,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("amendment_id") AmendmentId amId,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.viewMembers(amId, lstart, lend, start, end, extract), request, response, nice);
+		try {
+			objectOrNotFound(hdcService.viewMembers(amId, leaves, leaf), request, response, nice);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/view/{amendment_id}/voters", method = RequestMethod.GET)
@@ -137,13 +140,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("amendment_id") AmendmentId amId,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.viewVoters(amId, lstart, lend, start, end, extract), request, response, nice);
+		try {
+			objectOrNotFound(hdcService.viewVoters(amId, leaves, leaf), request, response, nice);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/view/{amendment_id}/signatures", method = RequestMethod.GET)
@@ -151,13 +155,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("amendment_id") AmendmentId amId,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.viewSignatures(amId, lstart, lend, start, end, extract), request, response, nice);
+		try {
+			objectOrNotFound(hdcService.viewSignatures(amId, leaves, leaf), request, response, nice);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/amendments/votes/{amendment_id}", method = RequestMethod.GET)
@@ -165,13 +170,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("amendment_id") AmendmentId amId,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.viewVotes(amId, lstart, lend, start, end, extract), request, response, nice);
+		try {
+			objectOrNotFound(hdcService.viewVotes(amId, leaves, leaf), request, response, nice);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/process", method = RequestMethod.POST)
@@ -227,13 +233,14 @@ public class HDCController extends UCoinController {
 	public void txKeys(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsKeys(lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsKeys(leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/last", method = RequestMethod.GET)
@@ -255,13 +262,14 @@ public class HDCController extends UCoinController {
 	public void txAll(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsAll(lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsAll(leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/recipient/{fingerprint}", method = RequestMethod.GET)
@@ -269,13 +277,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsOfRecipient(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsOfRecipient(new KeyId(fingerprint), leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}", method = RequestMethod.GET)
@@ -283,13 +292,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsOfSender(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsOfSender(new KeyId(fingerprint), leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance", method = RequestMethod.GET)
@@ -297,13 +307,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsIssuanceOfSender(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsIssuanceOfSender(new KeyId(fingerprint), leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/fusion", method = RequestMethod.GET)
@@ -311,13 +322,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsFusionOfSender(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsFusionOfSender(new KeyId(fingerprint), leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/dividend", method = RequestMethod.GET)
@@ -325,13 +337,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsDividendOfSender(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsDividendOfSender(new KeyId(fingerprint), leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/dividend/{amendment_number}", method = RequestMethod.GET)
@@ -340,13 +353,14 @@ public class HDCController extends UCoinController {
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint,
 		@PathVariable("amendment_number") int amNumber,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsDividendOfSenderForAm(new KeyId(fingerprint), amNumber, lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsDividendOfSenderForAm(new KeyId(fingerprint), amNumber, leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/transfert", method = RequestMethod.GET)
@@ -354,13 +368,14 @@ public class HDCController extends UCoinController {
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@PathVariable("fingerprint") String fingerprint,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		objectOrNotFound(hdcService.transactionsTransfertOfSender(new KeyId(fingerprint), lstart, lend, start, end, extract), request, response, true);
+		try {
+			objectOrNotFound(hdcService.transactionsTransfertOfSender(new KeyId(fingerprint), leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 	
 	@RequestMapping(value = "/hdc/transactions/sender/{fingerprint}/issuance/last", method = RequestMethod.GET)

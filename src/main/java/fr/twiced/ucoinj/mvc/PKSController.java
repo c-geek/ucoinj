@@ -22,6 +22,7 @@ import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.exceptions.BadParametersException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
+import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
 import fr.twiced.ucoinj.service.PKSService;
@@ -85,13 +86,15 @@ public class PKSController extends UCoinController {
 	public void lookup(
 		HttpServletRequest request,
 		HttpServletResponse response,
-		Integer lstart,
-		Integer lend,
-		Integer start,
-		Integer end,
-		Boolean extract,
+		Boolean leaves,
+		String leaf,
 		Boolean nice) {
-		Jsonable merkle = merkleService.searchPubkey(lstart, lend, start, end, extract);
-		sendResult(merkle, request, response, nice);
+		Jsonable merkle;
+		try {
+			merkle = merkleService.searchPubkey(leaves, leaf);
+			sendResult(merkle, request, response, nice);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 }

@@ -56,6 +56,9 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	@Transient
 	private Map<Integer, Map<Integer, String>> tree;
 	
+	@Transient
+	private Merklable leaf;
+	
 	public Merkle() {
 		name = "";
 		depth = 0;
@@ -225,6 +228,10 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	public void setDepth(Integer depth) {
 		this.depth = depth;
 	}
+	
+	public void setLeaf(Merklable leaf) {
+		this.leaf = leaf;
+	}
 
 	public Integer getNodesCount() {
 		return nodesCount;
@@ -266,33 +273,27 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 		Map<String, Object> map = new HashMap<>();
 		map.put("depth", depth);
 		map.put("nodesCount", nodesCount);
-		map.put("levelsCount", levelsCount);
 		map.put("leavesCount", leavesCount);
+		map.put("root", getRoot().getHash());
 		if (!leavesHashList.isEmpty()) {
 			// Leaves display
-			Map<Integer, Map<String, Object>> leaves = new HashMap<>();
+			List<String> leaves = new ArrayList<>();
 			Set<Integer> keys = leavesHashList.keySet();
 			for (Integer k : keys) {
-				Map<String, Object> values = new HashMap<>();
 				String hash = leavesHashList.get(k);
-				values.put("hash", hash);
-				values.put("value", leavesByHash.get(hash).getJSON());
-				leaves.put(k, values);
+				leaves.add(hash);
 			}
 			map.put("leaves", leaves);
-		} else {
-			// Levels display
-			Map<Integer, List<String>> leaves = new HashMap<>();
-			Set<Integer> keys = tree.keySet();
-			for (Integer k : keys) {
-				List<String> hashes = new ArrayList<>(tree.get(k).values());
-				leaves.put(k, hashes);
-			}
-			map.put("levels", leaves);
+		} else if (leaf != null) {
+			// Leaf display
+			Map<String, Object> leafMap = new HashMap<>();
+			leafMap.put("hash", leaf.getHash());
+			leafMap.put("value", leaf.getJSON());
+			map.put("leaf", leafMap);
 		}
 		return map;
 	}
-	
+
 	public static String getNameForMembers(AmendmentId amId) {
 		return String.format("am_%d_%s_members", amId.getNumber(), amId.getHash());
 	}
