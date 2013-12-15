@@ -163,6 +163,11 @@ public class ServerMain {
 	        	// Help on usage
 				printUsage();
 				
+	        } else if (command.equals("config")) {
+	        	
+	        	System.err.println("Not implemented yet.");
+				printUsage();
+				
 	        } else if (command.equals("start")) {
 	        	
 	        	// Start server
@@ -208,14 +213,12 @@ public class ServerMain {
 			+ "\r\n"
 			+ "  Commands:\r\n"
 			+ "\r\n"
+			+ "    config                 Register configuration in database\r\n"
+			+ "    start                  Start uCoin server using given --currency\r\n"
 			+ "    sync [host] [port]     Tries to synchronise data with remote uCoin node\r\n"
-			+ "    manage-keys            Update managed keys configuration and send corresponding forwards to other peers\r\n"
+			+ "    reset [config|data]    Reset configuration or data in database\r\n"
 			+ "    manage-key [key]       Add given key to stack of managed keys of this node\r\n"
 			+ "    forget-key [key]       Remove given key of the managed keys' stack of this node\r\n"
-			+ "    config                 Register configuration in database\r\n"
-			+ "    reset [config|data]    Reset configuration or data in database\r\n"
-			+ "    update-merkles         Reset Merkle trees and computes them again according to stored data.\r\n"
-			+ "    start                  Start uCoin server using given --currency\r\n"
 			+ "\r\n"
 			+ "  Options:\r\n"
 			+ "\r\n"
@@ -226,7 +229,7 @@ public class ServerMain {
 			+ "    --mhost <host>            MySQL host.\r\n"
 			+ "    --mport <port>            MySQL port.\r\n"
 			+ "    --mdb <name>              MySQL database name (defaults to currency name).\r\n"
-			+ "    --mdpasswd <password>     MySQL password.\r\n"
+			+ "    --mpasswd <password>      MySQL password.\r\n"
 			+ "    --pgpkey <keyPath>        Path to the private key used for signing HTTP responses.\r\n"
 			+ "    --pgppasswd <password>    Password for the key provided with --httpgp-key option.\r\n"
 			+ "    --ipv4 <address>          IPV4 interface to listen for requests\r\n"
