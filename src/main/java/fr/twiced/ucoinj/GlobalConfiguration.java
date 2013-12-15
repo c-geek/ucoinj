@@ -18,7 +18,7 @@ public class GlobalConfiguration {
 
 	private String currency = "";
 	private String privateKey = "";
-	private String DBURL = "jdbc:mysql://localhost:3306/ucoinj?createDatabaseIfNotExist=true";
+	private String DBURL = "";
 	private String DBUsername = "root";
 	private String DBPassword = "";
 	private PGPPrivateKey PGPPrivateKey;
@@ -94,7 +94,7 @@ public class GlobalConfiguration {
 		this.port = port;
 	}
 
-	public Object getCurrency() {
+	public String getCurrency() {
 		return currency;
 	}
 

@@ -11,6 +11,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Coin;
@@ -25,6 +26,7 @@ import fr.twiced.ucoinj.bean.Vote;
 
 @Configuration
 @ComponentScan("fr.twiced.ucoinj")
+@EnableTransactionManagement
 public class SpringConfiguration {
 
 	@Bean
