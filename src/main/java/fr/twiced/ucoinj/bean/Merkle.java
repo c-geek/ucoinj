@@ -274,7 +274,9 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 		map.put("depth", depth);
 		map.put("nodesCount", nodesCount);
 		map.put("leavesCount", leavesCount);
-		map.put("root", getRoot().getHash());
+		if (getRoot() != null) {
+			map.put("root", getRoot().getHash());
+		}
 		if (!leavesHashList.isEmpty()) {
 			// Leaves display
 			List<String> leaves = new ArrayList<>();
