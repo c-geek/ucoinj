@@ -44,6 +44,11 @@ public abstract class GenericDaoImpl<E> implements GenericDao<E> {
 	public List<E> getAll() {
 		return getSession().createQuery("from " + getEntityName()).list();
 	}
+	
+	@Override
+	public void removeAll() {
+		getSession().createQuery("delete from " + getEntityName()).executeUpdate();
+	}
 
 	protected abstract String getEntityName();
 }

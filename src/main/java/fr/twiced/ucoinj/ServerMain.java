@@ -12,6 +12,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 
 import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.dao.GlobalDao;
 import fr.twiced.ucoinj.dao.KeyDao;
 
 public class ServerMain {
@@ -178,6 +179,11 @@ public class ServerMain {
 	        	if (arg.equals("config")) {
 	        		config.reset();
 			        log.info("Configuration successfuly reseted.");
+	        	} else {
+			        log.info("Reseting data..");
+		        	ApplicationContext ctx = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+	        		ctx.getBean(GlobalDao.class).removeAll();
+			        log.info("Data successfuly reseted.");
 	        	}
 				
 	        } else if (command.equals("config")) {
@@ -220,7 +226,7 @@ public class ServerMain {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Error: " + e.getMessage());
-			printUsage();
+//			printUsage();
 		}
 	}
 	

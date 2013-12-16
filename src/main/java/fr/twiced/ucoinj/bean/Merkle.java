@@ -14,6 +14,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
@@ -44,8 +45,11 @@ public class Merkle<E extends Merklable> implements Hashable, Jsonable {
 	@Column(nullable = false)
 	private Integer levelsCount;
 
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(optional = true)
 	private Node root;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "merkle")
+	private List<Node> nodes;
 	
 	@Transient
 	private Map<Integer, String> leavesHashList;
