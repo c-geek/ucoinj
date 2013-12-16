@@ -34,8 +34,12 @@ public class GlobalConfiguration {
 	private String remoteIPv6 = "";
 	private Integer remotePort = 8081;
 	
+	private String getFileName() {
+		return String.format("%s.properties", currency);
+	}
+	
 	public void save() throws IOException {
-		save("config.properties");
+		save(getFileName());
 	}
 	
 	public void save(String name) throws IOException {
@@ -57,8 +61,31 @@ public class GlobalConfiguration {
 		}
 	}
 	
+	public void reset() throws IOException {
+		reset(getFileName());
+	}
+	
+	public static void reset(String name) throws IOException {
+		Properties prop = new Properties();
+		prop.put("currency", "");
+		prop.put("privateKey", "");
+		prop.put("DBURL", "");
+		prop.put("DBUsername", "");
+		prop.put("DBPassword", "");
+		prop.put("PGPPassword", "");
+		prop.put("IPv4", "");
+		prop.put("port", "");
+		prop.put("remoteHost", "");
+		prop.put("remoteIPv4", "");
+		prop.put("remoteIPv6", "");
+		prop.put("remotePort", "");
+		try (FileOutputStream out = new FileOutputStream(new File(name))) {
+			prop.store(out, "");
+		}
+	}
+	
 	public void load() throws IOException {
-		load("config.properties");
+		load(getFileName());
 	}
 	
 	public void load(String name) throws IOException {

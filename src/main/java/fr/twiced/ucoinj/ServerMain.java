@@ -22,8 +22,6 @@ public class ServerMain {
 		new ServerMain().exec(args);
 	}
     
-    private static String CONFIG_LOCATION = "config.properties";
-    
     private static String OPT_CURRENCY = "currency";
     private static String OPT_PRIVATE_KEY = "pgpkey";
     private static String OPT_PRIVATE_KEY_PASSWORD = "pgppasswd";
@@ -60,7 +58,6 @@ public class ServerMain {
 		try {
 
 	        GlobalConfiguration config = GlobalConfiguration.getInstance();
-	        config.load(CONFIG_LOCATION);
 			CommandLine cmd = parser.parse(options, args);
 	        String command = (String) (cmd.getArgList().isEmpty() ? "" : cmd.getArgList().get(0));
 			int port = 8080;
@@ -73,7 +70,8 @@ public class ServerMain {
 			if(!cmd.hasOption(OPT_CURRENCY)){
 				throw new OptionRequiredException(cmd);
 			}
-			
+
+	        config.load(cmd.getOptionValue(OPT_CURRENCY));
 	        config.setCurrency(cmd.getOptionValue(OPT_CURRENCY));
 	        dbName = config.getCurrency();
 			
@@ -166,9 +164,25 @@ public class ServerMain {
 	        	// Help on usage
 				printUsage();
 				
+	        } else if (command.equals("reset")) {
+	        	
+	        	if (cmd.getArgList().size() < 2) {
+        			throw new OptionRequiredException("bad reset takes an additional argument, must be reset <config|data>");
+        		}
+	        	
+	        	String arg = cmd.getArgList().get(1).toString();
+	        	if (!arg.equals("data") && !arg.equals("config")) {
+        			throw new OptionRequiredException("bad reset argument, must be `config` or `data`");
+        		}
+	        	
+	        	if (arg.equals("config")) {
+	        		config.reset();
+			        log.info("Configuration successfuly reseted.");
+	        	}
+				
 	        } else if (command.equals("config")) {
 
-		        config.save(CONFIG_LOCATION);
+		        config.save();
 		        log.info("Configuration saved.");
 				
 	        } else if (command.equals("start")) {
