@@ -37,6 +37,7 @@ public class ServerMain {
     private static String OPT_MPORT = "mport";
     private static String OPT_MUSER = "muser";
     private static String OPT_MPASSWD = "mpasswd";
+    private static String OPT_KMANAGEMENT = "kmanagement";
 	
 	public void exec(String[] args){
 		Options options = new Options();
@@ -54,6 +55,7 @@ public class ServerMain {
 		options.addOption(OPT_MPORT, true, "MySQL DB port");
 		options.addOption(OPT_MUSER, true, "MySQL DB user");
 		options.addOption(OPT_MPASSWD, true, "MySQL DB password");
+		options.addOption(OPT_KMANAGEMENT, true, "kmanagement");
 		
 		CommandLineParser parser = new BasicParser();
 		try {
@@ -67,12 +69,19 @@ public class ServerMain {
 			String dbHost = "localhost";
 			String dbName = "ucoinj";
 			
+			if (command == null || command.equals("help")) {
+	        	
+	        	// Help on usage
+				printUsage();
+				return;
+	        } 
+			
 			// --currency
 			if(!cmd.hasOption(OPT_CURRENCY)){
 				throw new OptionRequiredException(cmd);
 			}
 
-	        config.load(cmd.getOptionValue(OPT_CURRENCY));
+	        config.load(cmd.getOptionValue(OPT_CURRENCY) + ".properties");
 	        config.setCurrency(cmd.getOptionValue(OPT_CURRENCY));
 	        dbName = config.getCurrency();
 			
@@ -99,6 +108,11 @@ public class ServerMain {
 			// --mpasswd
 			if(cmd.hasOption(OPT_MPASSWD)){
 				config.setDBPassword(cmd.getOptionValue(OPT_MPASSWD));
+			}
+			
+			// --kmanagement
+			if(cmd.hasOption(OPT_KMANAGEMENT)){
+				config.setKmanagement(cmd.getOptionValue(OPT_KMANAGEMENT));
 			}
 
 			config.setDBURL(String.format("jdbc:mysql://%s:%d/%s?createDatabaseIfNotExist=true", dbHost, dbPort, dbName));
@@ -160,12 +174,7 @@ public class ServerMain {
 	        // the initialization phase of your application
 	        SLF4JBridgeHandler.install();
 	        
-	        if (command == null || command.equals("help")) {
-	        	
-	        	// Help on usage
-				printUsage();
-				
-	        } else if (command.equals("reset")) {
+	        if (command.equals("reset")) {
 	        	
 	        	if (cmd.getArgList().size() < 2) {
         			throw new OptionRequiredException("bad reset takes an additional argument, must be reset <config|data>");
@@ -226,7 +235,7 @@ public class ServerMain {
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.err.println("Error: " + e.getMessage());
-//			printUsage();
+			printUsage();
 		}
 	}
 	

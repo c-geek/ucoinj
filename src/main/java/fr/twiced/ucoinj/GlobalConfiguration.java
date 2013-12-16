@@ -33,6 +33,7 @@ public class GlobalConfiguration {
 	private String remoteIPv4 = "";
 	private String remoteIPv6 = "";
 	private Integer remotePort = 8081;
+	private String kmanagement = "ALL";
 	
 	private String getFileName() {
 		return String.format("%s.properties", currency);
@@ -56,6 +57,7 @@ public class GlobalConfiguration {
 		prop.put("remoteIPv4", remoteIPv4);
 		prop.put("remoteIPv6", remoteIPv6);
 		prop.put("remotePort", remotePort.toString());
+		prop.put("kmanagement", kmanagement);
 		try (FileOutputStream out = new FileOutputStream(new File(name))) {
 			prop.store(out, "");
 		}
@@ -79,6 +81,7 @@ public class GlobalConfiguration {
 		prop.put("remoteIPv4", "");
 		prop.put("remoteIPv6", "");
 		prop.put("remotePort", "");
+		prop.put("kmanagement", "");
 		try (FileOutputStream out = new FileOutputStream(new File(name))) {
 			prop.store(out, "");
 		}
@@ -105,6 +108,7 @@ public class GlobalConfiguration {
 			setRemoteHost((String) prop.get("remoteHost"));
 			setRemoteIPv4((String) prop.get("remoteIPv4"));
 			setRemoteIPv6((String) prop.get("remoteIPv6"));
+			setKmanagement((String) prop.get("kmanagement"));
 			Integer port = prop.get("port") == null ? 8081 : Integer.valueOf(prop.get("port").toString());
 			Integer remotePort = prop.get("remotePort") == null ? 8081 : Integer.valueOf(prop.get("remotePort").toString());
 			setRemotePort(remotePort);
@@ -154,6 +158,14 @@ public class GlobalConfiguration {
 
 	public String getIPv4() {
 		return IPv4;
+	}
+
+	public String getKmanagement() {
+		return kmanagement;
+	}
+
+	public void setKmanagement(String kmanagement) {
+		this.kmanagement = kmanagement == null ? "" : kmanagement;
 	}
 
 	public void setIPv4(String iPv4) {
@@ -206,5 +218,9 @@ public class GlobalConfiguration {
 
 	public void setRemotePort(int remotePort) {
 		this.remotePort = remotePort;
+	}
+	
+	public boolean isManagingALLKeys() {
+		return this.kmanagement.equals("ALL");
 	}
 }

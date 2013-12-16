@@ -6,9 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.twiced.ucoinj.GlobalConfiguration;
+import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
+import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.dao.KeyDao;
 import fr.twiced.ucoinj.dao.PublicKeyDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
@@ -28,6 +32,9 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 
 	@Autowired
 	private SignatureDao signatureDao;
+
+	@Autowired
+	private KeyDao keyDao;
 	
 	@Autowired
 	private PGPService pgpService;
@@ -49,6 +56,14 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 				pubkey.setSignature(signature);
 				dao.save(pubkey);
 				merkleService.put(pubkey);
+				if (GlobalConfiguration.getInstance().isManagingALLKeys()) {
+					Key k = keyDao.getByKeyId(new KeyId(pubkey.getFingerprint()));
+					if (k == null) {
+						k = new Key(pubkey.getFingerprint());
+						k.setManaged(true);
+						keyDao.save(k);
+					}
+				}
 			} else {
 				signatureDao.save(signature);
 				pubkey = stored;
