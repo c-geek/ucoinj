@@ -22,6 +22,8 @@ public class ServerMain {
 		new ServerMain().exec(args);
 	}
     
+    private static String CONFIG_LOCATION = "config.properties";
+    
     private static String OPT_CURRENCY = "currency";
     private static String OPT_PRIVATE_KEY = "pgpkey";
     private static String OPT_PRIVATE_KEY_PASSWORD = "pgppasswd";
@@ -58,6 +60,7 @@ public class ServerMain {
 		try {
 
 	        GlobalConfiguration config = GlobalConfiguration.getInstance();
+	        config.load(CONFIG_LOCATION);
 			CommandLine cmd = parser.parse(options, args);
 	        String command = (String) (cmd.getArgList().isEmpty() ? "" : cmd.getArgList().get(0));
 			int port = 8080;
@@ -101,7 +104,7 @@ public class ServerMain {
 
 			config.setDBURL(String.format("jdbc:mysql://%s:%d/%s?createDatabaseIfNotExist=true", dbHost, dbPort, dbName));
 			
-			if (command.equals("start")) {
+			if (command.equals("start") || command.equals("config")) {
 				
 				// --privk
 				if(!cmd.hasOption(OPT_PRIVATE_KEY)){
@@ -164,9 +167,9 @@ public class ServerMain {
 				printUsage();
 				
 	        } else if (command.equals("config")) {
-	        	
-	        	System.err.println("Not implemented yet.");
-				printUsage();
+
+		        config.save(CONFIG_LOCATION);
+		        log.info("Configuration saved.");
 				
 	        } else if (command.equals("start")) {
 	        	
