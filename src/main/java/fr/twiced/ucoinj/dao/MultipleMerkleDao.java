@@ -2,6 +2,7 @@ package fr.twiced.ucoinj.dao;
 
 import java.util.List;
 
+import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.NaturalId;
@@ -37,5 +38,9 @@ public interface MultipleMerkleDao<E extends Merklable, N extends NaturalId> ext
 	Merkle<E> put(String name, List<E> newLeaves);
 
 	Merkle<E> put(String name, List<E> newLeaves, String rootCheck) throws RefusedDataException;
+
+	void remove(String name, Hash hash);
+
+	Node getNode(String name, Hash hash);
 	
 }

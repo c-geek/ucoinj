@@ -15,6 +15,8 @@ public interface MerkleService {
 
 	String getRootPksAll();
 
+	String getRootManagedKeys();
+
 	String getRootTxKeys();
 
 	String getRootTxAll();
@@ -35,6 +37,8 @@ public interface MerkleService {
 
 	void put(PublicKey pubkey);
 
+	void putManagedKey(Key k);
+
 	void putTxKey(Key k);
 
 	void putTxAll(Transaction tx);
@@ -52,6 +56,10 @@ public interface MerkleService {
 	void putTxFusionOfSender(Transaction tx, KeyId id);
 
 	void putTxTransferOfSender(Transaction tx, KeyId id);
+
+	void removeManagedKey(Key k);
+
+	Jsonable searchManagedKey(Boolean leaves, String leaf) throws UnknownLeafException;
 
 	Jsonable searchPubkey(Boolean leaves, String leaf) throws UnknownLeafException;
 	

@@ -83,6 +83,19 @@ public class MerkleServiceImpl implements MerkleService {
 	}
 
 	@Override
+	public Jsonable searchManagedKey(Boolean leaves, String leaf) throws UnknownLeafException {
+		if (leaf != null) {
+			Node n = hashMerkleDao.getNode(UniqueMerkle.ALL_KEYS_MANAGED.name(), new Hash(leaf));
+			if (n == null) {
+				throw new UnknownLeafException();
+			}
+			return new Hash(n.getHash());
+		} else {
+			return searchMerkle(hashMerkleDao, new HashId(""), UniqueMerkle.ALL_KEYS_MANAGED.name(), leaves, leaf);
+		}
+	}
+
+	@Override
 	public Merkle<Hash> searchMembers(AmendmentId amId, Boolean leaves, String leaf) throws UnknownLeafException {
 		return searchMerkle(hashMerkleDao, new HashId(""), Merkle.getNameForMembers(amId), leaves, leaf);
 	}
@@ -167,8 +180,18 @@ public class MerkleServiceImpl implements MerkleService {
 	}
 
 	@Override
+	public void removeManagedKey(Key k) {
+		hashMerkleDao.remove(UniqueMerkle.ALL_KEYS_MANAGED.name(), new Hash(k.getFingerprint()));
+	}
+
+	@Override
 	public void put(PublicKey pubkey) {
 		pubkeyMerkleDao.put(UniqueMerkle.PUBLIC_KEY.name(), pubkey);
+	}
+
+	@Override
+	public void putManagedKey(Key k) {
+		hashMerkleDao.put(UniqueMerkle.ALL_KEYS_MANAGED.name(), new Hash(k.getFingerprint()));
 	}
 
 	@Override
@@ -219,6 +242,11 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public String getRootPksAll() {
 		return getRoot(pubkeyMerkleDao, UniqueMerkle.PUBLIC_KEY.name());
+	}
+
+	@Override
+	public String getRootManagedKeys() {
+		return getRoot(hashMerkleDao, UniqueMerkle.ALL_KEYS_MANAGED.name());
 	}
 
 	@Override

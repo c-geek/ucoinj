@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.NaturalId;
@@ -85,6 +86,17 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 		return merkle;
 	}
 	
+	@Override
+	public Node getNode(String name, Hash hash) {
+		Merkle<?> m = getMerkle(name);
+		return (Node) getSession().createQuery("select n from Node n "
+				+ "where n.merkle.id = :merkleId "
+				+ "AND n.hash = :hash")
+				.setParameter("merkleId", m.getId())
+				.setParameter("hash", hash.getHash())
+				.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Node> getNodes(String name, int lstart, int lend, int start, int end) {
@@ -119,6 +131,10 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 
 	@Override
 	public Merkle<E> put(String name, List<E> newLeaves) {
+		return put(name, newLeaves, new ArrayList<String>());
+	}
+
+	public Merkle<E> put(String name, List<E> newLeaves, List<String> excludeHashes) {
 		Merkle<E> merkle = getMerkle(name);
 		// Clear merkle data
 		merkle.setRoot(null);
@@ -135,7 +151,9 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 		// Rebuild merkle leaves
 		List<E> allNewLeaves = new ArrayList<>();
 		for (Node n : leaves) {
-			newLeaves.add(getNew(n.getHash()));
+			if (!excludeHashes.contains(n.getHash())) {
+				newLeaves.add(getNew(n.getHash()));
+			}
 		}
 		allNewLeaves.addAll(newLeaves);
 		// New leaves is exactly the same + new one leaf
@@ -167,6 +185,13 @@ public abstract class GenericMultipleMerkleDaoImpl<E extends Merklable, N extend
 		Merkle<E> merkle = put(name, newLeaves);
 		checkRootMatches(merkle, rootCheck);
 		return merkle;
+	}
+	
+	@Override
+	public void remove(String name, Hash hash) {
+		List<String> exclude = new ArrayList<>();
+		exclude.add(hash.getHash());
+		put(name, new ArrayList<E>(), exclude);
 	}
 	
 	private void checkRootMatches(Merkle<E> merkle, String rootCheck) throws RefusedDataException {
