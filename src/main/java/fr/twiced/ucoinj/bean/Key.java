@@ -27,17 +27,17 @@ public class Key extends UCoinEntity<KeyId> implements Merklable {
 
 	@Id
 	@GeneratedValue
-	@Column(nullable = true, unique = true)
+	@Column(nullable = false, unique = true)
 	public Integer getId() {
 		return id;
 	}
 
-	@Column(nullable = true, unique = true)
+	@Column(nullable = false, unique = true)
 	public String getFingerprint() {
 		return fingerprint;
 	}
 
-	@Column(nullable = true)
+	@Column(nullable = false)
 	public Boolean getManaged() {
 		return managed;
 	}

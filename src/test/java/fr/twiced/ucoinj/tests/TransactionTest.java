@@ -93,10 +93,6 @@ public class TransactionTest {
 		String armoredSig = readFile(sigURL);
 		PublicKey pubkey = pgpService.extractPublicKey(armoredPub);
 		Assert.assertNotNull(pksService.add(pubkey, new Signature(armoredSig)));
-		Key key = new Key();
-		key.setFingerprint(pubkey.getFingerprint());
-		key.setManaged(true);
-		keyDao.save(key);
 	}
 	
 	private void vote(String am, String voter) throws Exception {
