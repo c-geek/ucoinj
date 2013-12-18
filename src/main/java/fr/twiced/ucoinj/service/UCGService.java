@@ -1,6 +1,10 @@
 package fr.twiced.ucoinj.service;
 
+import java.io.IOException;
+import java.security.SignatureException;
 import java.util.List;
+
+import org.bouncycastle.openpgp.PGPException;
 
 import fr.twiced.ucoinj.bean.Forward;
 import fr.twiced.ucoinj.bean.Merkle;
@@ -10,6 +14,8 @@ import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Status;
 import fr.twiced.ucoinj.bean.THTEntry;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.exceptions.BadSignatureException;
+import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 
 public interface UCGService {
@@ -32,8 +38,13 @@ public interface UCGService {
 	/**
 	 * Get peering informations of this node.
 	 * @return Peering informations.
+	 * @throws NoPublicKeyPacketException 
+	 * @throws IOException 
+	 * @throws PGPException 
+	 * @throws SignatureException 
+	 * @throws BadSignatureException 
 	 */
-	Peer peer();
+	Peer peer() throws PGPException, IOException, NoPublicKeyPacketException, SignatureException, BadSignatureException;
 
 	/**
 	 * Get the Mekle resource of all known peers of this node.

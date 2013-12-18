@@ -13,9 +13,6 @@ http://www.springframework.org/schema/tx
 http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
 
     <context:annotation-config/>
-
-	<!-- Configures the @Controller programming model -->
-	<mvc:annotation-driven />
 	
 	<bean id="config" class="fr.twiced.ucoinj.SpringConfiguration"></bean>
 

@@ -1,13 +1,17 @@
 package fr.twiced.ucoinj.service.impl;
 
+import java.io.IOException;
+import java.security.SignatureException;
 import java.util.List;
 
+import org.bouncycastle.openpgp.PGPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.twiced.ucoinj.GlobalConfiguration;
 import fr.twiced.ucoinj.bean.Forward;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Merkle;
@@ -17,6 +21,10 @@ import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Status;
 import fr.twiced.ucoinj.bean.THTEntry;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.dao.PeerDao;
+import fr.twiced.ucoinj.dao.SignatureDao;
+import fr.twiced.ucoinj.exceptions.BadSignatureException;
+import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.UCGService;
@@ -29,6 +37,14 @@ public class UCGServiceImpl implements UCGService {
 	
 	@Autowired
 	private MerkleService merkleService;
+	
+	@Autowired
+	private PeerDao peerDao;
+	
+	@Autowired
+	private SignatureDao sigDao;
+	
+	private Peer peer;
 
 	@Override
 	public PublicKey pubkey() {
@@ -42,9 +58,35 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
-	public Peer peer() {
-		// TODO Auto-generated method stub
-		return null;
+	public Peer peer() throws PGPException, IOException, NoPublicKeyPacketException, SignatureException, BadSignatureException {
+		if (peer == null) {
+	        // Prepare data
+			GlobalConfiguration config = GlobalConfiguration.getInstance();
+	        String fingerprint = config.getPublicKey().getFingerprint();
+	        Peer stored = peerDao.getByKeyId(new KeyId(fingerprint));
+	        Peer computed = new Peer();
+	        computed.setCurrency(config.getCurrency());
+	        computed.setVersion(1);
+	        computed.setFingerprint(fingerprint);
+	        computed.setDns(config.getRemoteHost());
+	        computed.setIpv4(config.getRemoteIPv4());
+	        computed.setIpv6(config.getRemoteIPv6());
+	        computed.setPort(config.getPort());
+	        Signature sig = new Signature(new PGPServiceImpl().sign(computed.getRaw(), config.getPGPPrivateKey()));
+	        // Configuration changed?
+	        if (stored == null || !stored.getHash().equals(computed.getHash())) {
+	        	if (stored != null) {
+	        		peerDao.delete(stored);
+	        	}
+	        	sigDao.save(sig);
+	        	computed.setSignature(sig);
+	        	peerDao.save(computed);
+	        	peer = computed;
+	        } else {
+	        	peer = stored;
+	        }
+		}
+		return peer;
 	}
 
 	@Override

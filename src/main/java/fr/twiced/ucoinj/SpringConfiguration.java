@@ -12,6 +12,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Coin;
@@ -19,6 +20,7 @@ import fr.twiced.ucoinj.bean.CoinEntry;
 import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Node;
+import fr.twiced.ucoinj.bean.Peer;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Transaction;
@@ -27,6 +29,7 @@ import fr.twiced.ucoinj.bean.Vote;
 @Configuration
 @ComponentScan("fr.twiced.ucoinj")
 @EnableTransactionManagement
+@EnableWebMvc
 public class SpringConfiguration {
 
 	@Bean
@@ -51,7 +54,7 @@ public class SpringConfiguration {
 		sessionFactory.setHibernateProperties(props);
 		Class<?>[] annotatedClasses = new Class<?>[]{
 			Signature.class, PublicKey.class, Node.class, Merkle.class, Amendment.class, Vote.class,
-			Key.class, CoinEntry.class, Coin.class, Transaction.class
+			Key.class, CoinEntry.class, Coin.class, Transaction.class, Peer.class
 		};
 		sessionFactory.setAnnotatedClasses(annotatedClasses);
 		sessionFactory.afterPropertiesSet();

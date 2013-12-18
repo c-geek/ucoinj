@@ -1,10 +1,20 @@
 package fr.twiced.ucoinj;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Properties;
+
+import org.bouncycastle.bcpg.ArmoredOutputStream;
+import org.bouncycastle.openpgp.PGPException;
+import org.bouncycastle.openpgp.PGPPrivateKey;
+
+import fr.twiced.ucoinj.bean.PublicKey;
+import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
+import fr.twiced.ucoinj.service.impl.PGPServiceImpl;
 
 
 public class GlobalConfiguration {
@@ -222,5 +232,29 @@ public class GlobalConfiguration {
 	
 	public boolean isManagingALLKeys() {
 		return this.kmanagement.equals("ALL");
+	}
+	
+	public PGPPrivateKey getPGPPrivateKey() throws PGPException, IOException {
+		String privateKeyStream = GlobalConfiguration.getInstance().getPrivateKey();
+		PGPPrivateKey privateKey = null;
+		if(!(privateKeyStream == null || privateKeyStream.isEmpty())){
+			String password = GlobalConfiguration.getInstance().getPGPPassword();
+			privateKey = new PGPServiceImpl().extractPrivateKey(privateKeyStream, password);
+		}
+		return privateKey;
+	}
+	
+	public PublicKey getPublicKey() throws PGPException, IOException, NoPublicKeyPacketException {
+		PGPPrivateKey privateKey = getPGPPrivateKey();
+		if (privateKey != null) {
+			// Computes armored public key from private key
+			ByteArrayOutputStream armoredOut = new ByteArrayOutputStream();
+			OutputStream out = new ArmoredOutputStream(armoredOut);
+			out.write(privateKey.getPublicKeyPacket().getEncoded());
+			out.close();
+			String armoredPubkey = armoredOut.toString();
+			return new PGPServiceImpl().extractPublicKey(armoredPubkey);
+		}
+		return null;
 	}
 }

@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import fr.twiced.ucoinj.GlobalConfiguration;
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.PublicKey;
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.AmendmentDao;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
@@ -114,5 +115,20 @@ public class UCGController extends UCoinController {
 		} catch (UnknownLeafException e) {
 			sendError(404, "Leaf not found", response);
 		}
+	}
+	
+	@RequestMapping(value = "/ucg/peering/peer", method = RequestMethod.GET)
+	public void peeringPeer(
+		HttpServletRequest request,
+		HttpServletResponse response) {
+		try {
+			objectOrNotFound(ucgService.peer().getJSON(), request, response, true);
+		} catch (Exception e) {
+			sendError(500, "Can't produce Peering entry", response);
+		}
+	}
+
+	public PublicKey getPubkey() {
+		return pubkey;
 	}
 }
