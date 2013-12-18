@@ -13,16 +13,19 @@ import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.openpgp.PGPException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import fr.twiced.ucoinj.GlobalConfiguration;
+import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.PublicKey;
-import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.dao.AmendmentDao;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
+import fr.twiced.ucoinj.service.HDCService;
+import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
+import fr.twiced.ucoinj.service.PublicKeyService;
 import fr.twiced.ucoinj.service.UCGService;
 
 @Controller
@@ -33,6 +36,18 @@ public class UCGController extends UCoinController {
 	
 	@Autowired
 	private UCGService ucgService;
+	
+	@Autowired
+	private HDCService hdcService;
+	
+	@Autowired
+	private PublicKeyService pksService;
+	
+	@Autowired
+	private MerkleService merkleService;
+	
+	@Autowired
+	private AmendmentDao amDao;
 	
 	@Autowired
 	public UCGController(PGPService pgpService) throws PGPException, IOException, NoPublicKeyPacketException {
@@ -62,14 +77,29 @@ public class UCGController extends UCoinController {
 		GlobalConfiguration conf = GlobalConfiguration.getInstance();
 		Map<String, Object> map = new HashMap<String, Object>();
 		Map<String, Object> remote = new HashMap<String, Object>();
+		Map<String, Object> am = new HashMap<String, Object>();
+		Map<String, Object> merkles = new HashMap<String, Object>();
+		Amendment current = amDao.getCurrent();
 		remote.put("host", conf.getRemoteHost());
 		remote.put("ipv4", conf.getRemoteIPv4());
 		remote.put("ipv6", conf.getRemoteIPv6());
 		remote.put("port", conf.getRemotePort());
+		am.put("currentNumber", current == null ? -1 : current.getNumber());
+		am.put("hash", current == null ? "" : current.getHash());
+		try {
+			merkles.put("pks/all", pksService.all(false, null));
+		} catch (UnknownLeafException e) {
+		}
+		try {
+			merkles.put("hdc/amendments/current/votes", hdcService.viewVotes(current.getNaturalId(), false, null));
+		} catch (UnknownLeafException e) {
+		}
 		map.put("currency", conf.getCurrency());
 		map.put("key", pubkey.getFingerprint());
 		map.put("remote", remote);
-		sendResult(map, request, response);
+		map.put("contract", am);
+		map.put("merkles", merkles);
+		sendResult(map, request, response, true);
 	}
 	
 	@RequestMapping(value = "/ucg/peering/keys", method = RequestMethod.GET)

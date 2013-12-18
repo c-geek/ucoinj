@@ -18,6 +18,7 @@ import fr.twiced.ucoinj.dao.SignatureDao;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
 import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
 import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
+import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PGPService;
@@ -25,7 +26,7 @@ import fr.twiced.ucoinj.service.PublicKeyService;
 
 @Service
 @Transactional
-public class PublicKeyServiceImpl implements PublicKeyService {
+public class PublicKeyServiceImpl extends UCoinServiceImpl implements PublicKeyService {
 
 	@Autowired
 	private PublicKeyDao dao;
@@ -109,6 +110,11 @@ public class PublicKeyServiceImpl implements PublicKeyService {
 		}
 		pubkey.setPGPPublicKey(complete.getPGPPublicKey());
 		return pubkey;
+	}
+
+	@Override
+	public Object all(Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchPubkey(leaves, leaf));
 	}
 
 }

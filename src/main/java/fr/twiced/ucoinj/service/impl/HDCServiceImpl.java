@@ -18,7 +18,6 @@ import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Coin;
 import fr.twiced.ucoinj.bean.CoinEntry;
 import fr.twiced.ucoinj.bean.Hash;
-import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Node;
 import fr.twiced.ucoinj.bean.PublicKey;
@@ -55,7 +54,7 @@ import fr.twiced.ucoinj.service.tx.TransfertTransactionProcessor;
 
 @Service
 @Transactional
-public class HDCServiceImpl implements HDCService {
+public class HDCServiceImpl extends UCoinServiceImpl implements HDCService {
 
     private static final Logger log = LoggerFactory.getLogger(HDCServiceImpl.class);
 	
@@ -457,13 +456,6 @@ public class HDCServiceImpl implements HDCService {
 			leaves.add(new Hash(n.getHash()));
 		}
 		hashMerkleDao.put(name, leaves, checkHash);
-	}
-	
-	private Object jsonIt(Jsonable jsonable) {
-		if (jsonable != null) {
-			return jsonable.getJSON();
-		}
-		return null;
 	}
 
 }
