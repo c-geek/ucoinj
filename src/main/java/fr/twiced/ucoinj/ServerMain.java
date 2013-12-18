@@ -1,5 +1,10 @@
 package fr.twiced.ucoinj;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -166,8 +171,27 @@ public class ServerMain {
 				}
 
 		        config.setPort(port);
-		        config.setPrivateKey(cmd.getOptionValue(OPT_PRIVATE_KEY));
 		        config.setIPv4(cmd.getOptionValue(OPT_IPV4));
+		        
+		        // Private key
+		        String privateOpt = cmd.getOptionValue(OPT_PRIVATE_KEY);
+		        if (!privateOpt.startsWith("-----BEGIN PGP PRIVATE KEY BLOCK-----")) {
+		        	// Is it a file ?
+		        	File f = new File(privateOpt);
+		        	if (f.exists()) {
+		        		StringBuffer sb = new StringBuffer();
+		        		try (DataInputStream fis = new DataInputStream(new FileInputStream(f))) {
+		        			String line;
+		        			while ((line = fis.readLine()) != null) {
+		        				sb.append(line + "\r\n");
+		        			}
+		        		}
+		        		privateOpt = sb.toString();
+		        	} else {
+		        		throw new OptionRequiredException("Bad private key format or file not found");
+		        	}
+		        }
+		        config.setPrivateKey(privateOpt);
 			}
 
 	        // add SLF4JBridgeHandler to j.u.l's root logger, should be done once during
@@ -229,6 +253,8 @@ public class ServerMain {
 	        			k.setManaged(command.equals("manage-key"));
 	        			keyDao.update(k);
 	        		}
+		        } else {
+		        	throw new OptionRequiredException("No command given");
 		        }
 	        }
 			
