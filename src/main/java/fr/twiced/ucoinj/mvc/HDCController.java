@@ -403,13 +403,6 @@ public class HDCController extends UCoinController {
 		objectOrNotFound(hdcService.transactionsLastOfSender(new KeyId(fingerprint)), request, response, true);
 	}
 	
-	private void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {
-		if (o != null)
-			sendResult(o, request, response, nice);
-		else
-			sendError(404, response);
-	}
-	
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 	    binder.registerCustomEditor(AmendmentId.class, new PropertyEditorSupport() {

@@ -34,6 +34,13 @@ public class UCoinController {
 	public PGPService getPgpService() {
 		return pgpService;
 	}
+	
+	protected void objectOrNotFound(Object o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {
+		if (o != null)
+			sendResult(o, request, response, nice);
+		else
+			sendError(404, response);
+	}
 
 	protected void sendResult(Jsonable o, HttpServletRequest request, HttpServletResponse response, Boolean nice) {
 		HTTPSignedProcessor.send(o, request, response, pgpService, privateKey, nice);

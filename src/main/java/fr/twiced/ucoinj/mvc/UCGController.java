@@ -13,18 +13,26 @@ import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.openpgp.PGPException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import fr.twiced.ucoinj.GlobalConfiguration;
 import fr.twiced.ucoinj.bean.PublicKey;
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
+import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 import fr.twiced.ucoinj.service.PGPService;
+import fr.twiced.ucoinj.service.UCGService;
 
 @Controller
 public class UCGController extends UCoinController {
 	
 	private String armoredPubkey;
 	private PublicKey pubkey;
+	
+	@Autowired
+	private UCGService ucgService;
 	
 	@Autowired
 	public UCGController(PGPService pgpService) throws PGPException, IOException, NoPublicKeyPacketException {
@@ -62,5 +70,19 @@ public class UCGController extends UCoinController {
 		map.put("key", pubkey.getFingerprint());
 		map.put("remote", remote);
 		sendResult(map, request, response);
+	}
+	
+	@RequestMapping(value = "/ucg/peering/keys", method = RequestMethod.GET)
+	public void peeringKeys(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		Boolean leaves,
+		String leaf,
+		Boolean nice) {
+		try {
+			objectOrNotFound(ucgService.keys(leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
 	}
 }

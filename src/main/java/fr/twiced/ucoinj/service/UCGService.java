@@ -3,7 +3,6 @@ package fr.twiced.ucoinj.service;
 import java.util.List;
 
 import fr.twiced.ucoinj.bean.Forward;
-import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Peer;
 import fr.twiced.ucoinj.bean.PublicKey;
@@ -11,6 +10,7 @@ import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Status;
 import fr.twiced.ucoinj.bean.THTEntry;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 
 public interface UCGService {
 
@@ -22,9 +22,12 @@ public interface UCGService {
 
 	/**
 	 * Get the Merkle resource of all managed keys of this node.
+	 * @param leaf 
+	 * @param leaves 
 	 * @return Merkle resource.
+	 * @throws UnknownLeafException 
 	 */
-	Merkle<Key> keys();
+	Object keys(Boolean leaves, String leaf) throws UnknownLeafException;
 
 	/**
 	 * Get peering informations of this node.
