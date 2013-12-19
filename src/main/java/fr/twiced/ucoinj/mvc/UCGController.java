@@ -11,6 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.openpgp.PGPException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import fr.twiced.ucoinj.GlobalConfiguration;
 import fr.twiced.ucoinj.bean.Amendment;
+import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.PublicKey;
-import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.AmendmentDao;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
@@ -31,6 +33,8 @@ import fr.twiced.ucoinj.service.UCGService;
 
 @Controller
 public class UCGController extends UCoinController {
+
+    private static final Logger log = LoggerFactory.getLogger(UCGController.class);
 	
 	private String armoredPubkey;
 	private PublicKey pubkey;
@@ -92,7 +96,11 @@ public class UCGController extends UCoinController {
 		} catch (UnknownLeafException e) {
 		}
 		try {
-			merkles.put("hdc/amendments/current/votes", hdcService.viewVotes(current.getNaturalId(), false, null));
+			if (current != null) {
+				merkles.put("hdc/amendments/current/votes", hdcService.viewVotes(current.getNaturalId(), false, null));
+			} else {
+				merkles.put("hdc/amendments/current/votes", new Merkle<>().getJSON());
+			}
 		} catch (UnknownLeafException e) {
 		}
 		map.put("currency", conf.getCurrency());
