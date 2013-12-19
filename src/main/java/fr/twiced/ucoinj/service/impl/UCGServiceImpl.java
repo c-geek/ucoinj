@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.GlobalConfiguration;
+import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Forward;
+import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Peer;
@@ -20,14 +22,23 @@ import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Status;
 import fr.twiced.ucoinj.bean.THTEntry;
+import fr.twiced.ucoinj.bean.Transaction;
+import fr.twiced.ucoinj.bean.Vote;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.PeerDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
+import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
+import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
+import fr.twiced.ucoinj.exceptions.RefusedDataException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
+import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
+import fr.twiced.ucoinj.pgp.Sha1;
 import fr.twiced.ucoinj.service.MerkleService;
+import fr.twiced.ucoinj.service.PublicKeyService;
 import fr.twiced.ucoinj.service.UCGService;
+import fr.twiced.ucoinj.service.tx.TransactionProcessor;
 
 @Service
 @Transactional
@@ -44,6 +55,9 @@ public class UCGServiceImpl implements UCGService {
 	@Autowired
 	private SignatureDao sigDao;
 	
+	@Autowired
+	private PublicKeyService pubkeyService;
+	
 	private Peer peer;
 
 	@Override
@@ -58,10 +72,15 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
-	public Peer peer() throws PGPException, IOException, NoPublicKeyPacketException, SignatureException, BadSignatureException {
+	public Peer peer() throws PGPException, IOException, NoPublicKeyPacketException, SignatureException, BadSignatureException, UnknownPublicKeyException, ObsoleteDataException, MultiplePublicKeyException {
 		if (peer == null) {
 	        // Prepare data
 			GlobalConfiguration config = GlobalConfiguration.getInstance();
+			// Need to self-publish own pubkey, to check future peering entry
+			String armoredPubKey = config.getPublicKey().getArmored();
+			Signature sigPK = new Signature(new PGPServiceImpl().sign(armoredPubKey, config.getPGPPrivateKey()));
+			pubkeyService.add(config.getPublicKey(), sigPK);
+			// Create Peering entry
 	        String fingerprint = config.getPublicKey().getFingerprint();
 	        Peer stored = peerDao.getByKeyId(new KeyId(fingerprint));
 	        Peer computed = new Peer();
@@ -75,12 +94,7 @@ public class UCGServiceImpl implements UCGService {
 	        Signature sig = new Signature(new PGPServiceImpl().sign(computed.getRaw(), config.getPGPPrivateKey()));
 	        // Configuration changed?
 	        if (stored == null || !stored.getHash().equals(computed.getHash())) {
-	        	if (stored != null) {
-	        		peerDao.delete(stored);
-	        	}
-	        	sigDao.save(sig);
-	        	computed.setSignature(sig);
-	        	peerDao.save(computed);
+	        	addPeer(computed, sig);
 	        	peer = computed;
 	        } else {
 	        	peer = stored;
@@ -96,9 +110,30 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
-	public void addPeer(Peer peer, Signature sig) {
-		// TODO Auto-generated method stub
-
+	public void addPeer(Peer peer, Signature sig) throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException {
+		PublicKey pubkey = pubkeyService.getWorking(pubkeyService.getBySignature(sig));
+		if (!sig.verify(pubkey, peer.getRaw())) {
+			throw new BadSignatureException("Bad signature for peering entry");
+		}
+		// Already stored?
+		Peer stored = peerDao.getByKeyId(peer.getKeyId());
+		if(stored != null && stored.getSignature().isMoreRecentThan(sig)){
+			throw new ObsoleteDataException("A more recent entry is already stored");
+		} else if (stored == null || stored.getSignature().isLessRecentThan(sig)) {
+			if (stored != null) {
+				// Remove previous entry
+				sigDao.delete(stored.getSignature());
+				peerDao.delete(stored);
+			}
+			log.info(String.format("Saving new entry of %s", peer.getFingerprint()));
+			sigDao.save(sig);
+			peer.setSignature(sig);
+			peerDao.save(peer);
+			if (stored == null) {
+				// Update Merkle
+				merkleService.putPeer(peer);
+			}
+		}
 	}
 
 	@Override

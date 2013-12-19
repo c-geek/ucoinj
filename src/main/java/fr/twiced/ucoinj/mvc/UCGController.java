@@ -17,11 +17,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.twiced.ucoinj.GlobalConfiguration;
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Merkle;
+import fr.twiced.ucoinj.bean.Peer;
 import fr.twiced.ucoinj.bean.PublicKey;
+import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.dao.AmendmentDao;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
@@ -132,7 +135,25 @@ public class UCGController extends UCoinController {
 		try {
 			objectOrNotFound(ucgService.peer().getJSON(), request, response, true);
 		} catch (Exception e) {
+			e.printStackTrace();
 			sendError(500, "Can't produce Peering entry", response);
+		}
+	}
+	
+	@RequestMapping(value = "/cug/peering/peers", method = RequestMethod.POST)
+	public void transactionsProcess(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@RequestParam("entry") String entryStream,
+		@RequestParam("signature") String signatureStream) {
+		try{
+			Signature sig = new Signature(signatureStream);
+			Peer peer = new Peer(entryStream, sig);
+			ucgService.addPeer(peer, sig);
+			sendResult(peer.getJSON(), request, response);
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+			sendError(400, e.getMessage(), response);
 		}
 	}
 

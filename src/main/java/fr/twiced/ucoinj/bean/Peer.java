@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Transient;
 
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.exceptions.BadFormatException;
 import fr.twiced.ucoinj.pgp.Sha1;
 
@@ -29,6 +30,14 @@ public class Peer implements Merklable, Rawable {
 	private String hash;
 	private Signature signature;
 	
+	public Peer() {
+	}
+	
+	public Peer(String entryStream, Signature sig) throws BadFormatException {
+		this.parseFromRaw(entryStream);
+		this.setSignature(sig);
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(nullable = false, unique = true)
@@ -182,5 +191,10 @@ public class Peer implements Merklable, Rawable {
 		} else {
 			throw new BadFormatException();
 		}
+	}
+	
+	@Transient
+	public KeyId getKeyId() {
+		return new KeyId(this.getFingerprint());
 	}
 }

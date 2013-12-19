@@ -15,8 +15,11 @@ import fr.twiced.ucoinj.bean.Status;
 import fr.twiced.ucoinj.bean.THTEntry;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
+import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
+import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
+import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
 
 public interface UCGService {
 
@@ -43,8 +46,11 @@ public interface UCGService {
 	 * @throws PGPException 
 	 * @throws SignatureException 
 	 * @throws BadSignatureException 
+	 * @throws MultiplePublicKeyException 
+	 * @throws ObsoleteDataException 
+	 * @throws UnknownPublicKeyException 
 	 */
-	Peer peer() throws PGPException, IOException, NoPublicKeyPacketException, SignatureException, BadSignatureException;
+	Peer peer() throws PGPException, IOException, NoPublicKeyPacketException, SignatureException, BadSignatureException, UnknownPublicKeyException, ObsoleteDataException, MultiplePublicKeyException;
 
 	/**
 	 * Get the Mekle resource of all known peers of this node.
@@ -56,8 +62,12 @@ public interface UCGService {
 	 * Add a peering entry in pool of known peers.
 	 * @param peer Peer to add.
 	 * @param sig Peering entry signature.
+	 * @throws BadSignatureException 
+	 * @throws MultiplePublicKeyException 
+	 * @throws UnknownPublicKeyException 
+	 * @throws ObsoleteDataException 
 	 */
-	void addPeer(Peer peer, Signature sig);
+	void addPeer(Peer peer, Signature sig) throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException;
 
 	/**
 	 * List all peers this node is listening to for ANY incoming transaction.

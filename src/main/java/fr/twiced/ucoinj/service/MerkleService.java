@@ -3,6 +3,7 @@ package fr.twiced.ucoinj.service;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
+import fr.twiced.ucoinj.bean.Peer;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
@@ -16,6 +17,8 @@ public interface MerkleService {
 	String getRootPksAll();
 
 	String getRootManagedKeys();
+
+	String getRootPeers();
 
 	String getRootTxKeys();
 
@@ -38,6 +41,8 @@ public interface MerkleService {
 	void put(PublicKey pubkey);
 
 	void putManagedKey(Key k);
+
+	void putPeer(Peer p);
 
 	void putTxKey(Key k);
 
@@ -62,6 +67,8 @@ public interface MerkleService {
 	Jsonable searchManagedKey(Boolean leaves, String leaf) throws UnknownLeafException;
 
 	Jsonable searchPubkey(Boolean leaves, String leaf) throws UnknownLeafException;
+
+	Jsonable searchPeer(Boolean leaves, String leaf) throws UnknownLeafException;
 	
 	/** Amendments part **/
 

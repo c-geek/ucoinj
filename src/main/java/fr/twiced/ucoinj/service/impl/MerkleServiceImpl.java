@@ -14,6 +14,7 @@ import fr.twiced.ucoinj.bean.Merklable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.NaturalId;
 import fr.twiced.ucoinj.bean.Node;
+import fr.twiced.ucoinj.bean.Peer;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Transaction;
 import fr.twiced.ucoinj.bean.id.AmendmentId;
@@ -21,6 +22,7 @@ import fr.twiced.ucoinj.bean.id.HashId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.bean.id.TransactionId;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
+import fr.twiced.ucoinj.dao.MerkleOfPeerDao;
 import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
 import fr.twiced.ucoinj.dao.MerkleOfRecipientTransactionDao;
 import fr.twiced.ucoinj.dao.MerkleOfSenderDividendTransactionDao;
@@ -44,6 +46,9 @@ public class MerkleServiceImpl implements MerkleService {
 	
 	@Autowired
 	private MerkleOfHashDao hashMerkleDao;
+	
+	@Autowired
+	private MerkleOfPeerDao peerMerkleDao;
 	
 	@Autowired
 	private MerkleOfSignatureOfAmendmentDao signatureMerkleDao;
@@ -93,6 +98,11 @@ public class MerkleServiceImpl implements MerkleService {
 		} else {
 			return searchMerkle(hashMerkleDao, new HashId(""), UniqueMerkle.ALL_KEYS_MANAGED.name(), leaves, leaf);
 		}
+	}
+
+	@Override
+	public Jsonable searchPeer(Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(peerMerkleDao, new KeyId(), UniqueMerkle.PUBLIC_KEY.name(), leaves, leaf);
 	}
 
 	@Override
@@ -195,6 +205,11 @@ public class MerkleServiceImpl implements MerkleService {
 	}
 
 	@Override
+	public void putPeer(Peer p) {
+		peerMerkleDao.put(UniqueMerkle.ALL_PEERS.name(), p);
+	}
+
+	@Override
 	public void putTxKey(Key k) {
 		hashMerkleDao.put(UniqueMerkle.ALL_KEYS_WITH_TRANSACTION.name(), new Hash(k.getFingerprint()));
 	}
@@ -247,6 +262,11 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public String getRootManagedKeys() {
 		return getRoot(hashMerkleDao, UniqueMerkle.ALL_KEYS_MANAGED.name());
+	}
+
+	@Override
+	public String getRootPeers() {
+		return getRoot(peerMerkleDao, UniqueMerkle.ALL_PEERS.name());
 	}
 
 	@Override
