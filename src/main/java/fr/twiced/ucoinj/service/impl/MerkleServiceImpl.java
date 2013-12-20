@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.UniqueMerkle;
+import fr.twiced.ucoinj.bean.Forward;
 import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Key;
@@ -21,6 +22,7 @@ import fr.twiced.ucoinj.bean.id.AmendmentId;
 import fr.twiced.ucoinj.bean.id.HashId;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.bean.id.TransactionId;
+import fr.twiced.ucoinj.dao.MerkleOfForwardDao;
 import fr.twiced.ucoinj.dao.MerkleOfHashDao;
 import fr.twiced.ucoinj.dao.MerkleOfPeerDao;
 import fr.twiced.ucoinj.dao.MerkleOfPublicKeyDao;
@@ -49,6 +51,9 @@ public class MerkleServiceImpl implements MerkleService {
 	
 	@Autowired
 	private MerkleOfPeerDao peerMerkleDao;
+	
+	@Autowired
+	private MerkleOfForwardDao fwdMerkleDao;
 	
 	@Autowired
 	private MerkleOfSignatureOfAmendmentDao signatureMerkleDao;
@@ -103,6 +108,11 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public Jsonable searchPeer(Boolean leaves, String leaf) throws UnknownLeafException {
 		return searchMerkle(peerMerkleDao, new KeyId(), UniqueMerkle.ALL_PEERS.name(), leaves, leaf);
+	}
+
+	@Override
+	public Jsonable searchForward(Boolean leaves, String leaf) throws UnknownLeafException {
+		return searchMerkle(fwdMerkleDao, new KeyId(), UniqueMerkle.ALL_FORWARDS.name(), leaves, leaf);
 	}
 
 	@Override
@@ -210,6 +220,11 @@ public class MerkleServiceImpl implements MerkleService {
 	}
 
 	@Override
+	public void putForward(Forward forward) {
+		fwdMerkleDao.put(UniqueMerkle.ALL_FORWARDS.name(), forward);
+	}
+
+	@Override
 	public void putTxKey(Key k) {
 		hashMerkleDao.put(UniqueMerkle.ALL_KEYS_WITH_TRANSACTION.name(), new Hash(k.getFingerprint()));
 	}
@@ -267,6 +282,11 @@ public class MerkleServiceImpl implements MerkleService {
 	@Override
 	public String getRootPeers() {
 		return getRoot(peerMerkleDao, UniqueMerkle.ALL_PEERS.name());
+	}
+
+	@Override
+	public String getRootForward() {
+		return getRoot(fwdMerkleDao, UniqueMerkle.ALL_FORWARDS.name());
 	}
 
 	@Override

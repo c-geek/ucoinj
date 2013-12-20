@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import fr.twiced.ucoinj.GlobalConfiguration;
 import fr.twiced.ucoinj.bean.Amendment;
+import fr.twiced.ucoinj.bean.Forward;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Peer;
 import fr.twiced.ucoinj.bean.PublicKey;
@@ -140,8 +141,8 @@ public class UCGController extends UCoinController {
 		}
 	}
 	
-	@RequestMapping(value = "/cug/peering/peers", method = RequestMethod.POST)
-	public void transactionsProcess(
+	@RequestMapping(value = "/ucg/peering/peers", method = RequestMethod.POST)
+	public void peersPost(
 		HttpServletRequest request,
 		HttpServletResponse response,
 		@RequestParam("entry") String entryStream,
@@ -168,6 +169,23 @@ public class UCGController extends UCoinController {
 			objectOrNotFound(ucgService.peers(leaves, leaf), request, response, true);
 		} catch (UnknownLeafException e) {
 			sendError(404, "Leaf not found", response);
+		}
+	}
+	
+	@RequestMapping(value = "/ucg/peering/forward", method = RequestMethod.POST)
+	public void forwardPost(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@RequestParam("forward") String forwardStream,
+		@RequestParam("signature") String signatureStream) {
+		try{
+			Signature sig = new Signature(signatureStream);
+			Forward fwd = new Forward(forwardStream, sig);
+			ucgService.addForward(fwd, sig);
+			sendResult(fwd.getJSON(), request, response);
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+			sendError(400, e.getMessage(), response);
 		}
 	}
 

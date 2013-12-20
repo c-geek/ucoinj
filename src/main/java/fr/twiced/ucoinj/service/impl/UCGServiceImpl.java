@@ -21,6 +21,7 @@ import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Status;
 import fr.twiced.ucoinj.bean.THTEntry;
 import fr.twiced.ucoinj.bean.id.KeyId;
+import fr.twiced.ucoinj.dao.ForwardDao;
 import fr.twiced.ucoinj.dao.PeerDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
 import fr.twiced.ucoinj.exceptions.BadSignatureException;
@@ -44,6 +45,9 @@ public class UCGServiceImpl implements UCGService {
 	
 	@Autowired
 	private PeerDao peerDao;
+	
+	@Autowired
+	private ForwardDao forwardDao;
 	
 	@Autowired
 	private SignatureDao sigDao;
@@ -153,9 +157,30 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
-	public void addForward(Forward forward, Signature sig) {
-		// TODO Auto-generated method stub
-
+	public void addForward(Forward forward, Signature sig)  throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException {
+		PublicKey pubkey = pubkeyService.getWorking(pubkeyService.getBySignature(sig));
+		if (!sig.verify(pubkey, forward.getRaw())) {
+			throw new BadSignatureException("Bad signature for peering entry");
+		}
+		// Already stored?
+		Forward stored = forwardDao.getByKeyIds(forward.getFromKeyId(), forward.getToKeyId());
+		if(stored != null && stored.getSignature().isMoreRecentThan(sig)){
+			throw new ObsoleteDataException("A more recent entry is already stored");
+		} else if (stored == null || stored.getSignature().isLessRecentThan(sig)) {
+			if (stored != null) {
+				// Remove previous entry
+				forwardDao.delete(stored);
+				sigDao.delete(stored.getSignature());
+			}
+			log.info(String.format("Saving new entry of %s", forward.getFingerprint()));
+			sigDao.save(sig);
+			forward.setSignature(sig);
+			forwardDao.save(forward);
+			if (stored == null) {
+				// Update Merkle
+				merkleService.putForward(forward);
+			}
+		}
 	}
 
 	@Override

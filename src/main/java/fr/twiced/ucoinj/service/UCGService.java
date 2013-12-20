@@ -103,7 +103,7 @@ public interface UCGService {
 	 * @param forward Forward rule to be added.
 	 * @param sig Forward signature.
 	 */
-	void addForward(Forward forward, Signature sig);
+	void addForward(Forward forward, Signature sig) throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException;
 
 	/**
 	 * Add a status information for peering purposes.

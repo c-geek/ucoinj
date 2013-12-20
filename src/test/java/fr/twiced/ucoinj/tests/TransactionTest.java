@@ -22,7 +22,6 @@ import fr.twiced.ucoinj.TransactionOrigin;
 import fr.twiced.ucoinj.TransactionType;
 import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.CoinEntry;
-import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Transaction;

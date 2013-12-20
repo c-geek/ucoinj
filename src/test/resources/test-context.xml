@@ -52,6 +52,7 @@ http://www.springframework.org/schema/tx/spring-tx-2.5.xsd ">
 				<value>fr.twiced.ucoinj.bean.Coin</value>
 				<value>fr.twiced.ucoinj.bean.CoinEntry</value>
 				<value>fr.twiced.ucoinj.bean.Transaction</value>
+				<value>fr.twiced.ucoinj.bean.Forward</value>
 			</list>
 		</property>
 

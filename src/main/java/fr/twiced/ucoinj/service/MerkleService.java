@@ -1,5 +1,6 @@
 package fr.twiced.ucoinj.service;
 
+import fr.twiced.ucoinj.bean.Forward;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Key;
 import fr.twiced.ucoinj.bean.Merkle;
@@ -19,6 +20,8 @@ public interface MerkleService {
 	String getRootManagedKeys();
 
 	String getRootPeers();
+
+	String getRootForward();
 
 	String getRootTxKeys();
 
@@ -43,6 +46,8 @@ public interface MerkleService {
 	void putManagedKey(Key k);
 
 	void putPeer(Peer p);
+
+	void putForward(Forward forward);
 
 	void putTxKey(Key k);
 
@@ -69,6 +74,8 @@ public interface MerkleService {
 	Jsonable searchPubkey(Boolean leaves, String leaf) throws UnknownLeafException;
 
 	Jsonable searchPeer(Boolean leaves, String leaf) throws UnknownLeafException;
+
+	Jsonable searchForward(Boolean leaves, String leaf) throws UnknownLeafException;
 	
 	/** Amendments part **/
 
