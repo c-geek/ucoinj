@@ -26,6 +26,7 @@ import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Peer;
 import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
+import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.AmendmentDao;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
@@ -187,6 +188,14 @@ public class UCGController extends UCoinController {
 			log.warn(e.getMessage());
 			sendError(400, e.getMessage(), response);
 		}
+	}
+	
+	@RequestMapping(value = "/ucg/peering/peers/upstream", method = RequestMethod.GET)
+	public void peeringPeers(
+		HttpServletRequest request,
+		HttpServletResponse response) throws PGPException, IOException, NoPublicKeyPacketException {
+		KeyId self = new KeyId(GlobalConfiguration.getInstance().getPublicKey().getFingerprint());
+		objectOrNotFound(ucgService.upstream(self), request, response, true);
 	}
 
 	public PublicKey getPubkey() {

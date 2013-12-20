@@ -151,10 +151,14 @@ public class Peer implements Merklable, Rawable {
 		sb.append(String.format("Version: %d", version) + CARRIAGE_RETURN);
 		sb.append(String.format("Currency: %s", currency) + CARRIAGE_RETURN);
 		sb.append(String.format("Fingerprint: %s", fingerprint) + CARRIAGE_RETURN);
-		sb.append(String.format("Dns: %s", dns) + CARRIAGE_RETURN);
-		sb.append(String.format("IPv6: %s", ipv4) + CARRIAGE_RETURN);
-		sb.append(String.format("IPv6: %s", ipv6) + CARRIAGE_RETURN);
-		sb.append(String.format("Port: %d", port) + CARRIAGE_RETURN);
+		if (dns != null && !dns.isEmpty())
+			sb.append(String.format("Dns: %s", dns) + CARRIAGE_RETURN);
+		if (ipv4 != null && !ipv4.isEmpty())
+			sb.append(String.format("IPv4: %s", ipv4) + CARRIAGE_RETURN);
+		if (ipv6 != null && !ipv6.isEmpty())
+			sb.append(String.format("IPv6: %s", ipv6) + CARRIAGE_RETURN);
+		if (port != null)
+			sb.append(String.format("Port: %d", port) + CARRIAGE_RETURN);
 		return sb.toString();
 	}
 
@@ -163,7 +167,7 @@ public class Peer implements Merklable, Rawable {
 		String generic = "Version: (\\d+)\r\n"
 				+ "Currency: ([a-zA-Z0-9 -_]+)\r\n"
 				+ "Fingerprint: ([A-Z0-9]{40})\r\n"
-				+ "(Dns: (\\d+)\r\n)?"
+				+ "(Dns: ([-_a-zA-Z0-9.]+)\r\n)?"
 				+ "(IPv4: ([0-9.]+)\r\n)?"
 				+ "(IPv6: ([:a-fA-F0-9]+)\r\n)?"
 				+ "(Port: (\\d+)\r\n)?";
@@ -190,5 +194,15 @@ public class Peer implements Merklable, Rawable {
 	@Transient
 	public KeyId getKeyId() {
 		return new KeyId(this.getFingerprint());
+	}
+
+	@Transient
+	public Object getShortJSON() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("dns", dns);
+		map.put("ipv4", ipv4);
+		map.put("ipv6", ipv6);
+		map.put("port", port);
+		return map;
 	}
 }

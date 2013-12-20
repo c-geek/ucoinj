@@ -2,7 +2,10 @@ package fr.twiced.ucoinj.service.impl;
 
 import java.io.IOException;
 import java.security.SignatureException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.slf4j.Logger;
@@ -29,6 +32,7 @@ import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
+import fr.twiced.ucoinj.exceptions.UnknownPeerException;
 import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PublicKeyService;
@@ -56,6 +60,9 @@ public class UCGServiceImpl implements UCGService {
 	private PublicKeyService pubkeyService;
 	
 	private Peer peer;
+	
+	public UCGServiceImpl() throws PGPException, IOException, NoPublicKeyPacketException {
+	}
 
 	@Override
 	public PublicKey pubkey() {
@@ -133,15 +140,15 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
-	public List<Peer> upstream() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Peer> upstream(KeyId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object upstream(KeyId id) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Object> peers = new ArrayList<>();
+		List<Forward> upstreamALL = forwardDao.getForwardsALLFrom(id);
+		for (Forward fwd : upstreamALL) {
+			peers.add(peerDao.getByKeyId(fwd.getToKeyId()).getShortJSON());
+		}
+		map.put("peers", peers);
+		return map;
 	}
 
 	@Override
@@ -157,7 +164,7 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
-	public void addForward(Forward forward, Signature sig)  throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException {
+	public void addForward(Forward forward, Signature sig)  throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException, UnknownPeerException {
 		PublicKey pubkey = pubkeyService.getWorking(pubkeyService.getBySignature(sig));
 		if (!sig.verify(pubkey, forward.getRaw())) {
 			throw new BadSignatureException("Bad signature for peering entry");
@@ -171,6 +178,16 @@ public class UCGServiceImpl implements UCGService {
 				// Remove previous entry
 				forwardDao.delete(stored);
 				sigDao.delete(stored.getSignature());
+			} else {
+				// Peers must be known
+				KeyId from = forward.getFromKeyId();
+				if (peerDao.getByKeyId(from) == null) {
+					throw new UnknownPeerException(from);
+				}
+				KeyId to = forward.getToKeyId();
+				if (peerDao.getByKeyId(to) == null) {
+					throw new UnknownPeerException(to);
+				}
 			}
 			log.info(String.format("Saving new entry of %s", forward.getFingerprint()));
 			sigDao.save(sig);

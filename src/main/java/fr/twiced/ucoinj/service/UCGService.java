@@ -19,6 +19,7 @@ import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
+import fr.twiced.ucoinj.exceptions.UnknownPeerException;
 import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
 
 public interface UCGService {
@@ -73,17 +74,11 @@ public interface UCGService {
 	void addPeer(Peer peer, Signature sig) throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException;
 
 	/**
-	 * List all peers this node is listening to for ANY incoming transaction.
-	 * @return Peers list.
-	 */
-	List<Peer> upstream();
-
-	/**
 	 * List all peers this node is listening to for this key's incoming transactions.
 	 * @param id Id of the filtering Key.
 	 * @return Peers list.
 	 */
-	List<Peer> upstream(KeyId id);
+	Object upstream(KeyId id);
 
 	/**
 	 * List all peers this node is listening by for ANY incoming transaction.
@@ -102,8 +97,9 @@ public interface UCGService {
 	 * Add a forward rule for incoming transactions.
 	 * @param forward Forward rule to be added.
 	 * @param sig Forward signature.
+	 * @throws UnknownPeerException 
 	 */
-	void addForward(Forward forward, Signature sig) throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException;
+	void addForward(Forward forward, Signature sig) throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException, UnknownPeerException;
 
 	/**
 	 * Add a status information for peering purposes.
