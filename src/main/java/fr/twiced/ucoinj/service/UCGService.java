@@ -2,7 +2,6 @@ package fr.twiced.ucoinj.service;
 
 import java.io.IOException;
 import java.security.SignatureException;
-import java.util.List;
 
 import org.bouncycastle.openpgp.PGPException;
 
@@ -81,17 +80,11 @@ public interface UCGService {
 	Object upstream(KeyId id);
 
 	/**
-	 * List all peers this node is listening by for ANY incoming transaction.
-	 * @return Peers list.
-	 */
-	List<Peer> downstream();
-
-	/**
 	 * List all peers this node is listening by for this key's incoming transactions.
 	 * @param id Id of the filtering Key.
 	 * @return Peers list.
 	 */
-	List<Peer> downstream(KeyId id);
+	Object downstream(KeyId id);
 
 	/**
 	 * Add a forward rule for incoming transactions.

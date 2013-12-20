@@ -191,11 +191,19 @@ public class UCGController extends UCoinController {
 	}
 	
 	@RequestMapping(value = "/ucg/peering/peers/upstream", method = RequestMethod.GET)
-	public void peeringPeers(
+	public void peeringPeersUpstream(
 		HttpServletRequest request,
 		HttpServletResponse response) throws PGPException, IOException, NoPublicKeyPacketException {
 		KeyId self = new KeyId(GlobalConfiguration.getInstance().getPublicKey().getFingerprint());
 		objectOrNotFound(ucgService.upstream(self), request, response, true);
+	}
+	
+	@RequestMapping(value = "/ucg/peering/peers/downstream", method = RequestMethod.GET)
+	public void peeringPeersDownstream(
+		HttpServletRequest request,
+		HttpServletResponse response) throws PGPException, IOException, NoPublicKeyPacketException {
+		KeyId self = new KeyId(GlobalConfiguration.getInstance().getPublicKey().getFingerprint());
+		objectOrNotFound(ucgService.downstream(self), request, response, true);
 	}
 
 	public PublicKey getPubkey() {

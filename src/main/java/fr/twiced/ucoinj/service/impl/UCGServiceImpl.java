@@ -152,15 +152,15 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
-	public List<Peer> downstream() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Peer> downstream(KeyId id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object downstream(KeyId id) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Object> peers = new ArrayList<>();
+		List<Forward> upstreamALL = forwardDao.getForwardsALLTo(id);
+		for (Forward fwd : upstreamALL) {
+			peers.add(peerDao.getByKeyId(fwd.getToKeyId()).getShortJSON());
+		}
+		map.put("peers", peers);
+		return map;
 	}
 
 	@Override
