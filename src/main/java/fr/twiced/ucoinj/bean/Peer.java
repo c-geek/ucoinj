@@ -14,7 +14,6 @@ import javax.persistence.Transient;
 
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.exceptions.BadFormatException;
-import fr.twiced.ucoinj.pgp.Sha1;
 
 @Entity
 public class Peer implements Merklable, Rawable {
@@ -27,7 +26,6 @@ public class Peer implements Merklable, Rawable {
 	private String ipv4;
 	private String ipv6;
 	private Integer port;
-	private String hash;
 	private Signature signature;
 	
 	public Peer() {
@@ -86,12 +84,9 @@ public class Peer implements Merklable, Rawable {
 	}
 
 	@Override
-	@Column(nullable = false)
+	@Transient
 	public String getHash() {
-		if (hash == null) {
-			hash = new Sha1(getRaw()).getHash();
-		}
-		return hash;
+		return fingerprint;
 	}
 
 	public void setId(Integer id) {
@@ -127,7 +122,7 @@ public class Peer implements Merklable, Rawable {
 	}
 
 	public void setHash(String hash) {
-		this.hash = hash;
+		this.fingerprint = hash;
 	}
 
 	public void setSignature(Signature signature) {
@@ -187,7 +182,6 @@ public class Peer implements Merklable, Rawable {
 				ipv6 = m.group(9);
 			if (m.group(10) != null)
 				port = Integer.parseInt(m.group(11));
-			hash = new Sha1(getRaw()).getHash();
 		} else {
 			throw new BadFormatException();
 		}

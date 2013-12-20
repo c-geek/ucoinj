@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.twiced.ucoinj.GlobalConfiguration;
-import fr.twiced.ucoinj.bean.Amendment;
 import fr.twiced.ucoinj.bean.Forward;
-import fr.twiced.ucoinj.bean.Hash;
 import fr.twiced.ucoinj.bean.Jsonable;
 import fr.twiced.ucoinj.bean.Merkle;
 import fr.twiced.ucoinj.bean.Peer;
@@ -22,8 +20,6 @@ import fr.twiced.ucoinj.bean.PublicKey;
 import fr.twiced.ucoinj.bean.Signature;
 import fr.twiced.ucoinj.bean.Status;
 import fr.twiced.ucoinj.bean.THTEntry;
-import fr.twiced.ucoinj.bean.Transaction;
-import fr.twiced.ucoinj.bean.Vote;
 import fr.twiced.ucoinj.bean.id.KeyId;
 import fr.twiced.ucoinj.dao.PeerDao;
 import fr.twiced.ucoinj.dao.SignatureDao;
@@ -31,14 +27,11 @@ import fr.twiced.ucoinj.exceptions.BadSignatureException;
 import fr.twiced.ucoinj.exceptions.MultiplePublicKeyException;
 import fr.twiced.ucoinj.exceptions.NoPublicKeyPacketException;
 import fr.twiced.ucoinj.exceptions.ObsoleteDataException;
-import fr.twiced.ucoinj.exceptions.RefusedDataException;
 import fr.twiced.ucoinj.exceptions.UnknownLeafException;
 import fr.twiced.ucoinj.exceptions.UnknownPublicKeyException;
-import fr.twiced.ucoinj.pgp.Sha1;
 import fr.twiced.ucoinj.service.MerkleService;
 import fr.twiced.ucoinj.service.PublicKeyService;
 import fr.twiced.ucoinj.service.UCGService;
-import fr.twiced.ucoinj.service.tx.TransactionProcessor;
 
 @Service
 @Transactional
@@ -104,9 +97,8 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
-	public Merkle<Peer> peers() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object peers(Boolean leaves, String leaf) throws UnknownLeafException {
+		return jsonIt(merkleService.searchPeer(leaves, leaf));
 	}
 
 	@Override

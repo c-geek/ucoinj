@@ -102,7 +102,7 @@ public class MerkleServiceImpl implements MerkleService {
 
 	@Override
 	public Jsonable searchPeer(Boolean leaves, String leaf) throws UnknownLeafException {
-		return searchMerkle(peerMerkleDao, new KeyId(), UniqueMerkle.PUBLIC_KEY.name(), leaves, leaf);
+		return searchMerkle(peerMerkleDao, new KeyId(), UniqueMerkle.ALL_PEERS.name(), leaves, leaf);
 	}
 
 	@Override

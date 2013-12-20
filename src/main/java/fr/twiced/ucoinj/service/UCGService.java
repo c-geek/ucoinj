@@ -54,9 +54,12 @@ public interface UCGService {
 
 	/**
 	 * Get the Mekle resource of all known peers of this node.
+	 * @param leaf 
+	 * @param leaves 
 	 * @return Merkle resource.
+	 * @throws UnknownLeafException 
 	 */
-	Merkle<Peer> peers();
+	Object peers(Boolean leaves, String leaf) throws UnknownLeafException;
 
 	/**
 	 * Add a peering entry in pool of known peers.

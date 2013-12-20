@@ -156,6 +156,20 @@ public class UCGController extends UCoinController {
 			sendError(400, e.getMessage(), response);
 		}
 	}
+	
+	@RequestMapping(value = "/ucg/peering/peers", method = RequestMethod.GET)
+	public void peeringPeers(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		Boolean leaves,
+		String leaf,
+		Boolean nice) {
+		try {
+			objectOrNotFound(ucgService.peers(leaves, leaf), request, response, true);
+		} catch (UnknownLeafException e) {
+			sendError(404, "Leaf not found", response);
+		}
+	}
 
 	public PublicKey getPubkey() {
 		return pubkey;
