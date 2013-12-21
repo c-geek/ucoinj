@@ -73,11 +73,18 @@ public interface UCGService {
 	void addPeer(Peer peer, Signature sig) throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException;
 
 	/**
-	 * List all peers this node is listening to for this key's incoming transactions.
+	 * List all peers given node is listening to for ANY incoming transaction.
 	 * @param id Id of the filtering Key.
 	 * @return Peers list.
 	 */
 	Object upstream(KeyId id);
+
+	/**
+	 * List all peers given node is listening to for this key's incoming transactions.
+	 * @param id Id of the filtering Key.
+	 * @return Peers list.
+	 */
+	Object upstreamForKey(KeyId id, KeyId watched);
 
 	/**
 	 * List all peers this node is listening by for this key's incoming transactions.

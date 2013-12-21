@@ -152,6 +152,18 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
+	public Object upstreamForKey(KeyId id, KeyId watched) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Object> peers = new ArrayList<>();
+		List<Forward> upstreamALL = forwardDao.getForwardsKEYSFrom(id, watched);
+		for (Forward fwd : upstreamALL) {
+			peers.add(peerDao.getByKeyId(fwd.getToKeyId()).getShortJSON());
+		}
+		map.put("peers", peers);
+		return map;
+	}
+
+	@Override
 	public Object downstream(KeyId id) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		List<Object> peers = new ArrayList<>();

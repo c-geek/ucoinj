@@ -52,16 +52,16 @@ public class ForwardDaoImpl extends GenericDaoImpl<Forward> implements ForwardDa
 
 	@Override
 	public List<Forward> getForwardsKEYSFrom(KeyId issuer, KeyId watchedKey) {
-		return getSession().createQuery("select f from Forward f left join f.keys k where f.from = :from and f.forward = :type and k = :target")
+		return getSession().createQuery("from Forward f where f.from = :from and f.forward = :type and :target in elements(f.keys)")
 		.setParameter("from", issuer.getHash())
-		.setParameter("type", ForwardType.ALL)
+		.setParameter("type", ForwardType.KEYS)
 		.setParameter("target", watchedKey.getHash())
 		.list();
 	}
 
 	@Override
 	public List<Forward> getForwardsKEYSTo(KeyId recipient, KeyId watchedKey) {
-		return getSession().createQuery("select f from Forward f left join f.keys k where f.to = :to and f.forward = :type and k = :target")
+		return getSession().createQuery("from Forward f where f.to = :to and f.forward = :type and :target in elements(f.keys)")
 		.setParameter("to", recipient.getHash())
 		.setParameter("type", ForwardType.ALL)
 		.setParameter("target", watchedKey.getHash())

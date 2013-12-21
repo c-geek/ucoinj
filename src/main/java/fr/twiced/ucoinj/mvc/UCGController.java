@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -196,6 +197,15 @@ public class UCGController extends UCoinController {
 		HttpServletResponse response) throws PGPException, IOException, NoPublicKeyPacketException {
 		KeyId self = new KeyId(GlobalConfiguration.getInstance().getPublicKey().getFingerprint());
 		objectOrNotFound(ucgService.upstream(self), request, response, true);
+	}
+	
+	@RequestMapping(value = "/ucg/peering/peers/upstream/{fingerprint}", method = RequestMethod.GET)
+	public void peeringPeersUpstream(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint) throws PGPException, IOException, NoPublicKeyPacketException {
+		KeyId self = new KeyId(GlobalConfiguration.getInstance().getPublicKey().getFingerprint());
+		objectOrNotFound(ucgService.upstreamForKey(self, new KeyId(fingerprint)), request, response, true);
 	}
 	
 	@RequestMapping(value = "/ucg/peering/peers/downstream", method = RequestMethod.GET)
