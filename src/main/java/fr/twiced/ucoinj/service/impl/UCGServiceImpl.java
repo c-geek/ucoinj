@@ -176,6 +176,18 @@ public class UCGServiceImpl implements UCGService {
 	}
 
 	@Override
+	public Object downstreamForKey(KeyId id, KeyId watched) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		List<Object> peers = new ArrayList<>();
+		List<Forward> upstreamALL = forwardDao.getForwardsKEYSTo(id, watched);
+		for (Forward fwd : upstreamALL) {
+			peers.add(peerDao.getByKeyId(fwd.getToKeyId()).getShortJSON());
+		}
+		map.put("peers", peers);
+		return map;
+	}
+
+	@Override
 	public void addForward(Forward forward, Signature sig)  throws BadSignatureException, UnknownPublicKeyException, MultiplePublicKeyException, ObsoleteDataException, UnknownPeerException {
 		PublicKey pubkey = pubkeyService.getWorking(pubkeyService.getBySignature(sig));
 		if (!sig.verify(pubkey, forward.getRaw())) {

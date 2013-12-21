@@ -215,6 +215,15 @@ public class UCGController extends UCoinController {
 		KeyId self = new KeyId(GlobalConfiguration.getInstance().getPublicKey().getFingerprint());
 		objectOrNotFound(ucgService.downstream(self), request, response, true);
 	}
+	
+	@RequestMapping(value = "/ucg/peering/peers/downstream/{fingerprint}", method = RequestMethod.GET)
+	public void peeringPeersDownstream(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@PathVariable("fingerprint") String fingerprint) throws PGPException, IOException, NoPublicKeyPacketException {
+		KeyId self = new KeyId(GlobalConfiguration.getInstance().getPublicKey().getFingerprint());
+		objectOrNotFound(ucgService.downstreamForKey(self, new KeyId(fingerprint)), request, response, true);
+	}
 
 	public PublicKey getPubkey() {
 		return pubkey;
